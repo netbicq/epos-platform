@@ -37,7 +37,8 @@ import DictTag from '@/components/DictTag'
 import VueMeta from 'vue-meta'
 // 字典数据组件
 import DictData from '@/components/DictData'
-
+// 下载Excel
+import JsonExcel from 'vue-json-excel'
 // 全局方法挂载
 Vue.prototype.getDicts = getDicts
 Vue.prototype.getConfigKey = getConfigKey
@@ -50,6 +51,7 @@ Vue.prototype.download = download
 Vue.prototype.handleTree = handleTree
 
 // 全局组件挂载
+Vue.component('downloadExcel', JsonExcel)
 Vue.component('DictTag', DictTag)
 Vue.component('Pagination', Pagination)
 Vue.component('RightToolbar', RightToolbar)
