@@ -55,6 +55,46 @@ export const getRouters = () => {
                 }
             ]
         },
+        // 运营管理
+        {
+            "name": "operationManagement",
+            "path": "/operationManagement",
+            "hidden": false,
+            "redirect": "noRedirect",
+            "component": "Layout",
+            "alwaysShow": true,
+            "meta": {
+                "title": "运营管理",                
+                "noCache": false,
+                "link": null
+            },
+            "children": [
+                //通知公告
+                {
+                    "name": "noticeNotice",
+                    "path": "noticeNotice",
+                    "hidden": false,
+                    "component": "operationManagement/notice/index",
+                    "meta": {
+                        "title": "通知公告",
+                        "noCache": false,
+                        "link": null
+                    }
+                },
+                {
+                    "name": "storeManagement",
+                    "path": "storeManagement",
+                    "hidden": false,
+                    "component": "operationManagement/store/index",
+                    "meta": {
+                        "title": "门店管理",
+                        "noCache": false,
+                        "link": null
+                    }
+                },
+               
+            ]
+        },
           {
               "name": "System",
               "path": "/system",

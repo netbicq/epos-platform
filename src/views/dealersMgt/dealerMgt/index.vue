@@ -1,30 +1,17 @@
 <template>
   <div class="app-container">
-    <el-form
-      :model="queryParams"
-      ref="queryForm"
-      size="small"
-      :inline="true"
-      v-show="showSearch"
-    >
-      <el-form-item prop="deptName">
+    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch">
+      <el-form-item  prop="deptName">
         <el-input
-          v-model="queryParams.Filter"
+          v-model="queryParams.deptName"
           placeholder="筛选关键字"
           clearable
+          @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
+      </el-form-item>      
       <el-form-item>
-        <el-button
-          type="primary"
-          icon="el-icon-search"
-          size="mini"
-          @click="handleQuery"
-          >搜索</el-button
-        >
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
-          >重置</el-button
-        >
+        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
 
@@ -37,153 +24,108 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['system:dept:add']"
-          >新增</el-button
-        >
-      </el-col>
-      <right-toolbar
-        :showSearch.sync="showSearch"
-        @queryTable="getList"
-      ></right-toolbar>
+        >新增</el-button>
+      </el-col>      
+      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table
-      height="600"
       v-if="refreshTable"
       v-loading="loading"
       :data="deptList"
       row-key="deptId"
       :default-expand-all="isExpandAll"
-      :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+      :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >
-      <el-table-column
-        prop="a"
-        label="经销商名称"
-        width="100"
-      ></el-table-column>
-      <el-table-column prop="b" label="联系人" width="80"></el-table-column>
-      <el-table-column prop="c" label="联系电话" width="120"> </el-table-column>
-      <el-table-column label="银行账号" prop="d" width="200"> </el-table-column>
-      <el-table-column
-        prop="e"
-        label="银行开户名"
-        width="100"
-      ></el-table-column>
-      <el-table-column prop="f" label="开户银行" width="100"></el-table-column>
-      <el-table-column
-        prop="g"
-        label="云通道"
-        width="80"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="h"
-        label="经销商账号"
-        width="200"
-      ></el-table-column>
-      <el-table-column
-        label="门店剩余数量"
-        align="center"
-        width="100"
-        class-name="small-padding fixed-width"
-      >
+      <el-table-column prop="deptName" label="部门名称" width="260"></el-table-column>
+      <el-table-column prop="orderNum" label="排序" width="200"></el-table-column>
+      <el-table-column prop="status" label="状态" width="100">
         <template slot-scope="scope">
-          <el-button size="mini" type="text" @click="dealerBalance()"
-            >查看</el-button
-          >
+          <dict-tag :options="dict.type.sys_normal_disable" :value="scope.row.status"/>
         </template>
       </el-table-column>
-      <el-table-column prop="j" label="备注" width="200"></el-table-column>
-      <el-table-column prop="k" label="状态" width="50"></el-table-column>
-      <el-table-column
-        label="操作"
-        align="center"
-        class-name="small-padding fixed-width"
-      >
+      <el-table-column label="创建时间" align="center" prop="createTime" width="200">
         <template slot-scope="scope">
-          <el-button size="mini" type="text" icon="el-icon-edit"
-            >修改</el-button
-          >
-          <el-button size="mini" type="text" icon="el-icon-delete"
-            >锁定</el-button
-          >
-          <el-dropdown size="mini">
-            <span class="el-dropdown-link">
-              <i class="el-icon-d-arrow-right el-icon--right"></i>更多
-            </span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>重置密码</el-dropdown-item>
-              <el-dropdown-item @click="addPassage()"
-                >设置通道</el-dropdown-item
-              >
-            </el-dropdown-menu>
-          </el-dropdown>
+          <span>{{ parseTime(scope.row.createTime) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="handleUpdate(scope.row)"
+            v-hasPermi="['system:dept:edit']"
+          >修改</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-plus"
+            @click="handleAdd(scope.row)"
+            v-hasPermi="['system:dept:add']"
+          >新增</el-button>
+          <el-button
+            v-if="scope.row.parentId != 0"
+            size="mini"
+            type="text"
+            icon="el-icon-delete"
+            @click="handleDelete(scope.row)"
+            v-hasPermi="['system:dept:remove']"
+          >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
-    <pagination
-      v-show="total > 0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-    />
 
-    <!-- 添加维护经销商 -->
-    <el-dialog
-      title="维护经销商"
-      :visible.sync="open"
-      width="600px"
-      @close="handleClose"
-      append-to-body
-    >
-      <el-form ref="form" :model="openForm" :rules="rules" label-width="100px">
+    <!-- 添加或修改部门对话框 -->
+    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-row>
-          <el-col :span="24">
-            <el-form-item label="经销商名称">
-              <el-input v-model="openForm.a" placeholder="请输入经销商名称" />
+          <el-col :span="24" v-if="form.parentId !== 0">
+            <el-form-item label="上级部门" prop="parentId">
+              <treeselect v-model="form.parentId" :options="deptOptions" :normalizer="normalizer" placeholder="选择上级部门" />
             </el-form-item>
           </el-col>
-          <el-col :span="24">
-            <el-form-item label="联系人">
-              <el-input v-model="openForm.b" placeholder="请输入联系人" />
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="部门名称" prop="deptName">
+              <el-input v-model="form.deptName" placeholder="请输入部门名称" />
             </el-form-item>
           </el-col>
-          <el-col :span="24">
+          <el-col :span="12">
+            <el-form-item label="显示排序" prop="orderNum">
+              <el-input-number v-model="form.orderNum" controls-position="right" :min="0" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="负责人" prop="leader">
+              <el-input v-model="form.leader" placeholder="请输入负责人" maxlength="20" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
             <el-form-item label="联系电话" prop="phone">
-              <el-input v-model="openForm.c" placeholder="请输入联系电话" />
+              <el-input v-model="form.phone" placeholder="请输入联系电话" maxlength="11" />
             </el-form-item>
           </el-col>
-          <el-col :span="24">
-            <el-form-item label="银行账号">
-              <el-input v-model="openForm.d" placeholder="请输入银行账号" />
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="邮箱" prop="email">
+              <el-input v-model="form.email" placeholder="请输入邮箱" maxlength="50" />
             </el-form-item>
           </el-col>
-          <el-col :span="24">
-            <el-form-item label="银行开户名">
-              <el-input v-model="openForm.e" placeholder="请输入银行开户名" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="开户银行">
-              <el-input v-model="openForm.f" placeholder="请输入开户银行" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="经销商账号">
-              <el-input v-model="openForm.g" placeholder="请输入经销商账号" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="门店数量">
-              <el-input v-model="openForm.h" placeholder="请输入门店数量" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="备注">
-              <el-input
-                type="textarea"
-                v-model="openForm.j"
-                placeholder="请输入备注"
-              />
+          <el-col :span="12">
+            <el-form-item label="部门状态">
+              <el-radio-group v-model="form.status">
+                <el-radio
+                  v-for="dict in dict.type.sys_normal_disable"
+                  :key="dict.value"
+                  :label="dict.value"
+                >{{dict.label}}</el-radio>
+              </el-radio-group>
             </el-form-item>
           </el-col>
         </el-row>
@@ -193,98 +135,17 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-    <!-- 添加设置通道 -->
-    <el-dialog
-      title="设备通道"
-      :visible.sync="openPassage"
-      width="600px"
-      @close="handleClose"
-      append-to-body
-    >
-      <el-form
-        ref="form"
-        :model="passageForm"
-        :rules="rules"
-        label-width="100px"
-      >
-        <el-row>
-          <el-col :span="24">
-            <el-form-item label="经销商名称">
-              <el-input
-                v-model="passageForm.a"
-                placeholder="请输入经销商名称"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="云通道">
-              <el-select
-                placeholder="请选择云通道"
-                v-model="passageForm.b"
-                style="width: 100%"
-              >
-                <el-option label="华东" value="华东"></el-option>
-                <el-option label="华北" value="华北"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="passageSubmit">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
-      </div>
-    </el-dialog>
-    <!-- 查看经销商余额 -->
-    <el-dialog
-      title="经销商余额"
-      @close="handleClose"
-      :visible.sync="openDealer"
-      width="450px"
-      append-to-body
-    >
-      <el-form
-        ref="form"
-        :model="dealerForm"
-        :rules="rules"
-        label-width="100px"
-      >
-        <el-row>
-          <el-col :span="24">
-            <el-form-item label="经销商名称">
-              <el-input v-model="dealerForm.a" placeholder="请输入经销商名称" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="24" align="center">
-            <div>专业版：30</div>
-            <div>企业版：50</div>
-            <div>旗舰版：20</div>
-          </el-col>
-        </el-row>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dealerSubmit">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
 <script>
-import {
-  listDept,
-  getDept,
-  delDept,
-  addDept,
-  updateDept,
-  listDeptExcludeChild,
-} from "@/api/system/dept";
+import { listDept, getDept, delDept, addDept, updateDept, listDeptExcludeChild } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
 export default {
   name: "Dept",
-  dicts: ["sys_normal_disable"],
+  dicts: ['sys_normal_disable'],
   components: { Treeselect },
   data() {
     return {
@@ -293,111 +154,51 @@ export default {
       // 显示搜索条件
       showSearch: true,
       // 表格树数据
-      deptList: [
-        {
-          a: "库克科技",
-          b: "黄瑶",
-          c: "15213025532",
-          d: "6212262201023557228",
-          e: "黄瑶",
-          f: "建设银行",
-          g: "华东",
-          h: "15213025532",
-          i: "55",
-          j: "打钱",
-          k: "激活",
-        },
-      ],
-      // 总条数
-      total: 100,
-      // 是否显示新建经销商
+      deptList: [],
+      // 部门树选项
+      deptOptions: [],
+      // 弹出层标题
+      title: "",
+      // 是否显示弹出层
       open: false,
-      // 是否显示设备通道
-      openPassage: false,
-      // 是否显示查看经销商余额
-      openDealer: false,
       // 是否展开，默认全部展开
       isExpandAll: true,
       // 重新渲染表格状态
       refreshTable: true,
       // 查询参数
       queryParams: {
-        pageNum: 1,
-        pageSize: 10,
-        Filter: "",
+        deptName: undefined,
+        status: undefined
       },
-      // 维护经销商表单参数
-      openForm: {},
-      // 设备通道表单参数
-      passageForm: {},
-      // 经销商余额表单参数
-      dealerForm: {},
+      // 表单参数
+      form: {},
       // 表单校验
       rules: {
+        parentId: [
+          { required: true, message: "上级部门不能为空", trigger: "blur" }
+        ],
+        deptName: [
+          { required: true, message: "部门名称不能为空", trigger: "blur" }
+        ],
+        orderNum: [
+          { required: true, message: "显示排序不能为空", trigger: "blur" }
+        ],
+        email: [
+          {
+            type: "email",
+            message: "请输入正确的邮箱地址",
+            trigger: ["blur", "change"]
+          }
+        ],
         phone: [
           {
             pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
             message: "请输入正确的手机号码",
-            trigger: "blur",
-          },
-        ],
-      },
+            trigger: "blur"
+          }
+        ]
+      }
     };
-  },
-  methods: {
-    /** 重置按钮操作 */
-    resetQuery() {
-      this.queryParams.Filter = "";
-    },
-    /** 搜索按钮操作 */
-    handleQuery() {
-      console.log(this.queryParams);
-    },
-    /** 新增按钮操作 */
-    handleAdd() {
-      this.open = true;
-    },
-    // 打开设置通道
-    addPassage() {
-      this.openPassage = true;
-    },
-    // 关闭叉叉
-    handleClose() {
-      this.openForm = {};
-      this.passageForm = {};
-      this.dealerForm = {};
-    },
-    // 查看经销商余额
-    dealerBalance() {
-      this.openDealer = true;
-    },
-    // 取消按钮
-    cancel() {
-      this.open = false;
-      this.openPassage = false;
-      this.openDealer = false;
-      this.openForm = {};
-      this.passageForm = {};
-      this.dealerForm = {};
-    },
-    // 提交新增维护经销商按钮
-    submitForm() {
-      this.openForm = {};
-      this.open = false;
-      console.log(this.openForm);
-    },
-    // 提交设备通道按钮
-    passageSubmit() {
-      this.passageForm = {};
-      this.openPassage = false;
-      console.log(this.passageForm);
-    },
-    // 提交经销商余额查询按钮
-    dealerSubmit() {
-      this.dealerForm = {};
-      this.openDealer = false;
-      console.log(this.dealerForm);
-    },
   },
   /* created() {
     this.getList();
@@ -422,6 +223,11 @@ export default {
   //       children: node.children
   //     };
   //   },
+  //   // 取消按钮
+  //   cancel() {
+  //     this.open = false;
+  //     this.reset();
+  //   },
   //   // 表单重置
   //   reset() {
   //     this.form = {
@@ -435,6 +241,15 @@ export default {
   //       status: "0"
   //     };
   //     this.resetForm("form");
+  //   },
+  //   /** 搜索按钮操作 */
+  //   handleQuery() {
+  //     this.getList();
+  //   },
+  //   /** 重置按钮操作 */
+  //   resetQuery() {
+  //     this.resetForm("queryForm");
+  //     this.handleQuery();
   //   },
   //   /** 新增按钮操作 */
   //   handleAdd(row) {
