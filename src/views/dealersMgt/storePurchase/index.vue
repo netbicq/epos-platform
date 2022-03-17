@@ -55,26 +55,26 @@
       :default-expand-all="isExpandAll"
       :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
     >
-      <el-table-column prop="a" label="经销商名称" width="100"></el-table-column>
-      <el-table-column prop="b" label="经销商联系人" width="100"></el-table-column>
-      <el-table-column prop="c" label="经销商联系电话" width="150"> </el-table-column>
-      <el-table-column label="购买数量" prop="d" width="100"> </el-table-column>
-      <el-table-column prop="e" label="购买金额" width="100"></el-table-column>
-      <el-table-column prop="f" label="支付方式" width="100"></el-table-column>
+      <el-table-column prop="a" label="经销商名称" ></el-table-column>
+      <el-table-column prop="b" label="经销商联系人" ></el-table-column>
+      <el-table-column prop="c" label="经销商联系电话"> </el-table-column>
+      <el-table-column label="购买数量" prop="d"> </el-table-column>
+      <el-table-column prop="e" label="购买金额"></el-table-column>
+      <el-table-column prop="f" label="支付方式" width="80"></el-table-column>
       <el-table-column
         prop="g"
-        label="购买时间"
-        width="150"
+        label="购买时间"       
         :formatter="carTimeFilter"
         align="center"
       >
       </el-table-column>
-      <el-table-column prop="h" label="合同号" width="200"></el-table-column>
+      <el-table-column prop="h" label="合同号"></el-table-column>
       <el-table-column prop="j" label="备注" width="300"></el-table-column>
       <el-table-column prop="k" label="状态" width="50"></el-table-column>
       <el-table-column
         label="操作"
-        align="center"        
+        align="center"  
+        width="200"      
         class-name="small-padding fixed-width"
       >
         <template slot-scope="scope">

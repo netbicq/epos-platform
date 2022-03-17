@@ -7,10 +7,34 @@
       :inline="true"
       v-show="showSearch"
     >
+      <el-form-item>
+        <el-select
+          v-model="queryParams.status"
+          placeholder="正常"
+          style="width: 80px"
+        >
+          <el-option label="正常" value="正常"></el-option>
+          <el-option label="已分配" value="已分配"></el-option>
+          <el-option label="维修" value="维修"></el-option>
+          <el-option label="回收" value="回收"></el-option>
+          <el-option label="报废" value="报废"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-select
+          v-model="queryParams.type"
+          placeholder="智能插座"
+          style="width: 120px"
+        >
+          <el-option label="智能插座" value="智能插座"></el-option>
+          <el-option label="控制箱" value="控制箱"></el-option>
+          <el-option label="呼叫器" value="呼叫器"></el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item prop="deptName">
         <el-input
           v-model="queryParams.Filter"
-          placeholder="筛选关键字"
+          placeholder="请输入设备ID"
           clearable
         />
       </el-form-item>
@@ -55,66 +79,40 @@
       :default-expand-all="isExpandAll"
       :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
     >
-      <el-table-column
-        prop="a"
-        label="经销商名称"
-        width="180"
-      ></el-table-column>
-      <el-table-column prop="b" label="联系人" width="80"></el-table-column>
-      <el-table-column prop="c" label="联系电话" width="120"> </el-table-column>
-      <el-table-column label="银行账号" prop="d" width="200"> </el-table-column>
-      <el-table-column
-        prop="e"
-        label="银行开户名"
-        width="100"
-      ></el-table-column>
-      <el-table-column prop="f" label="开户银行" width="180"></el-table-column>
-      <el-table-column
-        prop="g"
-        label="云通道"
-        width="80"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="h"
-        label="经销商账号"
-        width="120"
-      ></el-table-column>
-      <el-table-column
-        label="门店剩余数量"
-        align="center"
-        width="100"
-        class-name="small-padding fixed-width"
-      >
-        <template slot-scope="scope">
-          <el-button size="mini" type="text" @click="dealerBalance()"
-            >查看</el-button
-          >
-        </template>
-      </el-table-column>
-      <el-table-column prop="j" label="备注"></el-table-column>
-      <el-table-column prop="k" label="状态" width="50"></el-table-column>
+      <el-table-column prop="a" label="设备ID"></el-table-column>
+      <el-table-column prop="b" label="设备名称"></el-table-column>
+      <el-table-column prop="c" label="设备类型"> </el-table-column>
+      <el-table-column label="所属门店" prop="d"> </el-table-column>
+      <el-table-column prop="e" label="状态"></el-table-column>
       <el-table-column
         label="操作"
-        width="200"
         align="center"
         class-name="small-padding fixed-width"
       >
         <template slot-scope="scope">
-          <el-button size="mini" type="text" icon="el-icon-edit"
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="maintain()"
             >修改</el-button
           >
           <el-button size="mini" type="text" icon="el-icon-delete"
-            >锁定</el-button
+            >删除</el-button
           >
-          <el-dropdown size="mini" @command="(command) => handleCommand(command, scope.row)">
+          <el-dropdown
+            size="mini"
+            @command="(command) => handleCommand(command, scope.row)"
+          >
             <span class="el-dropdown-link">
               <i class="el-icon-d-arrow-right el-icon--right"></i>更多
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>重置密码</el-dropdown-item>
-              <el-dropdown-item command="addPassage"
-                >设置通道</el-dropdown-item
+              <el-dropdown-item command="deviceSettings"
+                >设置设备</el-dropdown-item
+              >
+              <el-dropdown-item command="deviceAllocation"
+                >分配设备</el-dropdown-item
               >
             </el-dropdown-menu>
           </el-dropdown>
@@ -128,63 +126,62 @@
       :limit.sync="queryParams.pageSize"
     />
 
-    <!-- 添加维护经销商 -->
+    <!-- 设备设置 -->
     <el-dialog
-      title="维护经销商"
-      :visible.sync="open"
+      title="设备设置"
+      :visible.sync="isDeviceSettings"
       width="600px"
       @close="handleClose"
       append-to-body
     >
-      <el-form ref="form" :model="openForm" :rules="rules" label-width="100px">
+      <el-form
+        ref="setUpForm"
+        :model="setUpForm"
+        :rules="rules"
+        label-width="100px"
+      >
         <el-row>
           <el-col :span="24">
-            <el-form-item label="经销商名称">
-              <el-input v-model="openForm.a" placeholder="请输入经销商名称" />
+            <el-form-item label="设备ID">
+              <el-input v-model="setUpForm.a" placeholder="请输入设备ID" />
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="联系人">
-              <el-input v-model="openForm.b" placeholder="请输入联系人" />
+            <el-form-item label="设备名称">
+              <el-input v-model="setUpForm.b" placeholder="请输入设备名称" />
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="联系电话" prop="phone">
-              <el-input v-model="openForm.c" placeholder="请输入联系电话" />
+            <el-form-item label="设备类型">
+              <el-select
+                placeholder="智能插座"
+                style="width: 100%"
+                v-model="setUpForm.c"
+              >
+                <el-option label="智能插座" value="智能插座"></el-option>
+                <el-option label="控制箱" value="控制箱"></el-option>
+                <el-option label="呼叫器" value="呼叫器"></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="银行账号">
-              <el-input v-model="openForm.d" placeholder="请输入银行账号" />
+            <el-form-item label="所属门店">
+              <el-input v-model="setUpForm.d" placeholder="请输入所属门店" />
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="银行开户名">
-              <el-input v-model="openForm.e" placeholder="请输入银行开户名" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="开户银行">
-              <el-input v-model="openForm.f" placeholder="请输入开户银行" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="经销商账号">
-              <el-input v-model="openForm.g" placeholder="请输入经销商账号" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="门店数量">
-              <el-input v-model="openForm.h" placeholder="请输入门店数量" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="备注">
-              <el-input
-                type="textarea"
-                v-model="openForm.j"
-                placeholder="请输入备注"
-              />
+            <el-form-item label="状态">
+              <el-select
+                placeholder="正常"
+                v-model="setUpForm.e"
+                style="width: 100%"
+              >
+                <el-option label="正常" value="正常"></el-option>
+                <el-option label="已分配" value="已分配"></el-option>
+                <el-option label="维修" value="维修"></el-option>
+                <el-option label="回收" value="回收"></el-option>
+                <el-option label="报废" value="报废"></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -194,77 +191,114 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-    <!-- 添加设置通道 -->
+    <!-- 设备维护 -->
     <el-dialog
-      title="设备通道"
-      :visible.sync="openPassage"
+      :title="title"
+      :visible.sync="isMaintain"
       width="600px"
       @close="handleClose"
       append-to-body
     >
       <el-form
-        ref="form"
-        :model="passageForm"
+        ref="maintainForm"
+        :model="maintainForm"
         :rules="rules"
         label-width="100px"
       >
         <el-row>
           <el-col :span="24">
-            <el-form-item label="经销商名称">
+            <el-form-item label="设备ID">
+              <el-input v-model="maintainForm.a" placeholder="请输入设备ID" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="设备名称">
+              <el-input v-model="maintainForm.b" placeholder="请输入设备名称" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="设备类型">
+              <el-select
+                v-model="maintainForm.c"
+                placeholder="智能插座"
+                style="width: 100%"
+              >
+                <el-option label="智能插座" value="智能插座"></el-option>
+                <el-option label="控制箱" value="控制箱"></el-option>
+                <el-option label="呼叫器" value="呼叫器"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="所属门店">
+              <el-input v-model="maintainForm.d" placeholder="请输入门店" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="maintainSubmit">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
+    <!-- 设备分配 -->
+    <el-dialog
+      title="设备分配"
+      @close="handleClose"
+      :visible.sync="allocation"
+      width="450px"
+      append-to-body
+    >
+      <el-form
+        ref="allocationForm"
+        :model="allocationForm"
+        :rules="rules"
+        label-width="100px"
+      >
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="设备ID">
+              <el-input v-model="allocationForm.a" placeholder="请输入设备ID" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="设备名称">
               <el-input
-                v-model="passageForm.a"
-                placeholder="请输入经销商名称"
+                v-model="allocationForm.b"
+                placeholder="请输入设备名称"
               />
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="云通道">
+            <el-form-item label="设备类型">
               <el-select
-                placeholder="请选择云通道"
-                v-model="passageForm.b"
+                v-model="allocationForm.c"
+                placeholder="智能插座"
                 style="width: 100%"
               >
-                <el-option label="华东" value="华东"></el-option>
-                <el-option label="华北" value="华北"></el-option>
+                <el-option label="智能插座" value="智能插座"></el-option>
+                <el-option label="控制箱" value="控制箱"></el-option>
+                <el-option label="呼叫器" value="呼叫器"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="所属门店">
+              <el-select
+                v-model="allocationForm.d"
+                placeholder="请选择所属门店"
+                style="width: 100%"
+              >
+                <el-option label="A店" value="A店"></el-option>
+                <el-option label="B店" value="B店"></el-option>
+                <el-option label="C店" value="C店"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="passageSubmit">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
-      </div>
-    </el-dialog>
-    <!-- 查看经销商余额 -->
-    <el-dialog
-      title="经销商余额"
-      @close="handleClose"
-      :visible.sync="openDealer"
-      width="450px"
-      append-to-body
-    >
-      <el-form
-        ref="form"
-        :model="dealerForm"
-        :rules="rules"
-        label-width="100px"
-      >
-        <el-row>
-          <el-col :span="24">
-            <el-form-item label="经销商名称">
-              <el-input v-model="dealerForm.a" placeholder="请输入经销商名称" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="24" align="center">
-            <div>专业版：30</div>
-            <div>企业版：50</div>
-            <div>旗舰版：20</div>
-          </el-col>
-        </el-row>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dealerSubmit">确 定</el-button>
+        <el-button type="primary" @click="allocationSubmit">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
@@ -296,27 +330,22 @@ export default {
       // 表格树数据
       deptList: [
         {
-          a: "库克科技",
-          b: "黄瑶",
-          c: "15213025532",
-          d: "6212262201023557228",
-          e: "黄瑶",
-          f: "建设银行",
-          g: "华东",
-          h: "15213025532",
-          i: "55",
-          j: "打钱",
-          k: "激活",
+          a: "6212262201023557228",
+          b: "智能插座",
+          c: "智能插座",
+          d: "A店",
+          e: "正常",
         },
       ],
+      title: "",
       // 总条数
       total: 100,
-      // 是否显示新建经销商
-      open: false,
-      // 是否显示设备通道
-      openPassage: false,
-      // 是否显示查看经销商余额
-      openDealer: false,
+      // 是否设置设备
+      isDeviceSettings: false,
+      // 是否显示设备维护
+      isMaintain: false,
+      // 是否显示设备分配
+      allocation: false,
       // 是否展开，默认全部展开
       isExpandAll: true,
       // 重新渲染表格状态
@@ -326,29 +355,37 @@ export default {
         pageNum: 1,
         pageSize: 10,
         Filter: "",
+        status:'',
+        type:''
       },
-      // 维护经销商表单参数
-      openForm: {},
-      // 设备通道表单参数
-      passageForm: {},
-      // 经销商余额表单参数
-      dealerForm: {},
+      // 设置设备表单参数
+      setUpForm: {},
+      // 设备维护表单参数
+      maintainForm: {},
+      // 设备分配表单参数
+      allocationForm: {},
       // 表单校验
       rules: {
-        phone: [
+        /* phone: [
           {
             pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
             message: "请输入正确的手机号码",
             trigger: "blur",
           },
-        ],
+        ], */
       },
     };
   },
   methods: {
     /** 重置按钮操作 */
     resetQuery() {
-      this.queryParams.Filter = "";
+      this.queryParams=  {
+        pageNum: 1,
+        pageSize: 10,
+        Filter: "",
+        status:'',
+        type:''
+      }
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -356,61 +393,67 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd() {
-      this.open = true;
-    },
-    // 打开设置通道
-    addPassage() {
-      this.openPassage = true;
+      this.isMaintain = true;
+      this.title = "新增设备";
     },
     // 关闭叉叉
     handleClose() {
-      this.openForm = {};
-      this.passageForm = {};
-      this.dealerForm = {};
-    },
-    // 查看经销商余额
-    dealerBalance() {
-      this.openDealer = true;
+      this.setUpForm = {};
+      this.maintainForm = {};
+      this.allocationForm = {};
     },
     // 取消按钮
     cancel() {
-      this.open = false;
-      this.openPassage = false;
-      this.openDealer = false;
-      this.openForm = {};
-      this.passageForm = {};
-      this.dealerForm = {};
+      this.allocation = false;
+      this.allocationForm = {};
+      this.isMaintain = false;
+      this.maintainForm = {};
+      this.setUpForm = {};
+      this.isDeviceSettings = false;
     },
-    // 提交新增维护经销商按钮
-    submitForm() {
-      this.openForm = {};
-      this.open = false;
-      console.log(this.openForm);
+    //打开设置通道
+    deviceSettings() {
+      this.isDeviceSettings = true;
     },
-    // 提交设备通道按钮
-    passageSubmit() {
-      this.passageForm = {};
-      this.openPassage = false;
-      console.log(this.passageForm);
+    // 打开设备维护
+    maintain() {
+      this.isMaintain = true;
+      this.title = "设备维护";
     },
-    // 提交经销商余额查询按钮
-    dealerSubmit() {
-      this.dealerForm = {};
-      this.openDealer = false;
-      console.log(this.dealerForm);
+    // 打开设备分配
+    deviceAllocation() {
+      this.allocation = true;
     },
     // 更多操作触发
     handleCommand(command, row) {
       switch (command) {
-        case "addPassage":
-          this.addPassage(row);
+        case "deviceSettings":
+          this.deviceSettings(row);
           break;
-        case "handleAuthUser":
-          this.handleAuthUser(row);
+        case "deviceAllocation":
+          this.deviceAllocation(row);
           break;
         default:
           break;
       }
+    },
+    // 确认设置设备
+    submitForm() {
+      console.log(this.setUpForm);
+      this.setUpForm = {};
+      this.isDeviceSettings = false;
+    },
+    // 确认设备维护
+    maintainSubmit() {
+      console.log(this.maintainForm);
+      this.isMaintain = false;
+      this.maintainForm = {};
+    },
+    // 确认设备分配
+    allocationSubmit() {
+      console.log(this.allocationForm);
+      this.allocation = false;
+      this.allocationForm = {};
     },
   },
   /* created() {
