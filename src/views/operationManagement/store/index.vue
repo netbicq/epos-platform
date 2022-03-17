@@ -96,7 +96,6 @@
         width="80">
       </el-table-column>
    
-
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="168">
         <template slot-scope="scope">
            <el-button
@@ -104,12 +103,14 @@
             size="mini"
             type="text"
             icon="el-icon-check"
+            @click="examine()"
           >审核</el-button>
           <el-button
             v-if="scope.row.parentId != 0"
             size="mini"
             type="text"
             icon="el-icon-close"
+            @click="locking()"
           >锁定</el-button>
 
         </template>
@@ -129,58 +130,58 @@
       <el-form ref="form" :model="form" :rules="rules" label-width="100px" label-position="left">
         <el-row>
           <el-col :span="20" >
-            <el-form-item label="门店名称" prop="parentId" >
+            <el-form-item label="门店名称:" prop="store" >
               <el-input v-model="form.store" placeholder="门店名称" />
             </el-form-item>
           </el-col>
         </el-row>   
         <el-row>
           <el-col :span="20" >
-            <el-form-item label="门店联系人" prop="parentId" >
+            <el-form-item label="门店联系人:" prop="contacts" >
               <el-input  v-model="form.contacts" placeholder="彭于晏" />
             </el-form-item>
           </el-col>
         </el-row>      
         <el-row>
           <el-col :span="20" >
-            <el-form-item label="门店电话" prop="parentId" >
-              <el-input  v-model="form.phone" placeholder="136xxxxxxxxxxx" />
+            <el-form-item label="门店电话:" prop="phone" >
+              <el-input  v-model="form.phone" placeholder="136xxxxxxxxxxx" :maxlength="11"/>
             </el-form-item>
           </el-col>
         </el-row> 
         <el-row>
           <el-col :span="20" >
-            <el-form-item label="门店地址" prop="parentId" >
+            <el-form-item label="门店地址:" prop="address" >
               <el-input  v-model="form.address" placeholder="北京市天安门大街" />
             </el-form-item>
           </el-col>
         </el-row> 
         <el-row>
           <el-col :span="20" >
-            <el-form-item label="门店用户名" prop="parentId" >
+            <el-form-item label="门店用户名:" prop="userName" >
               <el-input   v-model="form.userName" placeholder="门店用户名" />
             </el-form-item>
           </el-col>
         </el-row> 
         <el-row>
             <el-col :span="20">
-          <el-form-item label="有效期限">
+          <el-form-item label="有效期限:" prop="period">
             <el-date-picker  format="yyyy-MM-dd" v-model="form.period" value-format="yyyy-MM-dd"
-              :style="{width: '100%'}" placeholder="请选择有效" clearable></el-date-picker>
+              :style="{width: '100%'}" placeholder="请选择有效期限" clearable></el-date-picker>
           </el-form-item>
         </el-col>
         </el-row>
         <el-row>
           <el-col :span="20" >
-            <el-form-item label="用户数量" prop="parentId" >
-              <el-input v-model="form.quantity" placeholder="门店名称" />
+            <el-form-item label="用户数量:" prop="quantity" >
+              <el-input v-model.number="form.quantity" placeholder="用户数量" />
             </el-form-item>
           </el-col>
         </el-row> 
    
          <el-row>
             <el-col :span="20">
-          <el-form-item label="应用版本">
+          <el-form-item label="应用版本:" prop="edition">
              <el-select v-model="form.edition" placeholder="请选择下拉选择" clearable :style="{width: '100%'}">
                  <el-option v-for="(item, index) in Options" :key="index" :label="item.label"
                   :value="item.value" :disabled="item.disabled"></el-option>
@@ -319,7 +320,7 @@ export default {
           { required: true, message: "门店联系人能为空", trigger: "blur" }
         ],
         phone: [
-          { required: true, message: "门店电话不能为空", trigger: "blur" }
+          { required: true, message: "电话格式错误", trigger: "blur",  pattern: /^1(3|4|5|7|8|9)\d{9}$/}
         ],
         address: [
           { required: true, message: "门店地址不能为空", trigger: "blur" }
@@ -346,6 +347,14 @@ export default {
     cancel() {
       this.open = false;
       this.reset();
+    },
+//审核按钮
+    examine(){
+      console.log('审核')
+    },
+//锁定按钮按钮
+    locking(){
+      console.log('锁定')
     },
     // 表单重置
     reset() {
@@ -384,6 +393,7 @@ export default {
     },
     /** 提交按钮 */
     submitForm: function() {
+      console.log(this.form)
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.dictId != undefined) {

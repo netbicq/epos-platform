@@ -54,13 +54,13 @@
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:dict:remove']"
           >删除</el-button>
-          <el-dropdown size="mini">
+          <el-dropdown size="mini" @command="(command) => handleCommand(command, scope.row)">
             <span class="el-dropdown-link">
               <i class="el-icon-d-arrow-right el-icon--right"></i>更多
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item  icon="el-icon-circle-check" >显示</el-dropdown-item>
-              <el-dropdown-item icon="el-icon-user">不显示</el-dropdown-item>
+              <el-dropdown-item  icon="el-icon-circle-check" command="display">显示</el-dropdown-item>
+              <el-dropdown-item icon="el-icon-user" command="hide">不显示</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
          
@@ -78,17 +78,17 @@
 
     <!-- 添加或修改参数配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="600px" height="540px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="100px" label-position="left">
+      <el-form ref="form" :model="form" :rules="rules" label-width="120px" label-position="left">
         <el-row>
           <el-col :span="20" >
-            <el-form-item label="标题" prop="parentId" >
+            <el-form-item label="标题:" prop="title" >
               <el-input  placeholder="请输入标题" v-model="form.title" />
             </el-form-item>
           </el-col>
         </el-row>        
         <el-row>
             <el-col :span="20">
-          <el-form-item label="显示开始日期">
+          <el-form-item label="显示开始日期:" prop="StartDate" >
             <el-date-picker  format="yyyy-MM-dd" v-model="form.StartDate" value-format="yyyy-MM-dd"
               :style="{width: '100%'}" placeholder="请选择开始日期" clearable></el-date-picker>
           </el-form-item>
@@ -96,7 +96,7 @@
         </el-row>
          <el-row>
             <el-col :span="20">
-          <el-form-item label="显示结束日期">
+          <el-form-item label="显示结束日期:" prop="endDate" >
             <el-date-picker  format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="form.endDate"
               :style="{width: '100%'}" placeholder="请选结束日期" clearable></el-date-picker>
           </el-form-item>
@@ -104,10 +104,10 @@
         </el-row>
          <el-row>
             <el-col :span="20">
-          <el-form-item label="状态">
+          <el-form-item label="状态:" prop="state" >
             <el-radio-group  size="medium" v-model="form.state">
-              	<el-radio  label="sta1">显示</el-radio>
-                <el-radio  label="sta2">不显示</el-radio>
+              	<el-radio  label="Y">显示</el-radio>
+                <el-radio  label="N">不显示</el-radio>
             </el-radio-group>
           </el-form-item>
         </el-col>
@@ -335,12 +335,13 @@ export default {
 
     /** 修改按钮操作 */
     handleUpdate(row) {
-       this.reset();
+      this.reset();
       this.open = true;
       this.title = "门店维护";
     },
     /** 提交按钮 */
     submitForm: function() {
+      console.log(this.form)
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.dictId != undefined) {
@@ -359,6 +360,30 @@ export default {
         }
       });
     },
+
+    //更多按钮触发操作
+handleCommand(command, row) {
+      switch (command) {
+        case "display":
+          this.display(row);
+          break;
+        case "hide":
+          this.hide(row);
+          break;
+        default:
+          break;
+      }
+    },
+    //显示按钮
+    display(){
+      console.log('显示')
+    },
+    //隐藏按钮
+    hide(){
+      console.log('隐藏')
+    },
+    
+
     /** 删除按钮操作 */
     handleDelete(row) {
       const dictIds = row.dictId || this.ids;

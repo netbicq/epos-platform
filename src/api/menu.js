@@ -81,6 +81,7 @@ export const getRouters = () => {
                         "link": null
                     }
                 },
+                //门店管理
                 {
                     "name": "storeManagement",
                     "path": "storeManagement",
@@ -92,6 +93,42 @@ export const getRouters = () => {
                         "link": null
                     }
                 },
+                //收款管理
+                {
+                    "name": "collectionManagement",
+                    "path": "collectionManagement",
+                    "hidden": false,
+                    "component": "operationManagement/collection/index",
+                    "meta": {
+                        "title": "收款管理",
+                        "noCache": false,
+                        "link": null
+                    }
+                },
+                //退款管理
+                {
+                    "name": "refundManagement",
+                    "path": "refundManagement",
+                    "hidden": false,
+                    "component": "operationManagement/refund/index",
+                    "meta": {
+                        "title": "退款管理",
+                        "noCache": false,
+                        "link": null
+                    }
+                },
+                //售价策略
+                {
+                    "name": "priceStrategyt",
+                    "path": "priceStrategyt",
+                    "hidden": false,
+                    "component": "operationManagement/strategy/index",
+                    "meta": {
+                        "title": "售价策略",
+                        "noCache": false,
+                        "link": null
+                    }
+                }
                
             ]
         },
