@@ -8,31 +8,31 @@
       v-show="showSearch"
       label-width="68px"
     >
-      <el-form-item label="收款时间" prop="date">
+      <el-form-item prop="date">
         <el-date-picker
-        
           v-model="queryParams.date"
-          style="width: 240px"
+          style="width: 280px"
           value-format="yyyy-MM-dd"
           type="daterange"
           range-separator="-"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
+          start-placeholder="请选择开始日期"
+          end-placeholder="请选择结束日期"
+          
         ></el-date-picker>
       </el-form-item>
-      <el-form-item label="关键字" prop="keyword">
+      <el-form-item prop="keyword">
         <el-input
           v-model="queryParams.keyword"
-          placeholder="门店 事由 收款方式"
+          placeholder="请输入门店/事由/收款方式"
           clearable
           style="width: 240px"
          
         />
       </el-form-item>
-      <el-form-item label="交易金额" prop="amount">
+      <el-form-item  prop="amount">
         <el-input
           v-model="queryParams.amount"
-          placeholder="交易金额"
+          placeholder="请输入交易金额"
           clearable
           style="width: 240px"
         />

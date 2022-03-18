@@ -8,7 +8,7 @@
       v-show="showSearch"
       label-width="80px"
     >
-      <el-form-item label="应用版本:" prop="dictName">
+      <el-form-item  prop="dictName">
         <el-select
           v-model="edition"
           placeholder="请选择版本"

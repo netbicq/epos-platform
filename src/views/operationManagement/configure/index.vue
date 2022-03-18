@@ -1,4 +1,5 @@
 <template>
+
     <div class="configure-Form">
       <el-row :gutter="15" class="configure-row">
         <el-form
@@ -71,14 +72,15 @@
               ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="24" style="text-align: right;">
+          <el-col :span="24" style="text-align: right; margin:10px 0">
           <el-form-item size="large">
             <el-button type="primary" @click="submitForm">提交</el-button>
           </el-form-item>
         </el-col>
         </el-form>
       </el-row>
-  </div>
+    </div>
+
 </template>
 <script>
 export default {
@@ -168,15 +170,16 @@ export default {
 <style  scoped>
 .min{
   width: 100%;
-
   height: 800px;
 }
 .configure-Form {
-  margin: 5% 0 0 30%; 
-  border: 1px solid black;
+  box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
   padding: 20px;
   width: 480px;
-  height: 540px;
+  height: 566px;
+  position: fixed;
+  top: 20%;
+  left: 40%;
 }
 .configure-row {
   width: 440px;

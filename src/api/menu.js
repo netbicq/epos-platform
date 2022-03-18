@@ -126,19 +126,7 @@ export const getRouters = () => {
                         "link": null
                     }
                 },
-                //小程序+支付配置
-                {
-                    "name": "configure",
-                    "path": "configure",
-                    "hidden": false,
-                    "component": "operationManagement/configure/index",
-                    "meta": {
-                        "title": "配置",
-                        "noCache": false,
-                        "icon":"peizhiguanli",
-                        "link": null
-                    }
-                },
+              
                 //售价策略
                 {
                     "name": "priceStrategyt",
@@ -149,6 +137,19 @@ export const getRouters = () => {
                         "title": "售价策略",
                         "noCache": false,
                         "icon":"yingxiaocelveguanli",
+                        "link": null
+                    }
+                },
+                  //小程序+支付配置
+                  {
+                    "name": "configure",
+                    "path": "configure",
+                    "hidden": false,
+                    "component": "operationManagement/configure/index",
+                    "meta": {
+                        "title": "配置应用",
+                        "noCache": false,
+                        "icon":"peizhiguanli",
                         "link": null
                     }
                 }

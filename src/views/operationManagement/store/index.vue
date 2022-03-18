@@ -1,18 +1,33 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="门店名称" prop="dictName">
+    <el-form
+      :model="queryParams"
+      ref="queryForm"
+      size="small"
+      :inline="true"
+      v-show="showSearch"
+      label-width="68px"
+    >
+      <el-form-item prop="dictName">
         <el-input
           v-model="queryParams.dictName"
-          placeholder="请输入门店名称"
+          placeholder="请输入名称/负责人/联系电话等"
           clearable
           style="width: 240px"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button
+          type="primary"
+          icon="el-icon-search"
+          size="mini"
+          @click="handleQuery"
+          >搜索</el-button
+        >
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
+          >重置</el-button
+        >
       </el-form-item>
     </el-form>
     <el-row :gutter="10" class="mb8">
@@ -24,95 +39,50 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['system:dict:add']"
-        >新增</el-button>
+          >新增</el-button
+        >
       </el-col>
-
-     
     </el-row>
 
-    <el-table :data="tableData" @selection-change="handleSelectionChange" height="600">
-       <el-table-column
-        prop="title"
-        label="门店名称"
-         fixed
-       width="120">
-      </el-table-column>
+    <el-table
+      :data="tableData"
+      @selection-change="handleSelectionChange"
+      height="600">
+      <el-table-column prop="title" label="门店名称" fixed> </el-table-column>
+      <el-table-column prop="title" label="门店联系人" fixed> </el-table-column>
+      <el-table-column prop="title" label="门店电话" fixed> </el-table-column>
+      <el-table-column prop="address" label="门店地址"> </el-table-column>
+      <el-table-column prop="title" label="门店用户名"> </el-table-column>
+      <el-table-column prop="title" label="门店来源"> </el-table-column>
+      <el-table-column prop="title" label="付款金额"> </el-table-column>
+      <el-table-column prop="title" label="应用版本"> </el-table-column>
+      <el-table-column prop="title" label="开通时间"> </el-table-column>
+      <el-table-column prop="title" label="有效期"> </el-table-column>
+      <el-table-column prop="title" label="用户数量" width="80"> </el-table-column>
+      <el-table-column prop="title" label="状态" width="80"> </el-table-column>
       <el-table-column
-        prop="title"
-        label="门店联系人"
-         fixed
-        width="120">
-      </el-table-column>
-      <el-table-column
-        prop="title"
-        label="门店电话"
-         fixed
-        width="100">
-      </el-table-column>
-      <el-table-column
-        prop="address"
-        label="门店地址"
-        width="200">
-      </el-table-column>
-      <el-table-column
-        prop="title"
-        label="门店用户名"
-        width="120">
-      </el-table-column>
-
-      <el-table-column
-        prop="title"
-        label="门店来源"
-        width="120">
-      </el-table-column>
-      <el-table-column
-        prop="title"
-        label="付款金额"
-        width="120">
-      </el-table-column>
-      <el-table-column
-        prop="title"
-        label="应用版本"
-        width="120">
-      </el-table-column>
-      <el-table-column
-        prop="title"
-        label="开通时间"
-        width="120">
-      </el-table-column>
-      <el-table-column
-        prop="title"
-        label="有效期"
-       width="120">
-      </el-table-column>
-      <el-table-column
-        prop="title"
-        label="用户数量"
-        width="80">
-      </el-table-column>
-      <el-table-column
-        prop="title"
-        label="状态"
-        width="80">
-      </el-table-column>
-   
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="168">
+        label="操作"
+        align="center"
+        class-name="small-padding fixed-width"
+        width="168"
+      >
         <template slot-scope="scope">
-           <el-button
+          <el-button
             v-if="scope.row.parentId != 0"
             size="mini"
             type="text"
             icon="el-icon-check"
             @click="examine()"
-          >审核</el-button>
+            >审核</el-button
+          >
           <el-button
             v-if="scope.row.parentId != 0"
             size="mini"
             type="text"
             icon="el-icon-close"
             @click="locking()"
-          >锁定</el-button>
-
+            >锁定</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -126,73 +96,103 @@
     />
 
     <!-- 添加或修改参数配置对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="600px" height="600px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="100px" style="padding-left:29px">
+    <el-dialog
+      :title="title"
+      :visible.sync="open"
+      width="600px"
+      height="600px"
+      append-to-body
+    >
+      <el-form
+        ref="form"
+        :model="form"
+        :rules="rules"
+        label-width="100px"
+        style="padding-left: 29px"
+      >
         <el-row>
-          <el-col :span="22" >
-            <el-form-item label="门店名称:" prop="store" >
+          <el-col :span="22">
+            <el-form-item label="门店名称:" prop="store">
               <el-input v-model="form.store" placeholder="门店名称" />
             </el-form-item>
           </el-col>
-        </el-row>   
-        <el-row>
-          <el-col :span="22" >
-            <el-form-item label="门店联系人:" prop="contacts" >
-              <el-input  v-model="form.contacts" placeholder="彭于晏" />
-            </el-form-item>
-          </el-col>
-        </el-row>      
-        <el-row>
-          <el-col :span="22" >
-            <el-form-item label="门店电话:" prop="phone" >
-              <el-input  v-model="form.phone" placeholder="136xxxxxxxxxxx" :maxlength="11"/>
-            </el-form-item>
-          </el-col>
-        </el-row> 
-        <el-row>
-          <el-col :span="22" >
-            <el-form-item label="门店地址:" prop="address" >
-              <el-input  v-model="form.address" placeholder="北京市天安门大街" />
-            </el-form-item>
-          </el-col>
-        </el-row> 
-        <el-row>
-          <el-col :span="22" >
-            <el-form-item label="门店用户名:" prop="userName" >
-              <el-input   v-model="form.userName" placeholder="门店用户名" />
-            </el-form-item>
-          </el-col>
-        </el-row> 
-        <el-row>
-            <el-col :span="22">
-          <el-form-item label="有效期限:" prop="period">
-            <el-date-picker  format="yyyy-MM-dd" v-model="form.period" value-format="yyyy-MM-dd"
-              :style="{width: '100%'}" placeholder="请选择有效期限" clearable></el-date-picker>
-          </el-form-item>
-        </el-col>
         </el-row>
         <el-row>
-          <el-col :span="22" >
-            <el-form-item label="用户数量:" prop="quantity" >
+          <el-col :span="22">
+            <el-form-item label="门店联系人:" prop="contacts">
+              <el-input v-model="form.contacts" placeholder="彭于晏" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="22">
+            <el-form-item label="门店电话:" prop="phone">
+              <el-input
+                v-model="form.phone"
+                placeholder="136xxxxxxxxxxx"
+                :maxlength="11"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="22">
+            <el-form-item label="门店地址:" prop="address">
+              <el-input v-model="form.address" placeholder="北京市天安门大街" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="22">
+            <el-form-item label="门店用户名:" prop="userName">
+              <el-input v-model="form.userName" placeholder="门店用户名" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="22">
+            <el-form-item label="有效期限:" prop="period">
+              <el-date-picker
+                format="yyyy-MM-dd"
+                v-model="form.period"
+                value-format="yyyy-MM-dd"
+                :style="{ width: '100%' }"
+                placeholder="请选择有效期限"
+                clearable
+              ></el-date-picker>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="22">
+            <el-form-item label="用户数量:" prop="quantity">
               <el-input v-model.number="form.quantity" placeholder="用户数量" />
             </el-form-item>
           </el-col>
-        </el-row> 
-   
-         <el-row>
-            <el-col :span="22">
-          <el-form-item label="应用版本:" prop="edition">
-             <el-select v-model="form.edition" placeholder="请选择下拉选择" clearable :style="{width: '100%'}">
-                 <el-option v-for="(item, index) in Options" :key="index" :label="item.label"
-                  :value="item.value" :disabled="item.disabled"></el-option>
-              </el-select>
-          </el-form-item>
-        </el-col>
         </el-row>
-       
-      </el-form>
-      <div style="height:60px"></div>
 
+        <el-row>
+          <el-col :span="22">
+            <el-form-item label="应用版本:" prop="edition">
+              <el-select
+                v-model="form.edition"
+                placeholder="请选择下拉选择"
+                clearable
+                :style="{ width: '100%' }"
+              >
+                <el-option
+                  v-for="(item, index) in Options"
+                  :key="index"
+                  :label="item.label"
+                  :value="item.value"
+                  :disabled="item.disabled"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <div style="height: 60px"></div>
 
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -203,72 +203,84 @@
 </template>
 
 <script>
-import { listType, getType, delType, addType, updateType, refreshCache } from "@/api/system/dict/type";
+import {
+  listType,
+  getType,
+  delType,
+  addType,
+  updateType,
+  refreshCache,
+} from "@/api/system/dict/type";
 
 export default {
   name: "Dict",
-  dicts: ['sys_normal_disable'],
+  dicts: ["sys_normal_disable"],
   data() {
-      
     return {
-        Options: [{
-        "label": "专业版",
-        "value": 1
-      }, {
-        "label": "旗舰版",
-        "value": 2
-      }, {
-        "label": "企业版",
-        "value": 3
-      }],
-        total:1,
-        banben:'',
-         sta:'',
-           tableData: [{
-            title:'今日说法',
-            stime:'2021-11-12',
-            etime:'2022-05-12',
-            status:'1',
-            date: '2016-05-02',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄'
-  
-          }, {
-            title:'今日说法',
-            stime:'2021-11-12',
-            etime:'2022-05-12',
-            status:'1',
-            date: '2016-05-02',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄'
-          },
-          {
-            title:'今日说法',
-            stime:'2021-11-12',
-            etime:'2022-05-12',
-            status:'1',
-            date: '2016-05-02',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄'
-          },
-          {
-            title:'今日说法',
-            stime:'2021-11-12',
-            etime:'2022-05-12',
-            status:'1',
-            date: '2016-05-02',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄'
-          },
-          {
-            title:'今日说法',
-            stime:'2021-11-12',
-            etime:'2022-05-12',
-            status:'1',
-            date: '2016-05-02',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄'
-          },],
+      Options: [
+        {
+          label: "专业版",
+          value: 1,
+        },
+        {
+          label: "旗舰版",
+          value: 2,
+        },
+        {
+          label: "企业版",
+          value: 3,
+        },
+      ],
+      total: 1,
+      banben: "",
+      sta: "",
+      tableData: [
+        {
+          title: "今日说法",
+          stime: "2021-11-12",
+          etime: "2022-05-12",
+          status: "1",
+          date: "2016-05-02",
+          name: "王小虎",
+          address: "上海市普陀区金沙江路 1518 弄",
+        },
+        {
+          title: "今日说法",
+          stime: "2021-11-12",
+          etime: "2022-05-12",
+          status: "1",
+          date: "2016-05-02",
+          name: "王小虎",
+          address: "上海市普陀区金沙江路 1518 弄",
+        },
+        {
+          title: "今日说法",
+          stime: "2021-11-12",
+          etime: "2022-05-12",
+          status: "1",
+          date: "2016-05-02",
+          name: "王小虎",
+          address: "上海市普陀区金沙江路 1518 弄",
+        },
+        {
+          title: "今日说法",
+          stime: "2021-11-12",
+          etime: "2022-05-12",
+          status: "1",
+          date: "2016-05-02",
+          name: "王小虎",
+          address: "上海市普陀区金沙江路 1518 弄",
+        },
+        {
+          title: "今日说法",
+          stime: "2021-11-12",
+          etime: "2022-05-12",
+          status: "1",
+          date: "2016-05-02",
+          name: "王小虎",
+          address: "上海市普陀区金沙江路 1518 弄",
+        },
+      ],
       // 遮罩层
       loading: true,
       // 选中数组
@@ -295,51 +307,56 @@ export default {
         pageSize: 10,
         dictName: undefined,
         dictType: undefined,
-        status: undefined
+        status: undefined,
       },
       // 表单参数
       form: {
-          store:'',
-          period:'',
-          contacts:'',
-          phone:'',
-          address:'',
-          userName:'',
-          quantity:'',
-          edition:''
+        store: "",
+        period: "",
+        contacts: "",
+        phone: "",
+        address: "",
+        userName: "",
+        quantity: "",
+        edition: "",
       },
       // 表单校验
       rules: {
         store: [
-          { required: true, message: "门店名称不能为空", trigger: "blur" }
+          { required: true, message: "门店名称不能为空", trigger: "blur" },
         ],
         period: [
-          { required: true, message: "有效期限不能为空", trigger: "blur" }
+          { required: true, message: "有效期限不能为空", trigger: "blur" },
         ],
         contacts: [
-          { required: true, message: "门店联系人能为空", trigger: "blur" }
+          { required: true, message: "门店联系人能为空", trigger: "blur" },
         ],
         phone: [
-          { required: true, message: "电话格式错误", trigger: "blur",  pattern: /^1(3|4|5|7|8|9)\d{9}$/}
+          {
+            required: true,
+            message: "电话格式错误",
+            trigger: "blur",
+            pattern: /^1(3|4|5|7|8|9)\d{9}$/,
+          },
         ],
         address: [
-          { required: true, message: "门店地址不能为空", trigger: "blur" }
+          { required: true, message: "门店地址不能为空", trigger: "blur" },
         ],
         userName: [
-          { required: true, message: "门店用户名不能为空", trigger: "blur" }
+          { required: true, message: "门店用户名不能为空", trigger: "blur" },
         ],
         quantity: [
-          { required: true, message: "用户数量不能为空", trigger: "blur" }
+          { required: true, message: "用户数量不能为空", trigger: "blur" },
         ],
         edition: [
-          { required: true, message: "应用版本不能为空", trigger: "blur" }
-        ]
-      }
+          { required: true, message: "应用版本不能为空", trigger: "blur" },
+        ],
+      },
     };
   },
-//   created() {
-//     this.getList();
-//   },
+  //   created() {
+  //     this.getList();
+  //   },
   methods: {
     /** 查询字典类型列表 */
 
@@ -348,13 +365,13 @@ export default {
       this.open = false;
       this.reset();
     },
-//审核按钮
-    examine(){
-      console.log('审核')
+    //审核按钮
+    examine() {
+      console.log("审核");
     },
-//锁定按钮按钮
-    locking(){
-      console.log('锁定')
+    //锁定按钮按钮
+    locking() {
+      console.log("锁定");
     },
     // 表单重置
     reset() {
@@ -363,7 +380,7 @@ export default {
         dictName: undefined,
         dictType: undefined,
         status: "0",
-        remark: undefined
+        remark: undefined,
       };
       this.resetForm("form");
     },
@@ -392,18 +409,18 @@ export default {
       this.title = "门店维护";
     },
     /** 提交按钮 */
-    submitForm: function() {
-      console.log(this.form)
-      this.$refs["form"].validate(valid => {
+    submitForm: function () {
+      console.log(this.form);
+      this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.form.dictId != undefined) {
-            updateType(this.form).then(response => {
+            updateType(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addType(this.form).then(response => {
+            addType(this.form).then((response) => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -415,12 +432,16 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const dictIds = row.dictId || this.ids;
-      this.$modal.confirm('是否确认删除字典编号为"' + dictIds + '"的数据项？').then(function() {
-        return delType(dictIds);
-      }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      this.$modal
+        .confirm('是否确认删除字典编号为"' + dictIds + '"的数据项？')
+        .then(function () {
+          return delType(dictIds);
+        })
+        .then(() => {
+          this.getList();
+          this.$modal.msgSuccess("删除成功");
+        })
+        .catch(() => {});
     },
 
     /** 刷新缓存按钮操作 */
@@ -428,7 +449,7 @@ export default {
       refreshCache().then(() => {
         this.$modal.msgSuccess("刷新成功");
       });
-    }
-  }
+    },
+  },
 };
 </script>
