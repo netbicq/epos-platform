@@ -127,44 +127,44 @@
 
     <!-- 添加或修改参数配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="600px" height="600px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="100px" label-position="left">
+      <el-form ref="form" :model="form" :rules="rules" label-width="100px" style="padding-left:29px">
         <el-row>
-          <el-col :span="20" >
+          <el-col :span="22" >
             <el-form-item label="门店名称:" prop="store" >
               <el-input v-model="form.store" placeholder="门店名称" />
             </el-form-item>
           </el-col>
         </el-row>   
         <el-row>
-          <el-col :span="20" >
+          <el-col :span="22" >
             <el-form-item label="门店联系人:" prop="contacts" >
               <el-input  v-model="form.contacts" placeholder="彭于晏" />
             </el-form-item>
           </el-col>
         </el-row>      
         <el-row>
-          <el-col :span="20" >
+          <el-col :span="22" >
             <el-form-item label="门店电话:" prop="phone" >
               <el-input  v-model="form.phone" placeholder="136xxxxxxxxxxx" :maxlength="11"/>
             </el-form-item>
           </el-col>
         </el-row> 
         <el-row>
-          <el-col :span="20" >
+          <el-col :span="22" >
             <el-form-item label="门店地址:" prop="address" >
               <el-input  v-model="form.address" placeholder="北京市天安门大街" />
             </el-form-item>
           </el-col>
         </el-row> 
         <el-row>
-          <el-col :span="20" >
+          <el-col :span="22" >
             <el-form-item label="门店用户名:" prop="userName" >
               <el-input   v-model="form.userName" placeholder="门店用户名" />
             </el-form-item>
           </el-col>
         </el-row> 
         <el-row>
-            <el-col :span="20">
+            <el-col :span="22">
           <el-form-item label="有效期限:" prop="period">
             <el-date-picker  format="yyyy-MM-dd" v-model="form.period" value-format="yyyy-MM-dd"
               :style="{width: '100%'}" placeholder="请选择有效期限" clearable></el-date-picker>
@@ -172,7 +172,7 @@
         </el-col>
         </el-row>
         <el-row>
-          <el-col :span="20" >
+          <el-col :span="22" >
             <el-form-item label="用户数量:" prop="quantity" >
               <el-input v-model.number="form.quantity" placeholder="用户数量" />
             </el-form-item>
@@ -180,7 +180,7 @@
         </el-row> 
    
          <el-row>
-            <el-col :span="20">
+            <el-col :span="22">
           <el-form-item label="应用版本:" prop="edition">
              <el-select v-model="form.edition" placeholder="请选择下拉选择" clearable :style="{width: '100%'}">
                  <el-option v-for="(item, index) in Options" :key="index" :label="item.label"

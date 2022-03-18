@@ -43,24 +43,25 @@
         :model="dataForm"
         :rules="rules"
         label-width="110px"
+        style="padding-left:29px"
       >
         <el-row>
-          <el-col :span="24">
+          <el-col :span="22">
             <el-form-item label="参数名">
               <el-input v-model="dataForm.a" placeholder="请输入参数名" />
             </el-form-item>
           </el-col>
-          <el-col :span="24">
+          <el-col :span="22">
             <el-form-item label="参数Key值">
               <el-input disabled="disabled" v-model="dataForm.b" />
             </el-form-item>
           </el-col>
-          <el-col :span="24">
+          <el-col :span="22">
             <el-form-item label="参数" prop="phone">
               <el-input v-model="dataForm.c" placeholder="请输入参数" />
             </el-form-item>
           </el-col>
-          <el-col :span="24">
+          <el-col :span="22">
             <el-form-item label="参数说明">
               <el-input
                 type="textarea"
@@ -73,7 +74,6 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -178,11 +178,6 @@ export default {
     // 关闭按钮
     handleClose() {
       this.dataForm = {};
-    },
-    // 取消按钮
-    cancel() {
-      this.dataForm = {};
-      this.open = false;
     },
   },
   /* created() {

@@ -190,7 +190,6 @@
       :title="title"
       :visible.sync="remarksOpen"
       width="600px"
-      height="540px"
       append-to-body
     >
       <div>
@@ -208,7 +207,6 @@
       :title="title"
       :visible.sync="reimburseOpen"
       width="600px"
-      height="540px"
       append-to-body
     >
       <div>
@@ -224,7 +222,7 @@
     <el-dialog
       :title="title"
       :visible.sync="refundOpen"
-      width="700px"
+      width="600px"
       height="540px"
       append-to-body
     >
@@ -232,47 +230,45 @@
         ref="form"
         :model="refundForm"
         :rules="rules"
-        label-width="160px"
-        label-position="left"
-        style="margin-left: 50px"
+        label-width="100px"
       >
         <el-row>
-          <el-col :span="20">
+          <el-col :span="22">
             <el-form-item label="订单号:" prop="OrderId">
               <span>{{ refundForm.OrderId }}</span>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="20">
+          <el-col :span="22">
             <el-form-item label="交易金额:" prop="transaction">
               <span>{{ refundForm.transaction }}</span>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="20">
+          <el-col :span="22">
             <el-form-item label="退款金额:" prop="refund">
               <span>{{ refundForm.refund }}</span>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="20">
+          <el-col :span="22">
             <el-form-item label="实际退款:" prop="effective">
               <span>{{ refundForm.effective }}</span>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="20">
+          <el-col :span="22">
             <el-form-item label="状态:" prop="state">
               <span>{{ refundForm.state }}</span>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="20">
+          <el-col :span="22">
             <el-form-item label="退款原因:" prop="reason">
               <div style="height: 100px">
                 {{ refundForm.reason }}
@@ -281,15 +277,11 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="20">
+          <el-col :span="22">
             <el-form-item label="附件:" prop="enclosure">
-              <div v-for="(k, i) in refundForm.fileList" :key="i">
-                <el-image
-                  style="width: 100px; height: 100px"
-                  :src="k.url"
-                  :fit="fit"
-                ></el-image>
-              </div>
+              <viewer :images="refundForm.fileList">
+                <img v-for="(k,i) in refundForm.fileList" :src="k.url" :key="i" height="100px" width="100px" style="margin-left:10px"/>
+              </viewer>
             </el-form-item>
           </el-col>
         </el-row>
@@ -318,7 +310,7 @@
         style="margin-left: 50px"
       >
         <el-row>
-          <el-col :span="20">
+          <el-col :span="22">
             <el-form-item prop="remarks" label="备注:">
               <el-input
                 type="textarea"
@@ -330,7 +322,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-col :span="20">
+        <el-col :span="22">
           <el-form-item label="意见:" prop="state">
             <el-radio-group size="medium" v-model="examineForm.state">
               <el-radio
@@ -343,8 +335,7 @@
           </el-form-item>
         </el-col>
       </el-form>
-      <div style="height: 140px"></div>
-
+      <div style="height: 10px"></div>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <!-- <el-button @click="cancel">取 消</el-button> -->
@@ -385,8 +376,12 @@ import {
 export default {
   name: "Dict",
   dicts: ["sys_normal_disable"],
+ 
   data() {
     return {
+      i: 0,
+      showImg: false,
+      imgSrc: "",
       //导出Excel表格的表头设置
       jsonFields: {
         原收款订单号: "collectionOrder",
@@ -546,7 +541,7 @@ export default {
           },
           {
             name: "food2.jpeg",
-            url: "https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100",
+            url: "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwww.netyitong.com%2Fimgup%2F2020%2F02%2F05%2Fe49f-intiarp6229797.jpg&refer=http%3A%2F%2Fwww.netyitong.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1650165906&t=f63f3118725a6a5a8eb9dffa36ce00cd",
           },
         ],
       },
@@ -627,8 +622,8 @@ export default {
     },
     //审批同意
     agree() {
-      console.log('同意')
-       this.open = false;
+      console.log("同意");
+      this.open = false;
     },
     /** 提交按钮 */
     submitForm: function () {

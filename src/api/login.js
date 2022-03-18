@@ -39,8 +39,6 @@ export function getInfo() {
     s(res)
   })
 
-
-
   // return request({
   //   url: '/system/user/getInfo',
   //   method: 'get'

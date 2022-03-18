@@ -78,16 +78,16 @@
 
     <!-- 添加或修改参数配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="600px" height="540px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="120px" label-position="left">
+      <el-form ref="form" :model="form" :rules="rules" label-width="120px" style="padding-left:29px">
         <el-row>
-          <el-col :span="20" >
+          <el-col :span="22" >
             <el-form-item label="标题:" prop="title" >
               <el-input  placeholder="请输入标题" v-model="form.title" />
             </el-form-item>
           </el-col>
         </el-row>        
         <el-row>
-            <el-col :span="20">
+            <el-col :span="22">
           <el-form-item label="显示开始日期:" prop="StartDate" >
             <el-date-picker  format="yyyy-MM-dd" v-model="form.StartDate" value-format="yyyy-MM-dd"
               :style="{width: '100%'}" placeholder="请选择开始日期" clearable></el-date-picker>
@@ -95,7 +95,7 @@
         </el-col>
         </el-row>
          <el-row>
-            <el-col :span="20">
+            <el-col :span="22">
           <el-form-item label="显示结束日期:" prop="endDate" >
             <el-date-picker  format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="form.endDate"
               :style="{width: '100%'}" placeholder="请选结束日期" clearable></el-date-picker>
@@ -103,7 +103,7 @@
         </el-col>
         </el-row>
          <el-row>
-            <el-col :span="20">
+            <el-col :span="22">
           <el-form-item label="状态:" prop="state" >
             <el-radio-group  size="medium" v-model="form.state">
               	<el-radio  label="Y">显示</el-radio>

@@ -39,7 +39,13 @@ import VueMeta from 'vue-meta'
 import DictData from '@/components/DictData'
 // 下载Excel
 import JsonExcel from 'vue-json-excel'
+// 处理日期
+import moment from "moment"
+//图片放大
+import Viewer from 'v-viewer'
+import 'viewerjs/dist/viewer.css'
 // 全局方法挂载
+Vue.prototype.$moment = moment
 Vue.prototype.getDicts = getDicts
 Vue.prototype.getConfigKey = getConfigKey
 Vue.prototype.parseTime = parseTime
@@ -59,10 +65,15 @@ Vue.component('Editor', Editor)
 Vue.component('FileUpload', FileUpload)
 Vue.component('ImageUpload', ImageUpload)
 Vue.component('ImagePreview', ImagePreview)
-
 Vue.use(directive)
 Vue.use(plugins)
 Vue.use(VueMeta)
+Vue.use(Viewer, {
+
+  defaultOptions: {
+    zIndex: 9999
+  }
+})
 DictData.install()
 
 /**

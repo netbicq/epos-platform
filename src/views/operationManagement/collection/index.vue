@@ -125,30 +125,31 @@
       width="600px"
       height="540px"
       append-to-body
+      style="padding-left: 29px;"
     >
       <el-form
         ref="form"
         :model="form"
         :rules="rules"
         label-width="100px"
-        label-position="left"
+       
       >
         <el-row>
-          <el-col :span="20">
+          <el-col :span="22">
             <el-form-item label="订单号:" prop="OrderId">
               <el-input readonly v-model="form.OrderId" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="20">
+          <el-col :span="22">
             <el-form-item label="交易金额:" prop="money">
               <el-input readonly v-model="form.money" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="20">
+          <el-col :span="22">
             <el-form-item label="退款金额:" prop="refund">
               <el-input
                 type="number"
@@ -159,7 +160,7 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="20">
+          <el-col :span="22">
             <el-form-item label="退款原因:" prop="reason">
               <el-input
                 v-model="form.reason"
@@ -172,7 +173,7 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="20">
+          <el-col :span="22">
             <el-form-item label="附件:" prop="enclosure">
               <el-upload
                 class="upload-demo"

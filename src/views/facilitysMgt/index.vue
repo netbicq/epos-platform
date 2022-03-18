@@ -66,7 +66,6 @@
       </el-col>
       <right-toolbar
         :showSearch.sync="showSearch"
-        @queryTable="getList"
       ></right-toolbar>
     </el-row>
 
@@ -139,19 +138,20 @@
         :model="setUpForm"
         :rules="rules"
         label-width="100px"
+        style="padding-left:29px"
       >
         <el-row>
-          <el-col :span="24">
+          <el-col :span="22">
             <el-form-item label="设备ID">
               <el-input v-model="setUpForm.a" placeholder="请输入设备ID" />
             </el-form-item>
           </el-col>
-          <el-col :span="24">
+          <el-col :span="22">
             <el-form-item label="设备名称">
               <el-input v-model="setUpForm.b" placeholder="请输入设备名称" />
             </el-form-item>
           </el-col>
-          <el-col :span="24">
+          <el-col :span="22">
             <el-form-item label="设备类型">
               <el-select
                 placeholder="智能插座"
@@ -164,12 +164,12 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="24">
+          <el-col :span="22">
             <el-form-item label="所属门店">
               <el-input v-model="setUpForm.d" placeholder="请输入所属门店" />
             </el-form-item>
           </el-col>
-          <el-col :span="24">
+          <el-col :span="22">
             <el-form-item label="状态">
               <el-select
                 placeholder="正常"
@@ -188,7 +188,6 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
     <!-- 设备维护 -->
@@ -204,19 +203,20 @@
         :model="maintainForm"
         :rules="rules"
         label-width="100px"
+        style="padding-left:29px"
       >
         <el-row>
-          <el-col :span="24">
+          <el-col :span="22">
             <el-form-item label="设备ID">
               <el-input v-model="maintainForm.a" placeholder="请输入设备ID" />
             </el-form-item>
           </el-col>
-          <el-col :span="24">
+          <el-col :span="22">
             <el-form-item label="设备名称">
               <el-input v-model="maintainForm.b" placeholder="请输入设备名称" />
             </el-form-item>
           </el-col>
-          <el-col :span="24">
+          <el-col :span="22">
             <el-form-item label="设备类型">
               <el-select
                 v-model="maintainForm.c"
@@ -229,7 +229,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="24">
+          <el-col :span="22">
             <el-form-item label="所属门店">
               <el-input v-model="maintainForm.d" placeholder="请输入门店" />
             </el-form-item>
@@ -238,7 +238,6 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="maintainSubmit">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
     <!-- 设备分配 -->
@@ -254,14 +253,15 @@
         :model="allocationForm"
         :rules="rules"
         label-width="100px"
+        style="padding-left:29px"
       >
         <el-row>
-          <el-col :span="24">
+          <el-col :span="22">
             <el-form-item label="设备ID">
               <el-input v-model="allocationForm.a" placeholder="请输入设备ID" />
             </el-form-item>
           </el-col>
-          <el-col :span="24">
+          <el-col :span="22">
             <el-form-item label="设备名称">
               <el-input
                 v-model="allocationForm.b"
@@ -269,7 +269,7 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :span="24">
+          <el-col :span="22">
             <el-form-item label="设备类型">
               <el-select
                 v-model="allocationForm.c"
@@ -282,7 +282,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="24">
+          <el-col :span="22">
             <el-form-item label="所属门店">
               <el-select
                 v-model="allocationForm.d"
@@ -299,7 +299,6 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="allocationSubmit">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -401,15 +400,6 @@ export default {
       this.setUpForm = {};
       this.maintainForm = {};
       this.allocationForm = {};
-    },
-    // 取消按钮
-    cancel() {
-      this.allocation = false;
-      this.allocationForm = {};
-      this.isMaintain = false;
-      this.maintainForm = {};
-      this.setUpForm = {};
-      this.isDeviceSettings = false;
     },
     //打开设置通道
     deviceSettings() {
