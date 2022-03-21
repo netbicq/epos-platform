@@ -1,86 +1,96 @@
 <template>
-
-    <div class="configure-Form">
-      <el-row :gutter="15" class="configure-row">
-        <el-form
-          ref="elForm"
-          :model="formData"
-          :rules="rules"
-          size="medium"
-          label-width="100px"
-        >
-          <el-col :span="23">
-            <div class="configure-applet">小程序配置:</div>
-            <el-form-item label="APPid" prop="appletId">
+  <div class="configure-Form">
+    <el-row :gutter="15" class="configure-row">
+      <el-form
+        ref="elForm"
+        :model="formData"
+        :rules="rules"
+        size="medium"
+        label-width="100px"
+      >
+        <el-col :span="8" style="padding: 10px 30px 10px 20px">
+          <div
+            style="
+              padding: 10px 0 0 0;
+              box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+              height: 224px;
+            "
+          >
+            <div style="margin: 10px 0 10px 15px">小程序配置:</div>
+            <el-form-item label="Id:" prop="appletId">
               <el-input
                 v-model="formData.appletId"
-                placeholder="请输入小程序APPid"
+                placeholder="请输入小程序Id"
+                show-word-limit
                 clearable
-                :style="{ width: '100%' }"
+                :style="{ width: '90%' }"
               ></el-input>
             </el-form-item>
-          </el-col>
-          <el-col :span="23">
-            <el-form-item label="SecretKey" prop="appletSecretKey">
+            <el-form-item label="SecretKey:" prop="appletSecretKey">
               <el-input
                 v-model="formData.appletSecretKey"
                 placeholder="请输入小程序SecretKey"
+                show-word-limit
                 clearable
-                :style="{ width: '100%' }"
+                :style="{ width: '90%' }"
               ></el-input>
             </el-form-item>
-          </el-col>
-          <el-col :span="23">
-            <el-form-item label="AccessKey" prop="appletAccessKey">
+            <el-form-item label="AccessKey:" prop="appletAccessKey">
               <el-input
                 v-model="formData.appletAccessKey"
                 placeholder="请输入小程序AccessKey"
+                show-word-limit
                 clearable
-                :style="{ width: '100%' }"
+                :style="{ width: '90%' }"
               ></el-input>
             </el-form-item>
-          </el-col>
+          </div>
+        </el-col>
+        <el-col :span="8" style="padding: 10px 30px 10px 20px">
+          <div
+            style="
+              padding: 10px 0 0 0;
+              box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+              height: 224px;
+            "
+          >
+            <div style="margin: 10px 0 10px 15px">支付配置:</div>
 
-          <el-col :span="23">
-            <div class="configure-applets">支付配置:</div>
-            <el-form-item label="APPid" prop="paymentId">
+            <el-form-item label="Id:" prop="paymentId">
               <el-input
                 v-model="formData.paymentId"
-                placeholder="请输入支付APPid"
+                placeholder="请输入支付Id"
+                show-word-limit
                 clearable
-                :style="{ width: '100%' }"
+                :style="{ width: '90%' }"
               ></el-input>
             </el-form-item>
-          </el-col>
-          <el-col :span="23">
-            <el-form-item label="SecretKey" prop="paymentSecretKey">
+            <el-form-item label="SecretKey:" prop="paymentSecretKey">
               <el-input
                 v-model="formData.paymentSecretKey"
                 placeholder="请输入支付SecretKey"
+                show-word-limit
                 clearable
-                :style="{ width: '100%' }"
+                :style="{ width: '90%' }"
               ></el-input>
             </el-form-item>
-          </el-col>
-          <el-col :span="23">
-            <el-form-item label="AccessKey" prop="paymentAccessKey">
+            <el-form-item label="AccessKey:" prop="paymentAccessKey">
               <el-input
                 v-model="formData.paymentAccessKey"
-                placeholder="请输入支付AccessKey"
+                placeholder="请输入支付AccessKey:"
+                show-word-limit
                 clearable
-                :style="{ width: '100%' }"
+                :style="{ width: '90%' }"
               ></el-input>
             </el-form-item>
-          </el-col>
-          <el-col :span="24" style="text-align: right; margin:10px 0">
-          <el-form-item size="large">
-            <el-button type="primary" @click="submitForm">提交</el-button>
-          </el-form-item>
+          </div>
         </el-col>
-        </el-form>
-      </el-row>
-    </div>
-
+        <el-col :span="24" style="text-align: center;margin-top: 20px;">
+          <el-button type="primary"  @click="submitForm">提交</el-button>
+        </el-col>
+      </el-form>
+    </el-row>
+  </div>
 </template>
 <script>
 export default {
@@ -90,22 +100,17 @@ export default {
     return {
       formData: {
         appletId: "",
-        appletSecretKey: undefined,
-        appletAccessKey: undefined,
+        appletSecretKey: "",
+        appletAccessKey: "",
         paymentId: "",
-        paymentSecretKey: undefined,
+        paymentSecretKey: "",
         paymentAccessKey: "",
       },
       rules: {
         appletId: [
           {
             required: true,
-            message: "请输入小程序APPid",
-            trigger: "blur",
-          },
-          {
-            pattern: /^wx(?=.*\d)(?=.*[a-z])[\da-z]{16}$/,
-            message: "小程序APPID错误",
+            message: "请输入小程序Id",
             trigger: "blur",
           },
         ],
@@ -126,12 +131,7 @@ export default {
         paymentId: [
           {
             required: true,
-            message: "请输入支付APPid",
-            trigger: "blur",
-          },
-          {
-            pattern: /^wx(?=.*\d)(?=.*[a-z])[\da-z]{16}$/,
-            message: "小程序APPID错误",
+            message: "请输入支付Id",
             trigger: "blur",
           },
         ],
@@ -145,7 +145,7 @@ export default {
         paymentAccessKey: [
           {
             required: true,
-            message: "请输入支付AccessKey",
+            message: "请输入支付AccessKey:",
             trigger: "blur",
           },
         ],
@@ -168,31 +168,5 @@ export default {
 };
 </script>
 <style  scoped>
-.min{
-  width: 100%;
-  height: 800px;
-}
-.configure-Form {
-  box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
-  padding: 20px;
-  width: 480px;
-  height: 566px;
-  position: fixed;
-  top: 20%;
-  left: 40%;
-}
-.configure-row {
-  width: 440px;
-}
-.configure-applet {
-  text-align: left;
-  margin: 15px 0;
-  font-weight: 600;
-}
-.configure-applets {
-  text-align: left;
-  margin: 25px 0 15px 0;
-  font-weight: 600;
-}
 </style>
 

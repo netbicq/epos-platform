@@ -11,7 +11,7 @@
       <el-form-item  prop="dictName">
         <el-select
           v-model="edition"
-          placeholder="请选择版本"
+          placeholder="专业版"
           clearable
           :style="{ width: '100%' }"
         >
@@ -19,8 +19,8 @@
             v-for="(item, index) in fieldptions"
             :key="index"
             :label="item.label"
+            placeholder="请选择版本"
             :value="item.value"
-            :disabled="item.disabled"
           ></el-option>
         </el-select>
       </el-form-item>
@@ -229,7 +229,7 @@ export default {
   data() {
     return {
       total: 1,
-      edition: "专业版",
+      edition: "",
       fieldptions: [
         {
           label: "专业版",

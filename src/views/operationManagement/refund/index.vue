@@ -67,7 +67,7 @@
           class="export-btn"
           :data="tableData"
           :fields="jsonFields"
-          type="xls"
+          type="xlsx"
           header="退款一览表"
           name="退款一览表"
         >

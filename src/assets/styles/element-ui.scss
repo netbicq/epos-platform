@@ -52,6 +52,11 @@
   left: 0;
   position: relative;
   margin: 0 auto;
+
+  .el-dialog__body {
+    border-top: 1px solid rgb(223, 228, 237);
+    border-bottom: 1px solid rgb(223, 228, 237);
+  }
 }
 
 // refine element ui upload
