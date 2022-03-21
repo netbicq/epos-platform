@@ -41,9 +41,7 @@
           >新增</el-button
         >
       </el-col>
-      <right-toolbar
-        :showSearch.sync="showSearch"       
-      ></right-toolbar>
+      <right-toolbar :showSearch.sync="showSearch"></right-toolbar>
       <!-- @queryTable="getList" -->
     </el-row>
 
@@ -62,8 +60,21 @@
         fixed
         label="经销商名称"
       ></el-table-column>
-      <el-table-column prop="b" label="联系人" fixed width="80" align="center"></el-table-column>
-      <el-table-column prop="c" label="联系电话" fixed align="center" width="120"> </el-table-column>
+      <el-table-column
+        prop="b"
+        label="联系人"
+        fixed
+        width="80"
+        align="center"
+      ></el-table-column>
+      <el-table-column
+        prop="c"
+        label="联系电话"
+        fixed
+        align="center"
+        width="120"
+      >
+      </el-table-column>
       <el-table-column label="银行账号" prop="d" width="180"> </el-table-column>
       <el-table-column
         prop="e"
@@ -96,7 +107,12 @@
         </template>
       </el-table-column>
       <el-table-column prop="j" label="备注"></el-table-column>
-      <el-table-column prop="k" label="状态" align="center" width="50"></el-table-column>
+      <el-table-column
+        prop="k"
+        label="状态"
+        align="center"
+        width="50"
+      ></el-table-column>
       <el-table-column
         label="操作"
         width="200"
@@ -104,8 +120,12 @@
         class-name="small-padding fixed-width"
       >
         <template slot-scope="scope">
-          <el-button size="mini" type="text" icon="el-icon-edit"
-           @click="maintainBtn" >修改</el-button
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="maintainBtn"
+            >修改</el-button
           >
           <el-button size="mini" type="text" icon="el-icon-delete"
             >锁定</el-button
@@ -140,7 +160,13 @@
       @close="handleClose"
       append-to-body
     >
-      <el-form ref="form" :model="openForm" :rules="rules" label-width="100px" style="padding-left:29px">
+      <el-form
+        ref="form"
+        :model="openForm"
+        :rules="rules"
+        label-width="100px"
+        style="padding-left: 29px"
+      >
         <el-row>
           <el-col :span="22">
             <el-form-item label="经销商名称">
@@ -209,7 +235,7 @@
         ref="form"
         :model="passageForm"
         :rules="rules"
-        style="padding-left:29px"
+        style="padding-left: 29px"
         label-width="100px"
       >
         <el-row>
@@ -217,7 +243,7 @@
             <el-form-item label="经销商名称">
               <el-input
                 v-model="passageForm.a"
-                placeholder="请输入经销商名称"
+                disabled="disabled"                
               />
             </el-form-item>
           </el-col>
@@ -255,12 +281,15 @@
         :model="dealerForm"
         :rules="rules"
         label-width="100px"
-        style="padding-left:29px"
+        style="padding-left: 29px"
       >
         <el-row>
           <el-col :span="22">
             <el-form-item label="经销商名称">
-              <el-input v-model="dealerForm.a" placeholder="请输入经销商名称" />
+              <el-input
+                v-model="dealerForm.a"
+                disabled="disabled"                
+              />
             </el-form-item>
           </el-col>
           <el-col :span="22" align="center">
@@ -292,7 +321,8 @@ export default {
   name: "DealerMgt",
   data() {
     return {
-      title:'',
+      disabled: "true",
+      title: "",
       // 遮罩层
       loading: false,
       // 显示搜索条件
@@ -360,7 +390,7 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd() {
-      this.title='新增经销商'
+      this.title = "新增经销商";
       this.open = true;
     },
     // 打开设置通道
@@ -409,10 +439,9 @@ export default {
       }
     },
     // 修改按钮
-    maintainBtn(){
-      this.title='维护经销商',
-      this.open = true;
-    }
+    maintainBtn() {
+      (this.title = "维护经销商"), (this.open = true);
+    },
   },
   /* created() {
     this.getList();

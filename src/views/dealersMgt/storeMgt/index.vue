@@ -40,9 +40,7 @@
           >新增</el-button
         >
       </el-col>
-      <right-toolbar
-        :showSearch.sync="showSearch"
-      ></right-toolbar>
+      <right-toolbar :showSearch.sync="showSearch"></right-toolbar>
     </el-row>
     <el-table
       height="600"
@@ -53,20 +51,51 @@
       :default-expand-all="isExpandAll"
       :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
     >
-      <el-table-column prop="a" label="门店名称" fixed width="180"></el-table-column>
-      <el-table-column prop="b" label="门店联系人" fixed width="90" align="center"></el-table-column>
-      <el-table-column prop="c" label="门店电话" align="center" fixed width="110"> </el-table-column>
+      <el-table-column
+        prop="a"
+        label="门店名称"
+        fixed
+        width="180"
+      ></el-table-column>
+      <el-table-column
+        prop="b"
+        label="门店联系人"
+        fixed
+        width="90"
+        align="center"
+      ></el-table-column>
+      <el-table-column
+        prop="c"
+        label="门店电话"
+        align="center"
+        fixed
+        width="110"
+      >
+      </el-table-column>
       <el-table-column prop="d" label="门店地址" width="200"> </el-table-column>
       <el-table-column
         prop="e"
         label="经销商名称"
         width="180"
       ></el-table-column>
-      <el-table-column prop="f" label="经销商电话" width="110" align="center"></el-table-column>
+      <el-table-column
+        prop="f"
+        label="经销商电话"
+        width="110"
+        align="center"
+      ></el-table-column>
       <el-table-column prop="g" label="经销商联系人" width="120" align="center">
       </el-table-column>
-      <el-table-column prop="h" label="门店用户名" width="100"></el-table-column>
-      <el-table-column prop="i" label="应用版本" align="center"></el-table-column>
+      <el-table-column
+        prop="h"
+        label="门店用户名"
+        width="100"
+      ></el-table-column>
+      <el-table-column
+        prop="i"
+        label="应用版本"
+        align="center"
+      ></el-table-column>
       <el-table-column
         prop="j"
         align="center"
@@ -81,7 +110,11 @@
         width="100"
         align="center"
       ></el-table-column>
-      <el-table-column prop="l" label="用户数量" align="center"></el-table-column>
+      <el-table-column
+        prop="l"
+        label="用户数量"
+        align="center"
+      ></el-table-column>
       <el-table-column prop="m" label="状态" align="center"></el-table-column>
       <el-table-column
         label="操作"
@@ -90,13 +123,13 @@
         class-name="small-padding fixed-width"
       >
         <template slot-scope="scope">
-           <el-button size="mini" type="text" @click="maintainBtn"
+          <el-button size="mini" type="text" @click="maintainBtn"
             >修改</el-button
           >
           <el-button size="mini" type="text" @click="checkBtn">审核</el-button>
           <el-button size="mini" type="text" @click="lockingBtn"
             >锁定</el-button
-          >        
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -120,12 +153,12 @@
         :model="dataForm"
         :rules="rules"
         label-width="100px"
-        style="padding-left:29px"
+        style="padding-left: 29px"
       >
         <el-row>
           <el-col :span="22">
             <el-form-item label="经销商">
-              <el-input v-model="dataForm.a" placeholder="请输入经销商" />
+              <el-input v-model="dataForm.a" disabled="disabled" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
@@ -190,6 +223,7 @@ export default {
   name: "StoreMgt",
   data() {
     return {
+      disabled: true,
       title: "",
       // 遮罩层
       loading: false,
@@ -389,3 +423,9 @@ export default {
   // }
 };
 </script>
+<style lang="scss" scoped>
+  ::v-deep .el-dialog__body{
+  border-top: 1px solid rgb(223,228,237);
+  border-bottom: 1px solid rgb(223,228,237);
+}
+</style>

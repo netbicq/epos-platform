@@ -143,12 +143,12 @@
         <el-row>
           <el-col :span="22">
             <el-form-item label="设备ID">
-              <el-input v-model="setUpForm.a" placeholder="请输入设备ID" />
+              <el-input v-model="setUpForm.a" disabled="disabled"/>
             </el-form-item>
           </el-col>
           <el-col :span="22">
             <el-form-item label="设备名称">
-              <el-input v-model="setUpForm.b" placeholder="请输入设备名称" />
+              <el-input v-model="setUpForm.b" disabled="disabled"/>
             </el-form-item>
           </el-col>
           <el-col :span="22">
@@ -157,6 +157,7 @@
                 placeholder="智能插座"
                 style="width: 100%"
                 v-model="setUpForm.c"
+                disabled="disabled"
               >
                 <el-option label="智能插座" value="智能插座"></el-option>
                 <el-option label="控制箱" value="控制箱"></el-option>
@@ -166,7 +167,7 @@
           </el-col>
           <el-col :span="22">
             <el-form-item label="所属门店">
-              <el-input v-model="setUpForm.d" placeholder="请输入所属门店" />
+              <el-input v-model="setUpForm.d" disabled="disabled"/>
             </el-form-item>
           </el-col>
           <el-col :span="22">
@@ -245,7 +246,7 @@
       title="设备分配"
       @close="handleClose"
       :visible.sync="allocation"
-      width="450px"
+      width="450px"      
       append-to-body
     >
       <el-form
@@ -258,14 +259,14 @@
         <el-row>
           <el-col :span="22">
             <el-form-item label="设备ID">
-              <el-input v-model="allocationForm.a" placeholder="请输入设备ID" />
+              <el-input v-model="allocationForm.a" disabled="disabled"/>
             </el-form-item>
           </el-col>
           <el-col :span="22">
             <el-form-item label="设备名称">
               <el-input
                 v-model="allocationForm.b"
-                placeholder="请输入设备名称"
+                disabled="disabled"               
               />
             </el-form-item>
           </el-col>
@@ -275,6 +276,7 @@
                 v-model="allocationForm.c"
                 placeholder="智能插座"
                 style="width: 100%"
+                disabled="disabled"
               >
                 <el-option label="智能插座" value="智能插座"></el-option>
                 <el-option label="控制箱" value="控制箱"></el-option>
@@ -286,6 +288,7 @@
             <el-form-item label="所属门店">
               <el-select
                 v-model="allocationForm.d"
+                filterable
                 placeholder="请选择所属门店"
                 style="width: 100%"
               >
@@ -322,6 +325,7 @@ export default {
   components: { Treeselect },
   data() {
     return {
+      disabled:true,
       // 遮罩层
       loading: false,
       // 显示搜索条件
