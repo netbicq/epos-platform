@@ -129,22 +129,21 @@
     >
       <el-form
         ref="form"
-        :model="form"
+        :model="formData"
         :rules="rules"
         label-width="100px"
-       
       >
         <el-row>
           <el-col :span="22">
-            <el-form-item label="订单号:" prop="OrderId">
-              <el-input readonly v-model="form.OrderId" />
+            <el-form-item label="订单号:" >
+              <el-input v-model="formData.OrderId" :disabled="true"/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="22">
-            <el-form-item label="交易金额:" prop="money">
-              <el-input readonly v-model="form.money" />
+            <el-form-item label="交易金额:" >
+              <el-input  v-model="formData.money" :disabled="true"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -154,7 +153,7 @@
               <el-input
                 type="number"
                 placeholder="请输入退款金额"
-                v-model="form.refund"
+                v-model="formData.refund"
               />
             </el-form-item>
           </el-col>
@@ -163,7 +162,7 @@
           <el-col :span="22">
             <el-form-item label="退款原因:" prop="reason">
               <el-input
-                v-model="form.reason"
+                v-model="formData.reason"
                 type="textarea"
                 placeholder="请输入退款原因"
                 :autosize="{ minRows: 4, maxRows: 4 }"
@@ -177,12 +176,13 @@
             <el-form-item label="附件:" prop="enclosure">
               <el-upload
                 class="upload-demo"
-                action="https://jsonplaceholder.typicode.com/posts/"
+                action="https://jsonplaceholder.typicode.com/posts"
                 :limit="2"
                 :on-exceed="handleExceed"
                 :on-preview="handlePreview"
                 :before-upload="beforeAvatarUpload"
                 :on-remove="handleRemove"
+                :on-success="handleAvatarSuccess"
                 :file-list="fileList"
                 list-type="picture"
               >
@@ -341,12 +341,13 @@ export default {
         amount: undefined,
       },
       // 表单参数
-      form: {
-        OrderId: "",
-        money: "",
-        refund: "",
-        reason: "",
+      formData: {
+        OrderId: "12S1321",
+        money: "123",
+        refund: "123",
+        reason: "123",
         enclosure: "",
+        fileList:this.fileList
       },
       // 表单校验
       rules: {
@@ -363,16 +364,29 @@ export default {
   //     this.getList();
   //   },
   methods: {
+    handleAvatarSuccess(res, file) {
+
+        // this.imageUrl = URL.createObjectURL(file.raw);
+        console.log(file);
+        this.fileList.push({'name':file.name,'url':file.url})
+
+        console.log(this.fileList);
+
+      },
     // 限制图片上传数量
     handleExceed(files, fileList) {
       this.$message.warning(`当前限制选择 2 个文件`);
     },
     handleRemove(file, fileList) {
-      console.log(file, fileList);
+      // console.log(file, fileList);
+      this.fileList=fileList
+    
+     
     },
     handlePreview(file) {
       console.log(file);
     },
+
     // 限制图片上传大小及格式
     beforeAvatarUpload(file) {
       const isJPG = file.type === "image/png" || file.type === "image/jpeg";
@@ -423,55 +437,26 @@ export default {
     },
     /** 提交按钮 */
     submitForm: function () {
-      console.log(this.form)
-      this.$refs["form"].validate((valid) => {
-        if (valid) {
-          if (this.form.dictId != undefined) {
-            updateType(this.form).then((response) => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
-            addType(this.form).then((response) => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
-          }
-        }
-      });
+      console.log(this.formData)
+      var data={
+        ...this.formData,
+        fileList:this.fileList
+      }
+     console.log(data);
     },
     /** 删除按钮操作 */
     handleDelete(row) {
       const dictIds = row.dictId || this.ids;
-      this.$modal
-        .confirm('是否确认删除字典编号为"' + dictIds + '"的数据项？')
-        .then(function () {
-          return delType(dictIds);
-        })
-        .then(() => {
-          this.getList();
-          this.$modal.msgSuccess("删除成功");
-        })
-        .catch(() => {});
+     
     },
 
     /** 刷新缓存按钮操作 */
     handleRefreshCache() {
-      refreshCache().then(() => {
-        this.$modal.msgSuccess("刷新成功");
-      });
+     
     },
     //导出
     andleExport() {
-      this.download(
-        "system/role/export",
-        {
-          ...this.queryParams,
-        },
-        `role_${new Date().getTime()}.xlsx`
-      );
+     
     },
   },
 };

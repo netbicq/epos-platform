@@ -47,7 +47,6 @@
                 :style="{ width: '90%' }"
               ></el-input>
             </el-form-item>
-
             <el-form-item label="SecretKey" prop="paymentSecretKey">
               <el-input
                 v-model="paymentForm.paymentSecretKey"
@@ -73,7 +72,7 @@
     <el-dialog
       :close-on-click-modal="true"
       :title="title[0]"
-      :visible.sync="appletopen"
+      :visible.sync="open"
       width="600px"
       height="540px"
       append-to-body
@@ -82,49 +81,47 @@
         ref="elForm"
         :model="dialogData"
         size="medium"
-        label-width="100px"
+        label-width="150px"
       >
-        <el-form-item
-          v-for="(k, i) in dialogData"
-          :key="i"
-          :label="k"
-        >
+        <el-form-item v-for="(k, i) in field" :key="i" :label="k + ':'">
           <el-input
-            :v-model="k"
+            v-model="dialogData[k]"
             clearable
-            :placeholder="k.i"
+            :placeholder="k"
             :style="{ width: '90%' }"
           ></el-input>
         </el-form-item>
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
       </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancel">取 消</el-button>
+        <el-button type="primary" @click="submitForm">确 定</el-button>
+        
+      </div>
     </el-dialog>
   </div>
 </template>
 <script>
-import { createLogger } from 'vuex';
+import { createLogger } from "vuex";
 export default {
   components: {},
   props: [],
   data() {
     return {
-      arardfsa:[],
-      appletopen: false,
-      paymentopen: false,
+      field: [],
+      open: false,
       title: "",
       dialogData: {},
       appletForm: {
         text: "小程序配置",
-        appletId: "小程序ID",
-        appletSecretKey: "小程序SecretKey",
-        appletAccessKey: "小程序AccessKey",
+        appletId: "wx49a1b99acb82992f",
+        appletSecretKey: "wx49a1b99acb82992f",
+        appletAccessKey: "wx49a1b99acb82992f",
       },
       paymentForm: {
         text: "支付配置",
-        paymentId: "",
-        paymentSecretKey: "",
-        paymentAccessKey: "",
+        paymentId: "zfb49a1b99acb82992f",
+        paymentSecretKey: "zfb49a1b99acb82992f",
+        paymentAccessKey: "zfb49a1b99acb82992f",
       },
     };
   },
@@ -135,41 +132,45 @@ export default {
   methods: {
     //取消按钮
     cancel() {
-      this.paymentopen = false;
-      this.appletopen = false;
+      this.open = false;
     },
-    //重置
+
+    //获取小程序配置
+    obtainpayment() {
+      console.log(12);
+      var field = Object.keys(this.paymentForm);
+      var value = Object.values(this.paymentForm);
+      this.processing(field, value);
+      this.open = true;
+    },
 
     //获取APP配置
     obtainapplet() {
-    this.dialogData=[]
       var field = Object.keys(this.appletForm);
       var value = Object.values(this.appletForm);
-      value.splice(0,1)
-
-      this.title = field.splice(0, 1);
-     
+      this.processing(field, value);
+      this.open = true;
+    },
+    //处理
+    processing(field, value) {
+      this.dialogData = [];
       console.log(value);
-      console.log(this.appletForm);
-    //   this.dialogData=field
-     
+      this.title = value.splice(0, 1);
+      field.splice(0, 1);
+
+      this.field = field;
+      console.log(field);
+      console.log(value);
       for (var i = 0; i < field.length; i++) {
-    
-         this.dialogData[field[i]]=value[i]
-       
+        this.dialogData[field[i]] = value[i];
       }
-      console.log(typeof(this.dialogData));
-      console.log(this.dialogData);
-      this.appletopen=true
+      this.dialogData = { ...this.dialogData };
     },
-    //获取支付配置遮罩
-    obtainpayment() {
-      this.paymentopen = true;
-    },
+
     //确认按钮
-    submitForm(){
-        console.log(this.dialogData);
-    }
+    submitForm() {
+      console.log(this.dialogData);
+    },
   },
 };
 </script>

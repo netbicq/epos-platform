@@ -19,7 +19,7 @@
           end-placeholder="请选择结束日期"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item  prop="roleName">
+      <el-form-item prop="roleName">
         <el-input
           v-model="queryParams.roleName"
           placeholder="请输入门店/事由/收款方式"
@@ -28,7 +28,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item  prop="roleKey">
+      <el-form-item prop="roleKey">
         <el-input
           v-model="queryParams.roleKey"
           placeholder="请输入交易金额"
@@ -52,16 +52,6 @@
       </el-form-item>
     </el-form>
     <el-row :gutter="10" class="mb8">
-      <!-- <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['system:dict:add']"
-        >新增</el-button>
-      </el-col> -->
       <el-col :span="1.5">
         <download-excel
           class="export-btn"
@@ -76,6 +66,7 @@
           >
         </download-excel>
       </el-col>
+      
     </el-row>
 
     <el-table
@@ -117,28 +108,18 @@
           <el-button
             size="mini"
             type="text"
-            @click="reimburse(scope)"
-            v-hasPermi="['system:dict:edit']"
+            @click="reimburse(scope.row.reason)"
             >查看</el-button
           >
         </template>
       </el-table-column>
       <el-table-column label="退款方式" align="center" prop="refundMethod" />
-      <el-table-column
-        label="退款时间"
-        align="center"
-        prop="refundDate"
-        width="100"
-      />
+      <el-table-column label="退款时间" align="center" prop="refundDate" />
       <el-table-column label="申请人" align="center" prop="applicant" />
       <el-table-column label="审核人" align="center" prop="reviewer" />
       <el-table-column label="审批备注" align="center" prop="remarks">
         <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            @click="remarks(scope)"
-            v-hasPermi="['system:dict:edit']"
+          <el-button size="mini" type="text" @click="remarks(scope.row.remarks)"
             >查看</el-button
           >
         </template>
@@ -188,30 +169,14 @@
     <!-- 审批备注 -->
     <el-dialog
       :title="title"
-      :visible.sync="remarksOpen"
+      :visible.sync="checksOpen"
       width="600px"
       append-to-body
     >
       <div>
-        桃树、杏树、梨树，你不让我，我不让你，都开满了花赶趟儿。红的像火，粉的像霞，白的像雪。花里带着甜味儿；闭了
+        {{ account }}
       </div>
 
-      <div slot="footer" class="dialog-footer">
-        <!-- <el-button type="primary" @click="submitForm">确 定</el-button> -->
-        <el-button @click="cancel">关 闭</el-button>
-      </div>
-    </el-dialog>
-
-    <!-- 退款原因 -->
-    <el-dialog
-      :title="title"
-      :visible.sync="reimburseOpen"
-      width="600px"
-      append-to-body
-    >
-      <div>
-        桃树、杏树、梨树，你不让我，我不让你，都开满了花赶趟儿。红的像火，粉的像霞，白的像雪。花里带着甜味儿；闭了
-      </div>
       <div slot="footer" class="dialog-footer">
         <!-- <el-button type="primary" @click="submitForm">确 定</el-button> -->
         <el-button @click="cancel">关 闭</el-button>
@@ -280,7 +245,14 @@
           <el-col :span="22">
             <el-form-item label="附件:" prop="enclosure">
               <viewer :images="refundForm.fileList">
-                <img v-for="(k,i) in refundForm.fileList" :src="k.url" :key="i" height="100px" width="100px" style="margin-left:10px"/>
+                <img
+                  v-for="(k, i) in refundForm.fileList"
+                  :src="k.url"
+                  :key="i"
+                  height="100px"
+                  width="100px"
+                  style="margin-left: 10px"
+                />
               </viewer>
             </el-form-item>
           </el-col>
@@ -364,6 +336,7 @@
 </template>
 
 <script>
+import XLSX, { WorkSheet } from "xlsx";
 import {
   listType,
   getType,
@@ -376,12 +349,13 @@ import {
 export default {
   name: "Dict",
   dicts: ["sys_normal_disable"],
- 
+
   data() {
     return {
       i: 0,
       showImg: false,
       imgSrc: "",
+      account: "",
       //导出Excel表格的表头设置
       jsonFields: {
         原收款订单号: "collectionOrder",
@@ -416,11 +390,13 @@ export default {
           collectionOrder: "15645154856156456415642",
           refundOrder: "1564515485615645641564",
           accountNumber: "1564515485615645641564",
-          name: "王小虎",
+          name: "王小虎1",
           money: "48564",
           monrefundAmountey: "4564",
-          store: "今日说法",
+          store: "今日说法456456465",
           refundMethod: "支付宝",
+          reason: "这是为嘛呢",
+          remarks: "fcejhwoiufgewuifbvbhuwjgvbchjsbvjhsbvhjsvbhsdvbchjsdvb",
           refundDate: "2023-15-26",
           applicant: "涛哥",
           reviewer: "涛哥",
@@ -431,11 +407,13 @@ export default {
           collectionOrder: "15645154856156456415642",
           refundOrder: "1564515485615645641564",
           accountNumber: "1564515485615645641564",
-          name: "王小虎",
+          name: "王小虎2",
           money: "48564",
           monrefundAmountey: "4564",
-          store: "今日说法",
+          store: "今日说法456456465",
           refundMethod: "支付宝",
+          reason: "这是为嘛呢",
+          remarks: "fcejhwoiufgewuifbvbhuwjgvbchjsbvjhsbvhjsvbhsdvbchjsdvb",
           refundDate: "2023-15-26",
           applicant: "涛哥",
           reviewer: "涛哥",
@@ -446,11 +424,13 @@ export default {
           collectionOrder: "15645154856156456415642",
           refundOrder: "1564515485615645641564",
           accountNumber: "1564515485615645641564",
-          name: "王小虎",
+          name: "王小虎3",
           money: "48564",
           monrefundAmountey: "4564",
-          store: "今日说法",
+          store: "今日说法456456465",
           refundMethod: "支付宝",
+          reason: "这是为嘛呢",
+          remarks: "fcejhwoiufgewuifbvbhuwjgvbchjsbvjhsbvhjsvbhsdvbchjsdvb",
           refundDate: "2023-15-26",
           applicant: "涛哥",
           reviewer: "涛哥",
@@ -461,11 +441,13 @@ export default {
           collectionOrder: "15645154856156456415642",
           refundOrder: "1564515485615645641564",
           accountNumber: "1564515485615645641564",
-          name: "王小虎",
+          name: "王小虎4",
           money: "48564",
           monrefundAmountey: "4564",
-          store: "今日说法",
+          store: "今日说法456456465",
           refundMethod: "支付宝",
+          reason: "这是为嘛呢",
+          remarks: "fcejhwoiufgewuifbvbhuwjgvbchjsbvjhsbvhjsvbhsdvbchjsdvb",
           refundDate: "2023-15-26",
           applicant: "涛哥",
           reviewer: "涛哥",
@@ -476,11 +458,13 @@ export default {
           collectionOrder: "15645154856156456415642",
           refundOrder: "1564515485615645641564",
           accountNumber: "1564515485615645641564",
-          name: "王小虎",
+          name: "王小虎5",
           money: "48564",
           monrefundAmountey: "4564",
-          store: "今日说法",
+          store: "今日说法456456465",
           refundMethod: "支付宝",
+          reason: "这是为嘛呢",
+          remarks: "fcejhwoiufgewuifbvbhuwjgvbchjsbvjhsbvhjsvbhsdvbchjsdvb",
           refundDate: "2023-15-26",
           applicant: "涛哥",
           reviewer: "涛哥",
@@ -507,9 +491,8 @@ export default {
       // 是否显示弹出层
       open: false,
       //审批备注弹层
-      remarksOpen: false,
-      //退款原因弹层
-      reimburseOpen: false,
+      checksOpen: false,
+
       //退款详情弹层
       refundOpen: false,
       //退款审核弹层
@@ -551,25 +534,35 @@ export default {
         state: "",
       },
       // 表单校验
-      rules: {},
+      rules: {
+        remarks: [{ required: true, message: "备注不能为空", trigger: "blur" }],
+        state: [{ required: true, message: "意见不能为空", trigger: "blur" }],
+      },
     };
   },
   //   created() {
   //     this.getList();
   //   },
   methods: {
+ 
+    
     //上传附件
     handlePreview(file) {
       console.log(file);
     },
     //查看审批备注
     remarks(row) {
-      this.remarksOpen = true;
+      console.log(row);
+      this.account = row;
+
+      this.checksOpen = true;
       this.title = "审批备注";
     },
     //查看退款原因
-    reimburse() {
-      this.reimburseOpen = true;
+    reimburse(row) {
+      this.account = row;
+
+      this.checksOpen = true;
       this.title = "退款原因";
     },
     //查看退款详情
@@ -587,8 +580,7 @@ export default {
     // 取消按钮
     cancel() {
       this.open = false;
-      this.remarksOpen = false;
-      this.reimburseOpen = false;
+      this.checksOpen = false;
       this.refundOpen = false;
       this.examineOpen = false;
       this.reset();
@@ -628,48 +620,9 @@ export default {
     /** 提交按钮 */
     submitForm: function () {
       console.log(this.examineForm);
-      this.$refs["form"].validate((valid) => {
-        if (valid) {
-          if (this.form.dictId != undefined) {
-            updateType(this.form).then((response) => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
-            addType(this.form).then((response) => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
-          }
-        }
-      });
     },
     /** 删除按钮操作 */
-    handleDelete(row) {
-      const dictIds = row.dictId || this.ids;
-      this.$modal
-        .confirm('是否确认删除字典编号为"' + dictIds + '"的数据项？')
-        .then(function () {
-          return delType(dictIds);
-        })
-        .then(() => {
-          this.getList();
-          this.$modal.msgSuccess("删除成功");
-        })
-        .catch(() => {});
-    },
-    //导出
-    andleExport() {
-      this.download(
-        "system/role/export",
-        {
-          ...this.queryParams,
-        },
-        `role_${new Date().getTime()}.xlsx`
-      );
-    },
+    handleDelete(row) {},
   },
 };
 </script>
