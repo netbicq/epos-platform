@@ -10,7 +10,7 @@
     >
       <el-form-item>
         <el-date-picker
-          v-model="dateRange"
+          v-model="queryParams.date"
           style="width: 280px"
           value-format="yyyy-MM-dd"
           type="daterange"
@@ -19,18 +19,18 @@
           end-placeholder="请选择结束日期"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item prop="roleName">
+      <el-form-item prop="crux">
         <el-input
-          v-model="queryParams.roleName"
+          v-model="queryParams.crux"
           placeholder="请输入门店/事由/收款方式"
           clearable
           style="width: 240px"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item prop="roleKey">
+      <el-form-item prop="amount">
         <el-input
-          v-model="queryParams.roleKey"
+          v-model="queryParams.amount"
           placeholder="请输入交易金额"
           clearable
           style="width: 240px"
@@ -53,49 +53,42 @@
     </el-form>
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <download-excel
-          class="export-btn"
-          :data="tableData"
-          :fields="jsonFields"
-          type="xlsx"
-          header="退款一览表"
-          name="退款一览表"
+        <el-button
+          type="warning"
+          plain
+          icon="el-icon-plus"
+          size="mini"
+          @click="derive"
+          >导出</el-button
         >
-          <el-button type="warning" plain icon="el-icon-plus" size="mini"
-            >导出</el-button
-          >
-        </download-excel>
       </el-col>
-      
     </el-row>
 
     <el-table
       :data="tableData"
       @selection-change="handleSelectionChange"
       height="600"
+      id="tabkeins"
     >
       <el-table-column
         label="原收款订单号"
         align="center"
         prop="collectionOrder"
-        fixed
         width="150"
       />
       <el-table-column
         label="退款订单号"
         align="center"
         prop="refundOrder"
-        fixed
         width="150"
       />
       <el-table-column
         label="对方账号"
         align="center"
         prop="accountNumber"
-        fixed
         width="150"
       />
-      <el-table-column label="对方户名" align="center" prop="name" fixed />
+      <el-table-column label="对方户名" align="center" prop="name" />
       <el-table-column label="交易金额" align="center" prop="money" />
       <el-table-column
         label="退款金额"
@@ -192,7 +185,7 @@
       append-to-body
     >
       <el-form
-        ref="form"
+        ref="refundForm"
         :model="refundForm"
         :rules="rules"
         label-width="100px"
@@ -274,7 +267,7 @@
       append-to-body
     >
       <el-form
-        ref="form"
+        ref="examineForm"
         :model="examineForm"
         :rules="rules"
         label-width="60px"
@@ -345,7 +338,7 @@ import {
   updateType,
   refreshCache,
 } from "@/api/system/dict/type";
-
+import moment from "moment";
 export default {
   name: "Dict",
   dicts: ["sys_normal_disable"],
@@ -356,24 +349,6 @@ export default {
       showImg: false,
       imgSrc: "",
       account: "",
-      //导出Excel表格的表头设置
-      jsonFields: {
-        原收款订单号: "collectionOrder",
-        退款订单号: "refundOrder",
-        对方账号: "accountNumber",
-        对方户名: "name",
-        交易金额: "money",
-        退款金额: "monrefundAmountey",
-        门店名称: "store",
-        退款原因: "createTime",
-        退款方式: "refundMethod",
-        退款时间: "refundDate",
-        申请人: "applicant",
-        审核人: "reviewer",
-        审核备注: "remarks",
-        退款人: "refunder",
-        状态: "status",
-      },
       fielptions: [
         {
           label: "同意",
@@ -504,9 +479,9 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        dictName: undefined,
-        dictType: undefined,
-        status: undefined,
+        crux: "",
+        amount: "",
+        date: "",
       },
       // 退款表单参数
       refundForm: {
@@ -544,8 +519,28 @@ export default {
   //     this.getList();
   //   },
   methods: {
- 
-    
+    //导出EXCLE
+    derive() {
+      var time = moment(new Date()).format("YYYYMMDDHHmm");
+      var tables = document.getElementById("tabkeins");
+      var table_book = this.$XLSX.utils.table_to_book(tables);
+      var table_write = this.$XLSX.write(table_book, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array",
+      });
+      console.log(table_write);
+      try {
+        this.$FileSaver.saveAs(
+          new Blob([table_write], { type: "application/octet-stream" }),
+          time + "退款.xlsx"
+        );
+      } catch (e) {
+        if (typeof console !== "undefined") console.log(e, table_write);
+      }
+      return table_write;
+    },
+
     //上传附件
     handlePreview(file) {
       console.log(file);
@@ -587,17 +582,15 @@ export default {
     },
     // 表单重置
     reset() {
-      this.form = {
-        dictId: undefined,
-        dictName: undefined,
-        dictType: undefined,
-        status: "0",
-        remark: undefined,
-      };
-      this.resetForm("form");
+      (this.examineForm = {
+        remarks: "",
+        state: "",
+      }),
+        this.resetForm("examineForm");
     },
     /** 搜索按钮操作 */
     handleQuery() {
+      console.log(this.queryParams);
       this.queryParams.pageNum = 1;
       this.getList();
     },
@@ -620,6 +613,7 @@ export default {
     /** 提交按钮 */
     submitForm: function () {
       console.log(this.examineForm);
+     
     },
     /** 删除按钮操作 */
     handleDelete(row) {},

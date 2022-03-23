@@ -17,20 +17,20 @@
           range-separator="-"
           start-placeholder="请选择开始日期"
           end-placeholder="请选择结束日期"
-          
         ></el-date-picker>
       </el-form-item>
-      <el-form-item prop="keyword">
+      <el-form-item prop="crux">
         <el-input
-          v-model="queryParams.keyword"
+          v-model="queryParams.crux"
+          type="daterange"
           placeholder="请输入门店/事由/收款方式"
           clearable
           style="width: 240px"
-         
         />
       </el-form-item>
-      <el-form-item  prop="amount">
+      <el-form-item prop="amount">
         <el-input
+          type="daterange"
           v-model="queryParams.amount"
           placeholder="请输入交易金额"
           clearable
@@ -63,18 +63,14 @@
         >新增</el-button>
       </el-col> -->
       <el-col :span="1.5">
-        <download-excel
-          class="export-btn"
-          :data="tableData"
-          :fields="jsonFields"
-          type="xlsx"
-          header="收款一览表"
-          name="收款一览表"
+        <el-button
+          type="warning"
+          plain
+          icon="el-icon-plus"
+          size="mini"
+          @click="derive"
+          >导出</el-button
         >
-          <el-button type="warning" plain icon="el-icon-plus" size="mini"
-            >导出</el-button
-          >
-        </download-excel>
       </el-col>
     </el-row>
 
@@ -82,6 +78,7 @@
       :data="tableData"
       @selection-change="handleSelectionChange"
       height="600"
+      id="table"
     >
       <el-table-column label="收款时间" align="center" prop="date" />
       <el-table-column label="订单号" align="center" prop="OrderId" />
@@ -91,7 +88,8 @@
       <el-table-column label="收款方式" align="center" prop="mode" />
       <el-table-column label="门店名称" align="center" prop="store" />
       <el-table-column label="收款事由" align="center" prop="matter" />
-      <el-table-column label="状态" align="center" prop="status" width="180" />
+      <el-table-column label="状态" align="center" prop="status" width="180">
+      </el-table-column>
       <el-table-column
         label="操作"
         align="center"
@@ -125,25 +123,20 @@
       width="600px"
       height="540px"
       append-to-body
-      style="padding-left: 29px;"
+      style="padding-left: 29px"
     >
-      <el-form
-        ref="form"
-        :model="formData"
-        :rules="rules"
-        label-width="100px"
-      >
+      <el-form ref="form" :model="formData" :rules="rules" label-width="100px">
         <el-row>
           <el-col :span="22">
-            <el-form-item label="订单号:" >
-              <el-input v-model="formData.OrderId" :disabled="true"/>
+            <el-form-item label="订单号:">
+              <el-input v-model="formData.OrderId" :disabled="true" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="22">
-            <el-form-item label="交易金额:" >
-              <el-input  v-model="formData.money" :disabled="true"/>
+            <el-form-item label="交易金额:">
+              <el-input v-model="formData.money" :disabled="true" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -213,24 +206,13 @@ import {
   updateType,
   refreshCache,
 } from "@/api/system/dict/type";
+import moment from "moment";
 
 export default {
   name: "Dict",
   dicts: ["sys_normal_disable"],
   data() {
     return {
-      //导出Excel表格的表头设置
-      jsonFields: {
-        收款时间: "date",
-        订单号: "OrderId",
-        对方账号: "accountNumber",
-        对方户名: "name",
-        交易金额: "money",
-        收款方式: "mode",
-        门店名称: "store",
-        收款事由: "matter",
-        状态: "status",
-      },
       total: 1,
       fileList: [
         {
@@ -337,7 +319,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
         date: undefined,
-        keyword: undefined,
+        crux: undefined,
         amount: undefined,
       },
       // 表单参数
@@ -347,7 +329,7 @@ export default {
         refund: "123",
         reason: "123",
         enclosure: "",
-        fileList:this.fileList
+        fileList: this.fileList,
       },
       // 表单校验
       rules: {
@@ -364,24 +346,41 @@ export default {
   //     this.getList();
   //   },
   methods: {
+    //导出excle
+    derive() {
+      var time = moment(new Date()).format("YYYYMMDDHHmm");
+      var tables = document.getElementById("table");
+      var table_book = this.$XLSX.utils.table_to_book(tables);
+      var table_write = this.$XLSX.write(table_book, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array",
+      });
+      try {
+        this.$FileSaver.saveAs(
+          new Blob([table_write], { type: "application/octet-stream" }),
+          time + "收款.xlsx"
+        );
+      } catch (e) {
+        if (typeof console !== "undefined") console.log(e, table_write);
+      }
+      return table_write;
+    },
+    //图片上传成功
     handleAvatarSuccess(res, file) {
+      // this.imageUrl = URL.createObjectURL(file.raw);
+      console.log(file);
+      this.fileList.push({ name: file.name, url: file.url });
 
-        // this.imageUrl = URL.createObjectURL(file.raw);
-        console.log(file);
-        this.fileList.push({'name':file.name,'url':file.url})
-
-        console.log(this.fileList);
-
-      },
+      console.log(this.fileList);
+    },
     // 限制图片上传数量
     handleExceed(files, fileList) {
       this.$message.warning(`当前限制选择 2 个文件`);
     },
     handleRemove(file, fileList) {
       // console.log(file, fileList);
-      this.fileList=fileList
-    
-     
+      this.fileList = fileList;
     },
     handlePreview(file) {
       console.log(file);
@@ -390,14 +389,13 @@ export default {
     // 限制图片上传大小及格式
     beforeAvatarUpload(file) {
       const isJPG = file.type === "image/png" || file.type === "image/jpeg";
-      const isLt2M = file.size /1024 < 500
+      const isLt2M = file.size / 1024 < 500;
 
       if (!isJPG) {
-        this.$message.error("上传头像图片只能是 JPG/PNG 格式!");
+        this.$message.error("上传图片只能是 JPG/PNG 格式!");
       }
       if (!isLt2M) {
-        this.$message.error("上传头像图片大小不能超过 500KB!");
-       
+        this.$message.error("上传图片大小不能超过 500KB!");
       }
       return isJPG && isLt2M;
     },
@@ -409,17 +407,19 @@ export default {
     },
     // 表单重置
     reset() {
-      this.form = {
-        dictId: undefined,
-        dictName: undefined,
-        dictType: undefined,
-        status: "0",
-        remark: undefined,
-      };
-      this.resetForm("form");
+      (this.formData = {
+        OrderId: " ",
+        money: " ",
+        refund: " ",
+        reason: " ",
+        enclosure: "",
+        fileList: this.fileList,
+      }),
+        this.resetForm("formData");
     },
     /** 搜索按钮操作 */
     handleQuery() {
+       console.log(this.queryParams);
       this.queryParams.pageNum = 1;
       this.getList();
     },
@@ -437,27 +437,22 @@ export default {
     },
     /** 提交按钮 */
     submitForm: function () {
-      console.log(this.formData)
-      var data={
+      var data = {
         ...this.formData,
-        fileList:this.fileList
-      }
-     console.log(data);
+        fileList: this.fileList,
+      };
+      console.log(data);
+      
     },
     /** 删除按钮操作 */
     handleDelete(row) {
       const dictIds = row.dictId || this.ids;
-     
     },
 
     /** 刷新缓存按钮操作 */
-    handleRefreshCache() {
-     
-    },
+    handleRefreshCache() {},
     //导出
-    andleExport() {
-     
-    },
+    andleExport() {},
   },
 };
 </script>

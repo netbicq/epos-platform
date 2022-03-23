@@ -53,7 +53,7 @@
   position: relative;
   margin: 0 auto;
 
-HEAD .el-dialog__body {
+.el-dialog__body {
     border-top: 1px solid rgb(223, 228, 237);
     border-bottom: 1px solid rgb(223, 228, 237);
 // refine element ui upload
@@ -67,7 +67,7 @@ HEAD .el-dialog__body {
           height: 200px;
         }
       }
-    }
+    }}
 
     // dropdown
     .el-dropdown-menu {
@@ -85,3 +85,4 @@ HEAD .el-dialog__body {
     .el-range-separator {
       box-sizing: content-box;
     }
+  }

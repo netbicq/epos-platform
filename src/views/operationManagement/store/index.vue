@@ -8,9 +8,9 @@
       v-show="showSearch"
       label-width="68px"
     >
-      <el-form-item prop="dictName">
+      <el-form-item prop="crux">
         <el-input
-          v-model="queryParams.dictName"
+          v-model="queryParams.crux"
           placeholder="请输入名称/负责人/联系电话等"
           clearable
           style="width: 240px"
@@ -47,19 +47,27 @@
     <el-table
       :data="tableData"
       @selection-change="handleSelectionChange"
-      height="600">
-      <el-table-column prop="title" label="门店名称" fixed> </el-table-column>
-      <el-table-column prop="title" label="门店联系人" fixed> </el-table-column>
-      <el-table-column prop="title" label="门店电话" fixed> </el-table-column>
-      <el-table-column prop="address" label="门店地址"> </el-table-column>
-      <el-table-column prop="title" label="门店用户名"> </el-table-column>
-      <el-table-column prop="title" label="门店来源"> </el-table-column>
-      <el-table-column prop="title" label="付款金额"> </el-table-column>
-      <el-table-column prop="title" label="应用版本"> </el-table-column>
-      <el-table-column prop="title" label="开通时间"> </el-table-column>
-      <el-table-column prop="title" label="有效期"> </el-table-column>
-      <el-table-column prop="title" label="用户数量" width="80"> </el-table-column>
-      <el-table-column prop="title" label="状态" width="80"> </el-table-column>
+      height="600"
+    >
+      <el-table-column prop="title" label="门店名称" fixed align="center"> </el-table-column>
+      <el-table-column prop="uName" label="门店联系人" fixed align="center"> </el-table-column>
+      <el-table-column prop="phone" label="门店电话" fixed align="center"> </el-table-column>
+      <el-table-column prop="address" label="门店地址" width="180" align="center"> </el-table-column>
+      <el-table-column prop="utitle" label="门店用户名" align="center"> </el-table-column>
+      <el-table-column prop="source" label="门店来源" align="center"> </el-table-column>
+      <el-table-column prop="amount" label="付款金额" align="center"> </el-table-column>
+      <el-table-column prop="edition" label="应用版本" align="center"> </el-table-column>
+      <el-table-column prop="otime" label="开通时间" align="center"> </el-table-column>
+      <el-table-column prop="etime" label="有效期" align="center"> </el-table-column>
+      <el-table-column prop="quantity" label="用户数量" width="80" align="center" ></el-table-column>
+      <el-table-column prop="status" label="状态" width="80" align="center">
+        <template slot-scope="scope">
+       
+          <span v-if="scope.row.status==1">激活</span>
+          <span v-if="scope.row.status==2">关闭</span>
+          <span v-if="scope.row.status==3">暂未开通</span>
+        </template>
+      </el-table-column>
       <el-table-column
         label="操作"
         align="center"
@@ -237,48 +245,157 @@ export default {
       tableData: [
         {
           title: "今日说法",
-          stime: "2021-11-12",
-          etime: "2022-05-12",
-          status: "1",
-          date: "2016-05-02",
-          name: "王小虎",
+          uName: "王吓唬",
+          phone: "11011911410086",
           address: "上海市普陀区金沙江路 1518 弄",
+          utitle: "大马猴店",
+          source: "来自支付宝",
+          amount: "326",
+          edition: "旗舰版",
+          otime: "2021-11-12",
+          etime: "2022-05-12",
+          quantity: "312",
+          status: "1",
         },
         {
           title: "今日说法",
-          stime: "2021-11-12",
-          etime: "2022-05-12",
-          status: "1",
-          date: "2016-05-02",
-          name: "王小虎",
+          uName: "王吓唬",
+          phone: "11011911410086",
           address: "上海市普陀区金沙江路 1518 弄",
+          utitle: "大马猴店",
+          source: "来自支付宝",
+          amount: "326",
+          edition: "旗舰版",
+          otime: "2021-11-12",
+          etime: "2022-05-12",
+          quantity: "312",
+          status: "3",
         },
         {
           title: "今日说法",
-          stime: "2021-11-12",
-          etime: "2022-05-12",
-          status: "1",
-          date: "2016-05-02",
-          name: "王小虎",
+          uName: "王吓唬",
+          phone: "11011911410086",
           address: "上海市普陀区金沙江路 1518 弄",
+          utitle: "大马猴店",
+          source: "来自支付宝",
+          amount: "326",
+          edition: "旗舰版",
+          otime: "2021-11-12",
+          etime: "2022-05-12",
+          quantity: "312",
+          status: "2",
         },
         {
           title: "今日说法",
-          stime: "2021-11-12",
-          etime: "2022-05-12",
-          status: "1",
-          date: "2016-05-02",
-          name: "王小虎",
+          uName: "王吓唬",
+          phone: "11011911410086",
           address: "上海市普陀区金沙江路 1518 弄",
+          utitle: "大马猴店",
+          source: "来自支付宝",
+          amount: "326",
+          edition: "旗舰版",
+          otime: "2021-11-12",
+          etime: "2022-05-12",
+          quantity: "312",
+          status: "2",
         },
         {
           title: "今日说法",
-          stime: "2021-11-12",
-          etime: "2022-05-12",
-          status: "1",
-          date: "2016-05-02",
-          name: "王小虎",
+          uName: "王吓唬",
+          phone: "11011911410086",
           address: "上海市普陀区金沙江路 1518 弄",
+          utitle: "大马猴店",
+          source: "来自支付宝",
+          amount: "326",
+          edition: "旗舰版",
+          otime: "2021-11-12",
+          etime: "2022-05-12",
+          quantity: "312",
+          status: "1",
+        },
+        {
+          title: "今日说法",
+          uName: "王吓唬",
+          phone: "11011911410086",
+          address: "上海市普陀区金沙江路 1518 弄",
+          utitle: "大马猴店",
+          source: "来自支付宝",
+          amount: "326",
+          edition: "旗舰版",
+          otime: "2021-11-12",
+          etime: "2022-05-12",
+          quantity: "312",
+          status: "1",
+        },
+        {
+          title: "今日说法",
+          uName: "王吓唬",
+          phone: "11011911410086",
+          address: "上海市普陀区金沙江路 1518 弄",
+          utitle: "大马猴店",
+          source: "来自支付宝",
+          amount: "326",
+          edition: "旗舰版",
+          otime: "2021-11-12",
+          etime: "2022-05-12",
+          quantity: "312",
+          status: "3",
+        },
+        {
+          title: "今日说法",
+          uName: "王吓唬",
+          phone: "11011911410086",
+          address: "上海市普陀区金沙江路 1518 弄",
+          utitle: "大马猴店",
+          source: "来自支付宝",
+          amount: "326",
+          edition: "旗舰版",
+          otime: "2021-11-12",
+          etime: "2022-05-12",
+          quantity: "312",
+          status: "1",
+        },
+        {
+          title: "今日说法",
+          uName: "王吓唬",
+          phone: "11011911410086",
+          address: "上海市普陀区金沙江路 1518 弄",
+          utitle: "大马猴店",
+          source: "来自支付宝",
+          amount: "326",
+          edition: "旗舰版",
+          otime: "2021-11-12",
+          etime: "2022-05-12",
+          quantity: "312",
+          status: "1",
+        },
+        {
+          title: "今日说法",
+          uName: "王吓唬",
+          phone: "11011911410086",
+          address: "上海市普陀区金沙江路 1518 弄",
+          utitle: "大马猴店",
+          source: "来自支付宝",
+          amount: "326",
+          edition: "旗舰版",
+          otime: "2021-11-12",
+          etime: "2022-05-12",
+          quantity: "312",
+          status: "2",
+        },
+        {
+          title: "今日说法",
+          uName: "王吓唬",
+          phone: "11011911410086",
+          address: "上海市普陀区金沙江路 1518 弄",
+          utitle: "大马猴店",
+          source: "来自支付宝",
+          amount: "326",
+          edition: "旗舰版",
+          otime: "2021-11-12",
+          etime: "2022-05-12",
+          quantity: "312",
+          status: "3",
         },
       ],
       // 遮罩层
@@ -305,9 +422,7 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        dictName: undefined,
-        dictType: undefined,
-        status: undefined,
+        crux: "",
       },
       // 表单参数
       form: {
@@ -376,11 +491,14 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        dictId: undefined,
-        dictName: undefined,
-        dictType: undefined,
-        status: "0",
-        remark: undefined,
+        store: "",
+        period: "",
+        contacts: "",
+        phone: "",
+        address: "",
+        userName: "",
+        quantity: "",
+        edition: "",
       };
       this.resetForm("form");
     },
@@ -411,45 +529,12 @@ export default {
     /** 提交按钮 */
     submitForm: function () {
       console.log(this.form);
-      this.$refs["form"].validate((valid) => {
-        if (valid) {
-          if (this.form.dictId != undefined) {
-            updateType(this.form).then((response) => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
-            addType(this.form).then((response) => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
-          }
-        }
-      });
     },
     /** 删除按钮操作 */
     handleDelete(row) {
+      console.log(this.queryParams);
       const dictIds = row.dictId || this.ids;
-      this.$modal
-        .confirm('是否确认删除字典编号为"' + dictIds + '"的数据项？')
-        .then(function () {
-          return delType(dictIds);
-        })
-        .then(() => {
-          this.getList();
-          this.$modal.msgSuccess("删除成功");
-        })
-        .catch(() => {});
-    },
-
-    /** 刷新缓存按钮操作 */
-    handleRefreshCache() {
-      refreshCache().then(() => {
-        this.$modal.msgSuccess("刷新成功");
-      });
-    },
+    }
   },
 };
 </script>

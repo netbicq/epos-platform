@@ -44,6 +44,13 @@ import moment from "moment"
 //图片放大
 import Viewer from 'v-viewer'
 import 'viewerjs/dist/viewer.css'
+
+//下载XLSX
+
+import FileSaver from 'file-saver'
+import XLSX from 'xlsx'
+
+
 // 全局方法挂载
 Vue.prototype.$moment = moment
 Vue.prototype.getDicts = getDicts
@@ -55,6 +62,8 @@ Vue.prototype.selectDictLabel = selectDictLabel
 Vue.prototype.selectDictLabels = selectDictLabels
 Vue.prototype.download = download
 Vue.prototype.handleTree = handleTree
+Vue.prototype.$FileSaver = FileSaver; 
+Vue.prototype.$XLSX = XLSX; 
 
 // 全局组件挂载
 Vue.component('downloadExcel', JsonExcel)

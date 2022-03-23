@@ -8,9 +8,9 @@
       v-show="showSearch"
       label-width="68px"
     >
-      <el-form-item prop="dictName">
+      <el-form-item prop="title">
         <el-input
-          v-model="queryParams.dictName"
+          v-model="queryParams.title"
           placeholder="请输入标题"
           clearable
           style="width: 240px"
@@ -347,9 +347,7 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        dictName: undefined,
-        dictType: undefined,
-        status: undefined,
+        title: "",
       },
       // 表单参数
       formData: {
@@ -384,19 +382,19 @@ export default {
     },
     // 表单重置
     reset() {
-      this.form = {
-        dictId: undefined,
-        dictName: undefined,
-        dictType: undefined,
-        status: "0",
-        remark: undefined,
-      };
-      this.resetForm("form");
+      (this.formData = {
+        title: " ",
+        StartDate: " ",
+        state: " ",
+        endDate: " ",
+      }),
+        this.resetForm("form");
     },
     /** 搜索按钮操作 */
     handleQuery() {
+       console.log(this.queryParams);
       this.queryParams.pageNum = 1;
-      this.getList();
+      
     },
     /** 重置按钮操作 */
     resetQuery() {
@@ -420,7 +418,6 @@ export default {
     /** 提交按钮 */
     submitForm: function () {
       console.log(this.formData);
-     
     },
 
     //更多按钮触发操作
@@ -448,13 +445,10 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const dictIds = row.dictId || this.ids;
-      
     },
 
     /** 刷新缓存按钮操作 */
-    handleRefreshCache() {
-      
-    },
+    handleRefreshCache() {},
   },
 };
 </script>

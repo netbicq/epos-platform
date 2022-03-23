@@ -8,9 +8,9 @@
       v-show="showSearch"
       label-width="80px"
     >
-      <el-form-item  prop="dictName">
+      <el-form-item  prop="edition">
         <el-select
-          v-model="edition"
+          v-model="queryParams.edition"
           placeholder="专业版"
           clearable
           :style="{ width: '100%' }"
@@ -101,7 +101,7 @@
 
     <!-- 添加或修改参数配置对话框 -->
     <el-dialog
-      :title="title"
+      title="门店维护"
       :visible.sync="open"
       width="600px"
       height="540px"
@@ -351,9 +351,7 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        dictName: undefined,
-        dictType: undefined,
-        status: undefined,
+        edition: ''
       },
       // 表单参数
       form: {
@@ -406,6 +404,7 @@ export default {
     },
     /** 搜索按钮操作 */
     handleQuery() {
+      console.log(this.queryParams);
       this.queryParams.pageNum = 1;
       this.getList();
     },
@@ -419,56 +418,28 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "门店维护";
     },
 
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       this.open = true;
-      this.title = "门店维护";
+    
     },
     /** 提交按钮 */
     submitForm: function () {
         console.log(this.form)
-      this.$refs["form"].validate((valid) => {
-        if (valid) {
-          if (this.form.dictId != undefined) {
-            updateType(this.form).then((response) => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
-            addType(this.form).then((response) => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
-          }
-        }
-      });
+     
     },
     /** 删除按钮操作 */
     handleDelete(row) {
       const dictIds = row.dictId || this.ids;
-      this.$modal
-        .confirm('是否确认删除字典编号为"' + dictIds + '"的数据项？')
-        .then(function () {
-          return delType(dictIds);
-        })
-        .then(() => {
-          this.getList();
-          this.$modal.msgSuccess("删除成功");
-        })
-        .catch(() => {});
+      
     },
 
     /** 刷新缓存按钮操作 */
     handleRefreshCache() {
-      refreshCache().then(() => {
-        this.$modal.msgSuccess("刷新成功");
-      });
+      
     },
   },
 };
