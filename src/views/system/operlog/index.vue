@@ -197,7 +197,7 @@ export default {
   data() {
     return {
       // 遮罩层
-      loading: true,
+      loading: false,
       // 选中数组
       ids: [],
       // 非多个禁用
@@ -233,7 +233,7 @@ export default {
   methods: {
     /** 查询登录日志 */
     getList() {
-      this.loading = true;
+      this.loading = false;
       list(this.addDateRange(this.queryParams, this.dateRange)).then( response => {
           this.list = response.rows;
           this.total = response.total;

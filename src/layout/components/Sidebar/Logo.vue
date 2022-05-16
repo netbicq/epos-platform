@@ -35,8 +35,7 @@ export default {
   },
   data() {
     return {
-      title: '若依管理系统',
-      logo: logoImg
+      title: 'EPOS管理系统',
     }
   }
 }

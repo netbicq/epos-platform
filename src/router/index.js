@@ -68,10 +68,15 @@ export const constantRoutes = [
     children: [
       {
         path: 'index',
+        component: () => import('@/views/dealersMgt/dealerMgt/index'),
+      }
+      /* {
+        path: 'index',
         component: () => import('@/views/index'),
+        hidden: true,
         name: 'Index',
         meta: { title: '首页', icon: 'dashboard', affix: true }
-      }
+      } */
     ]
   },
   {

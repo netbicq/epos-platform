@@ -196,7 +196,7 @@ export default {
   data() {
     return {
       // 遮罩层
-      loading: true,
+      loading: false,
       // 选中数组
       ids: [],
       // 非单个禁用
@@ -242,7 +242,7 @@ export default {
   methods: {
     /** 查询字典类型列表 */
     getList() {
-      this.loading = true;
+      this.loading = false;
       listType(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
           this.typeList = response.rows;
           this.total = response.total;

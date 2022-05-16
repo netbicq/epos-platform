@@ -354,7 +354,7 @@ export default {
   data() {
     return {
       // 遮罩层
-      loading: true,
+      loading: false,
       // 选中数组
       ids: [],
       // 非单个禁用
@@ -469,7 +469,7 @@ export default {
   methods: {
     /** 查询用户列表 */
     getList() {
-      this.loading = true;
+      this.loading = false;
       listUser(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
           this.userList = response.rows;
           this.total = response.total;

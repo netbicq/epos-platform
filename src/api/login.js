@@ -39,10 +39,10 @@ export function getInfo() {
     s(res)
   })
 
-  // return request({
-  //   url: '/system/user/getInfo',
-  //   method: 'get'
-  // })
+  /* return request({
+    url: '/system/user/getInfo',
+    method: 'get'
+  }) */
 }
 
 // 退出方法

@@ -96,7 +96,7 @@ export const getRouters = () => {
                     "meta": {
                         "title": "门店管理",
                         "noCache": false,
-                        "icon":"mendain",
+                        "icon":"mendiannew",
                         "link": null
                     }
                 },
@@ -109,7 +109,7 @@ export const getRouters = () => {
                     "meta": {
                         "title": "收款管理",
                         "noCache": false,
-                        "icon":"shoukuan",
+                        "icon":"shoukuannew",
                         "link": null
                     }
                 },
@@ -122,7 +122,7 @@ export const getRouters = () => {
                     "meta": {
                         "title": "退款管理",
                         "noCache": false,
-                        "icon":"tuikuan",
+                        "icon":"tuikuannew",
                         "link": null
                     }
                 },
@@ -136,7 +136,7 @@ export const getRouters = () => {
                     "meta": {
                         "title": "售价策略",
                         "noCache": false,
-                        "icon":"yingxiaocelveguanli",
+                        "icon":"celuonew",
                         "link": null
                     }
                 },
@@ -149,7 +149,7 @@ export const getRouters = () => {
                     "meta": {
                         "title": "配置应用",
                         "noCache": false,
-                        "icon":"peizhiguanli",
+                        "icon":"peizhinew",
                         "link": null
                     }
                 }
