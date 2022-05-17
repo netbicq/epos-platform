@@ -65,6 +65,8 @@
       ></el-table-column>
       <el-table-column prop="c" label="经销商联系电话" fixed width="140" align="center">
       </el-table-column>
+      <el-table-column label="购买版本" width="100" prop="L" align="center">
+      </el-table-column>
       <el-table-column label="购买数量" width="100" prop="d" align="center">
       </el-table-column>
       <el-table-column
@@ -133,17 +135,40 @@
         <el-row>
           <el-col :span="22">
             <el-form-item label="经销商名称">
-              <el-input v-model="dataForm.a" placeholder="请输入经销商名称" />
+              <el-select
+                placeholder="请选择经销商"
+                v-model="dataForm.a"
+                style="width: 100%"
+              >
+                <el-option label="1" value="1"></el-option>
+                <el-option label="2" value="2"></el-option>
+                <el-option label="3" value="3"></el-option>
+                <el-option label="4" value="4"></el-option>
+                <el-option label="5" value="5"></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="22">
             <el-form-item label="经销商联系人">
-              <el-input v-model="dataForm.b" placeholder="请输入联系人" />
+              <el-input v-model="dataForm.b" disabled="disabled"/>
             </el-form-item>
           </el-col>
           <el-col :span="22">
             <el-form-item label="联系电话" prop="phone">
-              <el-input v-model="dataForm.c" placeholder="请输入联系电话" />
+              <el-input v-model="dataForm.c" disabled="disabled"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="22">
+            <el-form-item label="购买版本">
+              <el-select
+                placeholder="专业版"
+                v-model="dataForm.k"
+                style="width: 100%"
+              >
+                <el-option label="专业版" value="专业版"></el-option>
+                <el-option label="企业版" value="企业版"></el-option>
+                <el-option label="旗舰版" value="旗舰版"></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="22">
@@ -239,6 +264,7 @@ export default {
           h: "6212262201023557228",
           j: "打钱",
           k: "激活",
+          L:" 专业版"
         },
       ],
       // 总条数

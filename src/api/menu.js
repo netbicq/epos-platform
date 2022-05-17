@@ -28,7 +28,7 @@ export const getRouters = () => {
                             "component": "dealersMgt/dealerMgt/index",
                             "meta": {
                                 "title": "经销商管理",
-                                "icon": "jingxiaoshang",
+                                "icon": "jingxiaoshangnew",
                                 "noCache": false,
                                 "link": null
                             }
@@ -53,7 +53,7 @@ export const getRouters = () => {
                             "meta": {
                                 "title": "门店账号管理",
                                 "noCache": false,
-                                "icon":"zhanghaoguanli",
+                                "icon":"zahnghaonew",
                                 "link": null
                             }
                         }
@@ -206,6 +206,18 @@ export const getRouters = () => {
                             "meta": {
                                 "icon": "druid",
                                 "title": "系统参数",
+                                "noCache": false,
+                                "link": null
+                            }
+                        },
+                        {
+                            "name": "dataSource",
+                            "path": "dataSource",
+                            "hidden": false,                            
+                            "component": "system/dataSource/index",
+                            "meta": {
+                                "icon": "druid",
+                                "title": "数据源管理",
                                 "noCache": false,
                                 "link": null
                             }
