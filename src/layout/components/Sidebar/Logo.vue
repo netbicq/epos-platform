@@ -36,6 +36,7 @@ export default {
   data() {
     return {
       title: 'EPOS管理系统',
+      logo:''
     }
   }
 }

@@ -1,7 +1,17 @@
+const components = require('prismjs/components');
+const allLanguages = Object.keys(components.languages).filter((item) => item !== 'meta');
 module.exports = {
   presets: [
     // https://github.com/vuejs/vue-cli/tree/master/packages/@vue/babel-preset-app
     '@vue/cli-plugin-babel/preset'
+  ],
+  plugins: [
+    [
+      'prismjs',
+      {
+        languages: allLanguages,
+      },
+    ],
   ],
   'env': {
     'development': {

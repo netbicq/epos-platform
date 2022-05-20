@@ -270,6 +270,18 @@ export const getRouters = () => {
                                 "link": null
                             }
                         },
+                        {
+                            "name": "Editing",
+                            "path": "editing",
+                            "hidden": false,
+                            "component": "editing/index",
+                            "meta": {
+                                "title": "文档编辑",
+                                "icon": "excel",
+                                "noCache": false,
+                                "link": null
+                            }
+                        },
                         /* {
                             "name": "Menu",
                             "path": "menu",
@@ -362,6 +374,7 @@ export const getRouters = () => {
                         } */
                     ]
                 },
+                
                 /* {
                     "name": "Monitor",
                     "path": "/monitor",

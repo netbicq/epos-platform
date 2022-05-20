@@ -50,6 +50,27 @@ import 'viewerjs/dist/viewer.css'
 import FileSaver from 'file-saver'
 import XLSX from 'xlsx'
 
+import VMdPreview from '@kangc/v-md-editor/lib/preview';
+
+VMdPreview.use(vuepressTheme, {
+  Prism
+});
+
+Vue.use(VMdPreview);
+
+import VueMarkdownEditor from '@kangc/v-md-editor';
+import '@kangc/v-md-editor/lib/style/base-editor.css';
+import vuepressTheme from '@kangc/v-md-editor/lib/theme/vuepress.js';
+import '@kangc/v-md-editor/lib/theme/style/vuepress.css';
+
+import Prism from 'prismjs';
+
+VueMarkdownEditor.use(vuepressTheme, {
+  Prism,
+});
+
+Vue.use(VueMarkdownEditor);
+
 
 // 全局方法挂载
 Vue.prototype.$moment = moment
