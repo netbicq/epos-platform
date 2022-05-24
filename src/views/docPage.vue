@@ -129,6 +129,10 @@ Vue (读音 /vjuː/，类似于 view) 是一套用于构建用户界面的渐进
 };
 </script>
 <style lang="scss" scoped>
+*{
+  padding: 0;
+  margin: 0;
+}
 .documentMain {
   width: 100%;
   height: 100%;
@@ -146,10 +150,9 @@ Vue (读音 /vjuː/，类似于 view) 是一套用于构建用户界面的渐进
 }
 
 .documentText {
-  padding: 10px 0px 60px 20px;
+  padding: 10px 20px 60px 20px;
   max-width: 900px;
   min-width: 400px;
-  transform: translateX(50px);
 }
 
 .sidebar-link {
@@ -168,4 +171,22 @@ Vue (读音 /vjuː/，类似于 view) 是一套用于构建用户界面的渐进
   font-weight: bold;
   color: #237ff0;
 }
+
+@media screen and (max-width: 1300px){
+  .documentText{
+    margin-left: 290px;
+}
+}
+@media screen and (max-width: 900px){
+  .documentTitle{
+    width: 0;
+    padding: 0;
+    left: 0;
+}
+.documentText{
+    margin-left: 0;
+}
+
+}
+
 </style>

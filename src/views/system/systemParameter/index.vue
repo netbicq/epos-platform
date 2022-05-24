@@ -19,7 +19,13 @@
         class-name="small-padding fixed-width"
       >
         <template slot-scope="scope">
-          <el-button size="mini" type="text" @click="modifyBtn">修改</el-button>
+          <el-button
+            size="mini"
+            icon="el-icon-edit"
+            type="text"
+            @click="modifyBtn"
+            >修改</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -43,7 +49,7 @@
         :model="dataForm"
         :rules="rules"
         label-width="110px"
-        style="padding-left:29px"
+        style="padding-left: 29px"
       >
         <el-row>
           <el-col :span="22">

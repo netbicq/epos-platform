@@ -129,23 +129,22 @@
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-edit"
+            icon="el-icon-view"
             @click="details(scope.row)"
             >查看</el-button
           >
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-edit"
+           icon="el-icon-finished" 
             @click="examine(scope.row)"
             >审核</el-button
           >
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            >退款</el-button
+            ><svg-icon icon-class="tuikuannew"  class-name='custom-class' />退款</el-button
           >
         </template>
       </el-table-column>

@@ -104,9 +104,9 @@
         class-name="small-padding fixed-width"
       >
         <template slot-scope="scope">
-          <el-button size="mini" type="text" @click="modifyBtn">修改</el-button>
-          <el-button size="mini" type="text" @click="deleteBtn">删除</el-button>
-          <el-button size="mini" type="text" @click="checkBtn">审核</el-button>
+          <el-button size="mini" type="text" icon="el-icon-edit" @click="modifyBtn">修改</el-button>
+          <el-button size="mini" type="text" icon="el-icon-delete"  @click="deleteBtn">删除</el-button>
+          <el-button size="mini" type="text" icon="el-icon-finished" @click="checkBtn">审核</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -137,6 +137,7 @@
             <el-form-item label="经销商名称">
               <el-select
                 placeholder="请选择经销商"
+                filterable
                 v-model="dataForm.a"
                 style="width: 100%"
               >

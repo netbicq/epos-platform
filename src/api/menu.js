@@ -96,7 +96,7 @@ export const getRouters = () => {
                     "meta": {
                         "title": "门店管理",
                         "noCache": false,
-                        "icon":"mendiannew",
+                        "icon":"门店管理",
                         "link": null
                     }
                 },
@@ -122,7 +122,7 @@ export const getRouters = () => {
                     "meta": {
                         "title": "退款管理",
                         "noCache": false,
-                        "icon":"tuikuannew",
+                        "icon":"退款管理",
                         "link": null
                     }
                 },
@@ -136,7 +136,7 @@ export const getRouters = () => {
                     "meta": {
                         "title": "售价策略",
                         "noCache": false,
-                        "icon":"celuonew",
+                        "icon":"零售价",
                         "link": null
                     }
                 },

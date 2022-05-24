@@ -123,13 +123,14 @@
         class-name="small-padding fixed-width"
       >
         <template slot-scope="scope">
-          <el-button size="mini" type="text" @click="maintainBtn"
+          <el-button size="mini" icon="el-icon-edit" type="text" @click="maintainBtn"
             >修改</el-button
           >
-          <el-button size="mini" type="text" @click="checkBtn">审核</el-button>
-          <el-button size="mini" type="text" @click="lockingBtn"
+         
+          <el-button size="mini" icon="el-icon-lock" type="text" @click="lockingBtn"
             >锁定</el-button
           >
+           <el-button size="mini" icon="el-icon-finished" type="text" @click="checkBtn">审核</el-button>
         </template>
       </el-table-column>
     </el-table>

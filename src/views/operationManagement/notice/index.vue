@@ -106,10 +106,10 @@
               <i class="el-icon-d-arrow-right el-icon--right"></i>更多
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item icon="el-icon-circle-check" command="display"
+              <el-dropdown-item  command="display"
                 >显示</el-dropdown-item
               >
-              <el-dropdown-item icon="el-icon-user" command="hide"
+              <el-dropdown-item  command="hide"
                 >不显示</el-dropdown-item
               >
             </el-dropdown-menu>

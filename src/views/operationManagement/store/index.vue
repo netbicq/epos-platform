@@ -79,7 +79,7 @@
             v-if="scope.row.parentId != 0"
             size="mini"
             type="text"
-            icon="el-icon-check"
+            icon="el-icon-finished"
             @click="examine()"
             >审核</el-button
           >
@@ -87,7 +87,7 @@
             v-if="scope.row.parentId != 0"
             size="mini"
             type="text"
-            icon="el-icon-close"
+            icon="el-icon-lock"
             @click="locking()"
             >锁定</el-button
           >

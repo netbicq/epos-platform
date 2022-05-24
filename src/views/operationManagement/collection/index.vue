@@ -99,10 +99,10 @@
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-edit"
+            
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:dict:edit']"
-            >退款</el-button
+            ><svg-icon icon-class="tuikuannew"  class-name='custom-class' />退款</el-button
           >
         </template>
       </el-table-column>

@@ -127,7 +127,7 @@
             @click="maintainBtn"
             >修改</el-button
           >
-          <el-button size="mini" type="text" icon="el-icon-delete"
+          <el-button size="mini" type="text" icon="el-icon-lock"
             >锁定</el-button
           >
           <el-dropdown
