@@ -123,14 +123,14 @@
         class-name="small-padding fixed-width"
       >
         <template slot-scope="scope">
-          <el-button size="mini" icon="el-icon-edit" type="text" @click="maintainBtn"
+          <el-button size="mini" icon="el-icon-edit" type="text" @click="handleUpdate"
             >修改</el-button
           >
          
-          <el-button size="mini" icon="el-icon-lock" type="text" @click="lockingBtn"
+          <el-button size="mini" icon="el-icon-lock" type="text" @click="lockBtn(scope.row)"
             >锁定</el-button
           >
-           <el-button size="mini" icon="el-icon-finished" type="text" @click="checkBtn">审核</el-button>
+           <el-button size="mini" icon="el-icon-finished" type="text" @click="checkBtn(scope.row)">审核</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -158,37 +158,37 @@
       >
         <el-row>
           <el-col :span="22">
-            <el-form-item label="经销商">
+            <el-form-item label="经销商 :">
               <el-input v-model="dataForm.a" disabled="disabled" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="门店名称">
+            <el-form-item label="门店名称 :">
               <el-input v-model="dataForm.b" placeholder="请输入门店名称" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="门店联系人">
+            <el-form-item label="门店联系人 :">
               <el-input v-model="dataForm.c" placeholder="请输入门店联系人" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="门店电话" prop="phone">
+            <el-form-item label="门店电话 :" prop="phone">
               <el-input v-model="dataForm.d" placeholder="请输入门店电话" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="门店地址">
+            <el-form-item label="门店地址 :">
               <el-input v-model="dataForm.e" placeholder="请输入门店地址" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="门店用户名">
+            <el-form-item label="门店用户名 :">
               <el-input v-model="dataForm.f" placeholder="请输入门店用户名" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="应用版本">
+            <el-form-item label="应用版本 :">
               <el-select
                 placeholder="专业版"
                 v-model="dataForm.g"
@@ -210,14 +210,6 @@
 </template>
 
 <script>
-import {
-  listDept,
-  getDept,
-  delDept,
-  addDept,
-  updateDept,
-  listDeptExcludeChild,
-} from "@/api/system/dept";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import moment from "moment";
 export default {
@@ -301,7 +293,7 @@ export default {
       this.open = true;
     },
     // 维护按钮
-    maintainBtn() {
+    handleUpdate() {
       this.title = "门店维护";
       this.open = true;
     },
@@ -310,9 +302,22 @@ export default {
       this.dataForm = {};
     },
     // 审核按钮
-    checkBtn() {},
+    checkBtn(row) {
+      console.log(row);
+      this.$message({
+            type: "success",
+            message: "审核成功!",
+          });
+    },
     // 锁定按钮
-    lockingBtn() {},
+    lockBtn(row) {
+      console.log(row)
+      this.$message({
+          message: '已成功锁定',
+          type: 'success'
+        });
+
+    }
   },
   /* created() {
     this.getList();

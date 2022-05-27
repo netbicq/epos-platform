@@ -42,11 +42,13 @@
           >新增</el-button
         >
       </el-col>
+      <right-toolbar
+        :showSearch.sync="showSearch"
+      ></right-toolbar>
     </el-row>
 
     <el-table
       :data="tableData"
-      @selection-change="handleSelectionChange"
       height="600"
     >
       <el-table-column prop="title" label="门店名称" fixed align="center"> </el-table-column>
@@ -80,7 +82,7 @@
             size="mini"
             type="text"
             icon="el-icon-finished"
-            @click="examine()"
+            @click="checkBtn(scope.row)"
             >审核</el-button
           >
           <el-button
@@ -88,7 +90,7 @@
             size="mini"
             type="text"
             icon="el-icon-lock"
-            @click="locking()"
+           @click="lockBtn(scope.row)"
             >锁定</el-button
           >
         </template>
@@ -96,19 +98,18 @@
     </el-table>
 
     <pagination
-      v-show="1"
+      v-show="total>0"
       :total="total"
       :page.sync="queryParams.pageNum"
       :limit.sync="queryParams.pageSize"
-      @pagination="getList"
     />
 
     <!-- 添加或修改参数配置对话框 -->
     <el-dialog
       :title="title"
       :visible.sync="open"
+      @close="handleClose"
       width="600px"
-      height="600px"
       append-to-body
     >
       <el-form
@@ -120,24 +121,24 @@
       >
         <el-row>
           <el-col :span="22">
-            <el-form-item label="门店名称:" prop="store">
-              <el-input v-model="form.store" placeholder="门店名称" />
+            <el-form-item label="门店名称 :" prop="store">
+              <el-input v-model="form.store" placeholder="请输入门店名称" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="22">
-            <el-form-item label="门店联系人:" prop="contacts">
-              <el-input v-model="form.contacts" placeholder="彭于晏" />
+            <el-form-item label="门店联系人 :" prop="contacts">
+              <el-input v-model="form.contacts" placeholder="请输入门店联系人" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="22">
-            <el-form-item label="门店电话:" prop="phone">
+            <el-form-item label="门店电话 :" prop="phone">
               <el-input
                 v-model="form.phone"
-                placeholder="136xxxxxxxxxxx"
+                placeholder="请输入门店电话"
                 :maxlength="11"
               />
             </el-form-item>
@@ -145,21 +146,21 @@
         </el-row>
         <el-row>
           <el-col :span="22">
-            <el-form-item label="门店地址:" prop="address">
-              <el-input v-model="form.address" placeholder="北京市天安门大街" />
+            <el-form-item label="门店地址 :" prop="address">
+              <el-input v-model="form.address" placeholder="请输入门店地址" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="22">
-            <el-form-item label="门店用户名:" prop="userName">
-              <el-input v-model="form.userName" placeholder="门店用户名" />
+            <el-form-item label="门店用户名 :" prop="userName">
+              <el-input v-model="form.userName" placeholder="请输入门店用户名" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="22">
-            <el-form-item label="有效期限:" prop="period">
+            <el-form-item label="有效期限 :" prop="period">
               <el-date-picker
                 format="yyyy-MM-dd"
                 v-model="form.period"
@@ -173,18 +174,17 @@
         </el-row>
         <el-row>
           <el-col :span="22">
-            <el-form-item label="用户数量:" prop="quantity">
-              <el-input v-model.number="form.quantity" placeholder="用户数量" />
+            <el-form-item label="用户数量 :" prop="quantity">
+              <el-input v-model.number="form.quantity" placeholder="请输入用户数量" />
             </el-form-item>
           </el-col>
         </el-row>
-
         <el-row>
           <el-col :span="22">
-            <el-form-item label="应用版本:" prop="edition">
+            <el-form-item label="应用版本 :" prop="edition">
               <el-select
                 v-model="form.edition"
-                placeholder="请选择下拉选择"
+                placeholder="请选择版本"
                 clearable
                 :style="{ width: '100%' }"
               >
@@ -200,29 +200,15 @@
           </el-col>
         </el-row>
       </el-form>
-      <div style="height: 60px"></div>
-
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
-        <!-- <el-button @click="cancel">取 消</el-button> -->
       </div>
     </el-dialog>
   </div>
 </template>
-
 <script>
-import {
-  listType,
-  getType,
-  delType,
-  addType,
-  updateType,
-  refreshCache,
-} from "@/api/system/dict/type";
-
 export default {
-  name: "Dict",
-  dicts: ["sys_normal_disable"],
+  name: "store",
   data() {
     return {
       Options: [
@@ -239,7 +225,6 @@ export default {
           value: 3,
         },
       ],
-      total: 1,
       banben: "",
       sta: "",
       tableData: [
@@ -409,7 +394,7 @@ export default {
       // 显示搜索条件
       showSearch: true,
       // 总条数
-      total: 0,
+      total: 100,
       // 字典表格数据
       typeList: [],
       // 弹出层标题
@@ -469,11 +454,7 @@ export default {
       },
     };
   },
-  //   created() {
-  //     this.getList();
-  //   },
   methods: {
-    /** 查询字典类型列表 */
 
     // 取消按钮
     cancel() {
@@ -481,26 +462,18 @@ export default {
       this.reset();
     },
     //审核按钮
-    examine() {
-      console.log("审核");
+    checkBtn() {
+      this.$message({
+            type: "success",
+            message: "审核成功!",
+          });
     },
     //锁定按钮按钮
-    locking() {
-      console.log("锁定");
-    },
-    // 表单重置
-    reset() {
-      this.form = {
-        store: "",
-        period: "",
-        contacts: "",
-        phone: "",
-        address: "",
-        userName: "",
-        quantity: "",
-        edition: "",
-      };
-      this.resetForm("form");
+    lockBtn() {
+      this.$message({
+            type: "success",
+            message: "锁定成功!",
+          });
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -510,31 +483,33 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.dateRange = [];
-      this.resetForm("queryForm");
       this.handleQuery();
     },
     /** 新增按钮操作 */
     handleAdd() {
-      this.reset();
       this.open = true;
-      this.title = "门店维护";
+      this.title = "新增门店管理";
     },
 
     /** 修改按钮操作 */
     handleUpdate(row) {
-      this.reset();
       this.open = true;
       this.title = "门店维护";
     },
     /** 提交按钮 */
-    submitForm: function () {
+    submitForm() {
+       this.open = false;
+       this.form={};
       console.log(this.form);
     },
     /** 删除按钮操作 */
     handleDelete(row) {
       console.log(this.queryParams);
-      const dictIds = row.dictId || this.ids;
-    }
+    },
+     // 关闭按钮
+    handleClose() {
+      this.form = {};
+    },
   },
 };
 </script>

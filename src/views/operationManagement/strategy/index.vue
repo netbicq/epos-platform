@@ -116,14 +116,14 @@
       >
         <el-row>
           <el-col :span="22">
-            <el-form-item label="策略名称:" prop="titstrategyle">
+            <el-form-item label="策略名称 :" prop="titstrategyle">
               <el-input placeholder="请输入标题" v-model="form.titstrategyle" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="22">
-            <el-form-item label="显示开始日期:" prop="stime">
+            <el-form-item label="显示开始日期 :" prop="stime">
               <el-date-picker
                 format="yyyy-MM-dd"
                 v-model="form.stime"
@@ -137,7 +137,7 @@
         </el-row>
         <el-row>
           <el-col :span="22">
-            <el-form-item label="显示结束日期:" prop="etime">
+            <el-form-item label="显示结束日期 :" prop="etime">
               <el-date-picker
                 format="yyyy-MM-dd"
                 value-format="yyyy-MM-dd"
@@ -151,7 +151,7 @@
         </el-row>
         <el-row>
           <el-col :span="13">
-            <el-form-item label="是否促销:" prop="promotion">
+            <el-form-item label="是否促销 :" prop="promotion">
               <el-radio-group size="medium" v-model="form.promotion">
                 <el-radio label="Y">是</el-radio>
                 <el-radio label="N">否</el-radio>
@@ -161,7 +161,7 @@
         </el-row>
         <el-row>
           <el-col :span="22">
-            <el-form-item label="应用版本:" prop="edition">
+            <el-form-item label="应用版本 :" prop="edition">
               <el-select
                 v-model="form.edition"
                 placeholder="请选择版本"
@@ -181,7 +181,7 @@
         </el-row>
         <el-row>
           <el-col :span="13">
-            <el-form-item label="价格类别:" prop="category">
+            <el-form-item label="价格类别 :" prop="category">
               <el-radio-group size="medium" v-model="form.category"  placeholder="请选择价格类别">
                 <el-radio label="sta1">开户</el-radio>
                 <el-radio label="sta2">年度</el-radio>
@@ -191,38 +191,26 @@
         </el-row>
         <el-row>
           <el-col :span="22">
-            <el-form-item label="经销商价格:" prop="distributor">
+            <el-form-item label="经销商价格 :" prop="distributor">
               <el-input placeholder="请输入经销商价格" v-model="form.distributor" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="22">
-            <el-form-item label="零售价格:" prop="retail">
+            <el-form-item label="零售价格 :" prop="retail">
               <el-input placeholder="请输入零售价格" v-model="form.retail" />
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
-      <div style="height: 20px"></div>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
-        <!-- <el-button @click="cancel">取 消</el-button> -->
       </div>
     </el-dialog>
   </div>
 </template>
-
 <script>
-import {
-  listType,
-  getType,
-  delType,
-  addType,
-  updateType,
-  refreshCache,
-} from "@/api/system/dict/type";
-
 export default {
   name: "Dict",
   dicts: ["sys_normal_disable"],

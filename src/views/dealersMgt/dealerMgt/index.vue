@@ -127,7 +127,11 @@
             @click="maintainBtn"
             >修改</el-button
           >
-          <el-button size="mini" type="text" icon="el-icon-lock"
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-lock"
+            @click="lockBtn(scope.row)"
             >锁定</el-button
           >
           <el-dropdown
@@ -138,8 +142,10 @@
               <i class="el-icon-d-arrow-right el-icon--right"></i>更多
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>重置密码</el-dropdown-item>
-              <el-dropdown-item command="addPassage">设置通道</el-dropdown-item>
+              <el-dropdown-item command="resetPassword"
+                >重置密码</el-dropdown-item
+              >
+              <el-dropdown-item command="setChannel">设置通道</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </template>
@@ -169,47 +175,47 @@
       >
         <el-row>
           <el-col :span="22">
-            <el-form-item label="经销商名称">
+            <el-form-item label="经销商名称 :">
               <el-input v-model="openForm.a" placeholder="请输入经销商名称" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="联系人">
+            <el-form-item label="联系人 :">
               <el-input v-model="openForm.b" placeholder="请输入联系人" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="联系电话" prop="phone">
+            <el-form-item label="联系电话 :" prop="phone">
               <el-input v-model="openForm.c" placeholder="请输入联系电话" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="银行账号">
+            <el-form-item label="银行账号 :">
               <el-input v-model="openForm.d" placeholder="请输入银行账号" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="银行开户名">
+            <el-form-item label="银行开户名 :">
               <el-input v-model="openForm.e" placeholder="请输入银行开户名" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="开户银行">
+            <el-form-item label="开户银行 :">
               <el-input v-model="openForm.f" placeholder="请输入开户银行" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="经销商账号">
+            <el-form-item label="经销商账号 :">
               <el-input v-model="openForm.g" placeholder="请输入经销商账号" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="门店数量">
+            <el-form-item label="门店数量 :">
               <el-input v-model="openForm.h" placeholder="请输入门店数量" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="备注">
+            <el-form-item label="备注 :">
               <el-input
                 type="textarea"
                 v-model="openForm.j"
@@ -240,15 +246,12 @@
       >
         <el-row>
           <el-col :span="22">
-            <el-form-item label="经销商名称">
-              <el-input
-                v-model="passageForm.a"
-                disabled="disabled"                
-              />
+            <el-form-item label="经销商名称 :">
+              <el-input v-model="passageForm.a" disabled="disabled" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="云通道">
+            <el-form-item label="云通道 :">
               <el-select
                 placeholder="请选择云通道"
                 v-model="passageForm.b"
@@ -286,10 +289,7 @@
         <el-row>
           <el-col :span="22">
             <el-form-item label="经销商名称">
-              <el-input
-                v-model="dealerForm.a"
-                disabled="disabled"                
-              />
+              <el-input v-model="dealerForm.a" disabled="disabled" />
             </el-form-item>
           </el-col>
           <el-col :span="22" align="center">
@@ -307,14 +307,6 @@
 </template>
 
 <script>
-import {
-  listDept,
-  getDept,
-  delDept,
-  addDept,
-  updateDept,
-  listDeptExcludeChild,
-} from "@/api/system/dept";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
 export default {
@@ -393,10 +385,7 @@ export default {
       this.title = "新增经销商";
       this.open = true;
     },
-    // 打开设置通道
-    addPassage() {
-      this.openPassage = true;
-    },
+    
     // 关闭叉叉
     handleClose() {
       this.openForm = {};
@@ -412,6 +401,10 @@ export default {
       this.openForm = {};
       this.open = false;
       console.log(this.openForm);
+      this.$message({
+          message: '修改成功',
+          type: 'success'
+        });
     },
     // 提交设备通道按钮
     passageSubmit() {
@@ -425,14 +418,25 @@ export default {
       this.openDealer = false;
       console.log(this.dealerForm);
     },
+    // 设置通道
+    setChannel(){
+      this.openPassage = true;
+    },
+    // 重置密码
+    resetPassword() {
+      this.$message({
+          message: '已成功重置密码',
+          type: 'success'
+        });
+    },
     // 更多操作触发
     handleCommand(command, row) {
       switch (command) {
-        case "addPassage":
-          this.addPassage(row);
+        case "resetPassword":
+          this.resetPassword(row);
           break;
-        case "handleAuthUser":
-          this.handleAuthUser(row);
+        case "setChannel":
+          this.setChannel(row);
           break;
         default:
           break;
@@ -442,6 +446,15 @@ export default {
     maintainBtn() {
       (this.title = "维护经销商"), (this.open = true);
     },
+    // 锁定按钮
+    lockBtn(row) {
+      console.log(row)
+      this.$message({
+          message: '已成功锁定',
+          type: 'success'
+        });
+
+    }
   },
   /* created() {
     this.getList();

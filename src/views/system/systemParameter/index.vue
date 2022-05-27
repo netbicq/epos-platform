@@ -53,22 +53,22 @@
       >
         <el-row>
           <el-col :span="22">
-            <el-form-item label="参数名">
+            <el-form-item label="参数名 :">
               <el-input v-model="dataForm.a" placeholder="请输入参数名" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="参数Key值">
+            <el-form-item label="参数Key值 :">
               <el-input disabled="disabled" v-model="dataForm.b" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="参数" prop="phone">
+            <el-form-item label="参数 :" prop="phone">
               <el-input v-model="dataForm.c" placeholder="请输入参数" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="参数说明">
+            <el-form-item label="参数说明 :">
               <el-input
                 type="textarea"
                 v-model="dataForm.d"
@@ -86,17 +86,8 @@
 </template>
 
 <script>
-import {
-  listDept,
-  getDept,
-  delDept,
-  addDept,
-  updateDept,
-  listDeptExcludeChild,
-} from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
-import moment from "moment";
 export default {
   name: "Dept",
   dicts: ["sys_normal_disable"],

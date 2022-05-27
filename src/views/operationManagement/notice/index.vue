@@ -42,13 +42,10 @@
           >新增</el-button
         >
       </el-col>
+      <right-toolbar :showSearch.sync="showSearch"></right-toolbar>
     </el-row>
 
-    <el-table
-      :data="tableData"
-      @selection-change="handleSelectionChange"
-      height="600"
-    >
+    <el-table :data="tableData" height="600">
       <el-table-column label="标题" align="center" prop="title" />
       <el-table-column
         label="显示开始时间"
@@ -94,7 +91,7 @@
             size="mini"
             type="text"
             icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
+           @click="handleDelete(scope.row)"
             v-hasPermi="['system:dict:remove']"
             >删除</el-button
           >
@@ -106,12 +103,8 @@
               <i class="el-icon-d-arrow-right el-icon--right"></i>更多
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item  command="display"
-                >显示</el-dropdown-item
-              >
-              <el-dropdown-item  command="hide"
-                >不显示</el-dropdown-item
-              >
+              <el-dropdown-item command="display">显示</el-dropdown-item>
+              <el-dropdown-item command="hide">不显示</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </template>
@@ -119,19 +112,18 @@
     </el-table>
 
     <pagination
-      v-show="1"
+      v-show="total > 0"
       :total="total"
       :page.sync="queryParams.pageNum"
       :limit.sync="queryParams.pageSize"
-      @pagination="getList"
     />
 
     <!-- 添加或修改参数配置对话框 -->
     <el-dialog
       :title="title"
       :visible.sync="open"
+      @close="handleClose"
       width="600px"
-      height="540px"
       append-to-body
     >
       <el-form
@@ -143,14 +135,14 @@
       >
         <el-row>
           <el-col :span="22">
-            <el-form-item label="标题:" prop="title">
+            <el-form-item label="标题 :" prop="title">
               <el-input placeholder="请输入标题" v-model="formData.title" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="22">
-            <el-form-item label="显示开始日期:" prop="StartDate">
+            <el-form-item label="显示开始日期 :" prop="StartDate">
               <el-date-picker
                 format="yyyy-MM-dd"
                 v-model="formData.StartDate"
@@ -164,7 +156,7 @@
         </el-row>
         <el-row>
           <el-col :span="22">
-            <el-form-item label="显示结束日期:" prop="endDate">
+            <el-form-item label="显示结束日期 :" prop="endDate">
               <el-date-picker
                 format="yyyy-MM-dd"
                 value-format="yyyy-MM-dd"
@@ -178,7 +170,7 @@
         </el-row>
         <el-row>
           <el-col :span="22">
-            <el-form-item label="状态:" prop="state">
+            <el-form-item label="状态 :" prop="state">
               <el-radio-group size="medium" v-model="formData.state">
                 <el-radio label="Y">显示</el-radio>
                 <el-radio label="N">不显示</el-radio>
@@ -186,33 +178,32 @@
             </el-form-item>
           </el-col>
         </el-row>
+        <el-row>
+          <el-col :span="22">
+            <el-form-item label="通知内容 :">
+              <el-input
+                :autosize="{ minRows: 3, maxRows: 8 }"
+                v-model="formData.con"
+                type="textarea"
+                placeholder="请输入通知内容"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
-      <div style="height: 240px"></div>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
-        <!-- <el-button @click="cancel">取 消</el-button> -->
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import {
-  listType,
-  getType,
-  delType,
-  addType,
-  updateType,
-  refreshCache,
-} from "@/api/system/dict/type";
-
 export default {
-  name: "Dict",
+  name: "Notice",
   dicts: ["sys_normal_disable"],
   data() {
     return {
-      total: 1,
-
       tableData: [
         {
           title: "今日说法",
@@ -334,7 +325,7 @@ export default {
       // 显示搜索条件
       showSearch: true,
       // 总条数
-      total: 0,
+      total: 100,
       // 字典表格数据
       typeList: [],
       // 弹出层标题
@@ -351,10 +342,11 @@ export default {
       },
       // 表单参数
       formData: {
-        title: "标题啊",
-        StartDate: "2021-15-12",
-        state: "Y",
-        endDate: "2222-12-11",
+        title: "",
+        StartDate: "",
+        state: "",
+        endDate: "",
+        con:''
       },
       // 表单校验
       rules: {
@@ -378,17 +370,6 @@ export default {
     // 取消按钮
     cancel() {
       this.open = false;
-      this.reset();
-    },
-    // 表单重置
-    reset() {
-      (this.formData = {
-        title: " ",
-        StartDate: " ",
-        state: " ",
-        endDate: " ",
-      }),
-        this.resetForm("form");
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -399,25 +380,27 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.dateRange = [];
-      this.resetForm("queryForm");
       this.handleQuery();
     },
     /** 新增按钮操作 */
     handleAdd() {
-      this.reset();
+      this.title = "新增通知公告";
       this.open = true;
-      this.title = "门店维护";
+      
     },
-
+   // 关闭按钮
+    handleClose() {
+      this.formData = {};
+    },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      this.reset();
+      this.title = "修改通知公告";
       this.open = true;
-      this.title = "门店维护";
     },
     /** 提交按钮 */
-    submitForm: function () {
-      console.log(this.formData);
+    submitForm(){
+      this.open = false;
+      this.formData={};
     },
 
     //更多按钮触发操作
@@ -447,8 +430,27 @@ export default {
       const dictIds = row.dictId || this.ids;
     },
 
-    /** 刷新缓存按钮操作 */
-    handleRefreshCache() {},
+    // 删除按钮
+    handleDelete(row) {
+      console.log(row);
+      this.$confirm("此操作将永久删除该数据, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.$message({
+            type: "success",
+            message: "删除成功!",
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
+    },
   },
 };
 </script>

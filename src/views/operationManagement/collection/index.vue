@@ -72,11 +72,11 @@
           >导出</el-button
         >
       </el-col>
+       <right-toolbar :showSearch.sync="showSearch"></right-toolbar>
     </el-row>
 
     <el-table
       :data="tableData"
-      @selection-change="handleSelectionChange"
       height="600"
       id="table"
     >
@@ -99,7 +99,6 @@
           <el-button
             size="mini"
             type="text"
-            
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:dict:edit']"
             ><svg-icon icon-class="tuikuannew"  class-name='custom-class' />退款</el-button
@@ -109,7 +108,7 @@
     </el-table>
 
     <pagination
-      v-show="1"
+      v-show="total>0"
       :total="total"
       :page.sync="queryParams.pageNum"
       :limit.sync="queryParams.pageSize"
@@ -118,6 +117,7 @@
 
     <!-- 添加或修改参数配置对话框 -->
     <el-dialog
+    @close="handleClose"
       :title="title"
       :visible.sync="open"
       width="600px"
@@ -128,23 +128,22 @@
       <el-form ref="form" :model="formData" :rules="rules" label-width="100px">
         <el-row>
           <el-col :span="22">
-            <el-form-item label="订单号:">
+            <el-form-item label="订单号 :">
               <el-input v-model="formData.OrderId" :disabled="true" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="22">
-            <el-form-item label="交易金额:">
+            <el-form-item label="交易金额 :">
               <el-input v-model="formData.money" :disabled="true" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="22">
-            <el-form-item label="退款金额:" prop="refund">
+            <el-form-item label="退款金额 :" prop="refund">
               <el-input
-                type="number"
                 placeholder="请输入退款金额"
                 v-model="formData.refund"
               />
@@ -153,7 +152,7 @@
         </el-row>
         <el-row>
           <el-col :span="22">
-            <el-form-item label="退款原因:" prop="reason">
+            <el-form-item label="退款原因 :" prop="reason">
               <el-input
                 v-model="formData.reason"
                 type="textarea"
@@ -166,7 +165,7 @@
         </el-row>
         <el-row>
           <el-col :span="22">
-            <el-form-item label="附件:" prop="enclosure">
+            <el-form-item label="附件 :" prop="enclosure">
               <el-upload
                 class="upload-demo"
                 action="https://jsonplaceholder.typicode.com/posts"
@@ -191,21 +190,12 @@
 
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
-        <!-- <el-button @click="cancel">取 消</el-button> -->
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import {
-  listType,
-  getType,
-  delType,
-  addType,
-  updateType,
-  refreshCache,
-} from "@/api/system/dict/type";
 import moment from "moment";
 
 export default {
@@ -213,7 +203,6 @@ export default {
   dicts: ["sys_normal_disable"],
   data() {
     return {
-      total: 1,
       fileList: [
         {
           name: "food.jpeg",
@@ -305,7 +294,7 @@ export default {
       // 显示搜索条件
       showSearch: true,
       // 总条数
-      total: 0,
+      total: 100,
       // 字典表格数据
       typeList: [],
       // 弹出层标题
@@ -324,10 +313,10 @@ export default {
       },
       // 表单参数
       formData: {
-        OrderId: "12S1321",
-        money: "123",
-        refund: "123",
-        reason: "123",
+        OrderId: "",
+        money: "",
+        refund: "",
+        reason: "",
         enclosure: "",
         fileList: this.fileList,
       },
@@ -359,7 +348,7 @@ export default {
       try {
         this.$FileSaver.saveAs(
           new Blob([table_write], { type: "application/octet-stream" }),
-          time + "收款.xlsx"
+           "收款明细"+time +".xlsx"
         );
       } catch (e) {
         if (typeof console !== "undefined") console.log(e, table_write);
@@ -400,59 +389,34 @@ export default {
       return isJPG && isLt2M;
     },
 
-    // 取消按钮
-    cancel() {
-      this.open = false;
-      this.reset();
-    },
-    // 表单重置
-    reset() {
-      (this.formData = {
-        OrderId: " ",
-        money: " ",
-        refund: " ",
-        reason: " ",
-        enclosure: "",
-        fileList: this.fileList,
-      }),
-        this.resetForm("formData");
-    },
     /** 搜索按钮操作 */
     handleQuery() {
        console.log(this.queryParams);
       this.queryParams.pageNum = 1;
       this.getList();
     },
+     // 关闭按钮
+    handleClose() {
+      this.formData = {};
+    },
     /** 重置按钮操作 */
     resetQuery() {
       this.dateRange = [];
-      this.resetForm("queryForm");
       this.handleQuery();
     },
     /** 退款按钮操作 */
     handleUpdate(row) {
-      this.reset();
-      this.open = true;
       this.title = "退款申请";
+      this.open = true;
     },
     /** 提交按钮 */
-    submitForm: function () {
+    submitForm() {
       var data = {
         ...this.formData,
         fileList: this.fileList,
       };
       console.log(data);
-      
-    },
-    /** 删除按钮操作 */
-    handleDelete(row) {
-      const dictIds = row.dictId || this.ids;
-    },
-
-    /** 刷新缓存按钮操作 */
-    handleRefreshCache() {},
-    //导出
-    andleExport() {},
+    }
   },
 };
 </script>

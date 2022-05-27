@@ -104,9 +104,9 @@
         class-name="small-padding fixed-width"
       >
         <template slot-scope="scope">
-          <el-button size="mini" type="text" icon="el-icon-edit" @click="modifyBtn">修改</el-button>
-          <el-button size="mini" type="text" icon="el-icon-delete"  @click="deleteBtn">删除</el-button>
-          <el-button size="mini" type="text" icon="el-icon-finished" @click="checkBtn">审核</el-button>
+          <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate">修改</el-button>
+          <el-button size="mini" type="text" icon="el-icon-delete"  @click="handleDelete(scope.row)">删除</el-button>
+          <el-button size="mini" type="text" icon="el-icon-finished" @click="checkBtn(scope.row)">审核</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -129,12 +129,12 @@
         ref="form"
         :model="dataForm"
         :rules="rules"
-        label-width="100px"
+        label-width="106px"
         style="padding-left: 29px"
       >
         <el-row>
           <el-col :span="22">
-            <el-form-item label="经销商名称">
+            <el-form-item label="经销商名称 :">
               <el-select
                 placeholder="请选择经销商"
                 filterable
@@ -150,17 +150,17 @@
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="经销商联系人">
+            <el-form-item label="经销商联系人 :">
               <el-input v-model="dataForm.b" disabled="disabled"/>
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="联系电话" prop="phone">
+            <el-form-item label="联系电话 :" prop="phone">
               <el-input v-model="dataForm.c" disabled="disabled"/>
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="购买版本">
+            <el-form-item label="购买版本 :">
               <el-select
                 placeholder="专业版"
                 v-model="dataForm.k"
@@ -173,17 +173,17 @@
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="购买数量">
+            <el-form-item label="购买数量 :">
               <el-input v-model="dataForm.d" placeholder="请输入购买数量" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="购买金额">
+            <el-form-item label="购买金额 :">
               <el-input v-model="dataForm.e" placeholder="请输入购买金额" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="支付方式">
+            <el-form-item label="支付方式 :">
               <el-select
                 placeholder="请选择支付方式"
                 v-model="dataForm.f"
@@ -197,7 +197,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="购买时间">
+            <el-form-item label="购买时间 :">
               <el-date-picker
                 type="date"
                 placeholder="选择日期"
@@ -207,12 +207,12 @@
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="合同号">
+            <el-form-item label="合同号 :">
               <el-input v-model="dataForm.h" placeholder="请输入合同号" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="备注">
+            <el-form-item label="备注 :">
               <el-input
                 v-model="dataForm.i"
                 type="textarea"
@@ -325,14 +325,39 @@ export default {
       this.dataForm = {};
     },
     // 修改按钮
-    modifyBtn() {
+    handleUpdate() {
       this.titlt = "购买记录维护";
       this.open = true;
     },
     // 审核按钮
-    checkBtn() {},
+    checkBtn(row) {
+      console.log(row);
+      this.$message({
+            type: "success",
+            message: "审核成功!",
+          });
+    },
     // 删除按钮
-    deleteBtn() {},
+    handleDelete(row) {
+      console.log(row);
+      this.$confirm("此操作将永久删除该数据, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.$message({
+            type: "success",
+            message: "删除成功!",
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
+    },
   },
   /* created() {
     this.getList();
@@ -444,3 +469,5 @@ export default {
   // }
 };
 </script>
+<style scoped rel="stylesheet/scss" lang="scss">
+</style>

@@ -142,17 +142,17 @@
       >
         <el-row>
           <el-col :span="22">
-            <el-form-item label="设备ID">
+            <el-form-item label="设备ID :">
               <el-input v-model="setUpForm.a" disabled="disabled"/>
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="设备名称">
+            <el-form-item label="设备名称 :">
               <el-input v-model="setUpForm.b" disabled="disabled"/>
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="设备类型">
+            <el-form-item label="设备类型 :">
               <el-select
                 placeholder="智能插座"
                 style="width: 100%"
@@ -166,12 +166,12 @@
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="所属门店">
+            <el-form-item label="所属门店 :">
               <el-input v-model="setUpForm.d" disabled="disabled"/>
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="状态">
+            <el-form-item label="状态 :">
               <el-select
                 placeholder="正常"
                 v-model="setUpForm.e"
@@ -208,17 +208,17 @@
       >
         <el-row>
           <el-col :span="22">
-            <el-form-item label="设备ID">
+            <el-form-item label="设备ID :">
               <el-input v-model="maintainForm.a" placeholder="请输入设备ID" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="设备名称">
+            <el-form-item label="设备名称 :">
               <el-input v-model="maintainForm.b" placeholder="请输入设备名称" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="设备类型">
+            <el-form-item label="设备类型 :">
               <el-select
                 v-model="maintainForm.c"
                 placeholder="智能插座"
@@ -231,7 +231,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="所属门店">
+            <el-form-item label="所属门店 :">
               <el-input v-model="maintainForm.d" placeholder="请输入门店" />
             </el-form-item>
           </el-col>
@@ -258,12 +258,12 @@
       >
         <el-row>
           <el-col :span="22">
-            <el-form-item label="设备ID">
+            <el-form-item label="设备ID :">
               <el-input v-model="allocationForm.a" disabled="disabled"/>
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="设备名称">
+            <el-form-item label="设备名称 :">
               <el-input
                 v-model="allocationForm.b"
                 disabled="disabled"               
@@ -271,7 +271,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="设备类型">
+            <el-form-item label="设备类型 :">
               <el-select
                 v-model="allocationForm.c"
                 placeholder="智能插座"
@@ -285,7 +285,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="所属门店">
+            <el-form-item label="所属门店 :">
               <el-select
                 v-model="allocationForm.d"
                 filterable

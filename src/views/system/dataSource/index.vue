@@ -1,114 +1,250 @@
 <template>
   <div class="app-container">
-    <el-tabs v-model="activeName" @tab-click="handleClick">
+    <el-tabs v-model="activeName">
       <el-tab-pane label="数据源策略" name="first">
-        <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch">
+        <el-form
+          :model="queryParams"
+          ref="queryForm"
+          size="small"
+          :inline="true"
+          v-show="showSearch"
+        >
           <el-form-item prop="deptName">
-            <el-input v-model="queryParams.Filter" placeholder="请输入名称 负责人 联系电话等" style="width: 225px" clearable />
+            <el-input
+              v-model="queryParams.Filter"
+              placeholder="请输入名称 负责人 联系电话等"
+              style="width: 225px"
+              clearable
+            />
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-            <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+            <el-button
+              type="primary"
+              icon="el-icon-search"
+              size="mini"
+              @click="handleQuery"
+              >搜索</el-button
+            >
+            <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
+              >重置</el-button
+            >
           </el-form-item>
         </el-form>
 
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
-            <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="modifyBtn(true)"
-              v-hasPermi="['system:dept:add']">新增</el-button>
+            <el-button
+              type="primary"
+              plain
+              icon="el-icon-plus"
+              size="mini"
+              @click="modifyBtn(true)"
+              v-hasPermi="['system:dept:add']"
+              >新增</el-button
+            >
           </el-col>
           <right-toolbar :showSearch.sync="showSearch"></right-toolbar>
           <!-- @queryTable="getList" -->
         </el-row>
 
-        <el-table height="600" v-if="refreshTable" v-loading="loading" :data="deptList" row-key="deptId"
-          :default-expand-all="isExpandAll" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
+        <el-table
+          height="600"
+          v-if="refreshTable"
+          v-loading="loading"
+          :data="deptList"
+          row-key="deptId"
+          :default-expand-all="isExpandAll"
+          :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+        >
           <el-table-column prop="a" width="260" label="名称"></el-table-column>
-          <el-table-column prop="b" width="300" label="写库"  align="center"></el-table-column>
-          <el-table-column prop="c" width="300" label="读库"  align="center">
+          <el-table-column
+            prop="b"
+            width="300"
+            label="写库"
+            align="center"
+          ></el-table-column>
+          <el-table-column prop="c" width="300" label="读库" align="center">
           </el-table-column>
           <el-table-column label="备注" prop="d"> </el-table-column>
-          <el-table-column label="操作" width="200" align="center" class-name="small-padding fixed-width">
+          <el-table-column
+            label="操作"
+            width="200"
+            align="center"
+            class-name="small-padding fixed-width"
+          >
             <template slot-scope="scope">
-              <el-button size="mini" type="text" icon="el-icon-edit" @click="modifyBtn">修改</el-button>
-              <el-button size="mini" type="text" icon="el-icon-delete">删除</el-button>
+              <el-button
+                size="mini"
+                type="text"
+                icon="el-icon-edit"
+                @click="modifyBtn"
+                >修改</el-button
+              >
+              <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)"
+                >删除</el-button
+              >
             </template>
           </el-table-column>
         </el-table>
-        <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum"
-          :limit.sync="queryParams.pageSize" />
+        <pagination
+          v-show="total > 0"
+          :total="total"
+          :page.sync="queryParams.pageNum"
+          :limit.sync="queryParams.pageSize"
+        />
       </el-tab-pane>
 
-
       <el-tab-pane label="数据源管理" name="second">
-        <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch">
+        <el-form
+          :model="queryParams"
+          ref="queryForm"
+          size="small"
+          :inline="true"
+          v-show="showSearch"
+        >
           <el-form-item prop="deptName">
-            <el-input v-model="queryParams.Filter" placeholder="请输入名称 负责人 联系电话等" style="width: 225px" clearable />
+            <el-input
+              v-model="queryParams.Filter"
+              placeholder="请输入名称 负责人 联系电话等"
+              style="width: 225px"
+              clearable
+            />
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-            <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+            <el-button
+              type="primary"
+              icon="el-icon-search"
+              size="mini"
+              @click="handleQuery"
+              >搜索</el-button
+            >
+            <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
+              >重置</el-button
+            >
           </el-form-item>
         </el-form>
 
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
-            <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="addManagementForm(true)"
-              v-hasPermi="['system:dept:add']">新增</el-button>
+            <el-button
+              type="primary"
+              plain
+              icon="el-icon-plus"
+              size="mini"
+              @click="addManagementForm(true)"
+              v-hasPermi="['system:dept:add']"
+              >新增</el-button
+            >
           </el-col>
           <right-toolbar :showSearch.sync="showSearch"></right-toolbar>
           <!-- @queryTable="getList" -->
         </el-row>
 
-        <el-table height="600" v-if="refreshTable" v-loading="loading" :data="managementList" row-key="deptId"
-          :default-expand-all="isExpandAll" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
+        <el-table
+          height="600"
+          v-if="refreshTable"
+          v-loading="loading"
+          :data="managementList"
+          row-key="deptId"
+          :default-expand-all="isExpandAll"
+          :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+        >
           <el-table-column prop="a" width="260" label="名称"></el-table-column>
-          <el-table-column prop="b" width="300" label="数据驱动名"  align="center"></el-table-column>
-          <el-table-column prop="c" width="300" label="连接地址"  align="center">
+          <el-table-column
+            prop="b"
+            width="300"
+            label="数据驱动名"
+            align="center"
+          ></el-table-column>
+          <el-table-column prop="c" width="300" label="连接地址" align="center">
           </el-table-column>
           <el-table-column label="连接参数" prop="d"> </el-table-column>
           <el-table-column label="用户名" prop="e"> </el-table-column>
           <el-table-column label="密码" prop="f"> </el-table-column>
           <el-table-column label="备注" prop="g"> </el-table-column>
-          <el-table-column label="操作" width="200" align="center" class-name="small-padding fixed-width">
+          <el-table-column
+            label="操作"
+            width="200"
+            align="center"
+            class-name="small-padding fixed-width"
+          >
             <template slot-scope="scope">
-              <el-button size="mini" type="text" icon="el-icon-edit" @click="addManagementForm">修改</el-button>
-              <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.$index, scope.row)"">删除</el-button>
+              <el-button
+                size="mini"
+                type="text"
+                icon="el-icon-edit"
+                @click="addManagementForm()"
+                >修改</el-button
+              >
+              <el-button
+                size="mini"
+                type="text"
+                icon="el-icon-delete"
+                @click="handleDelete(scope.row)"
+                >删除
+              </el-button>
             </template>
           </el-table-column>
         </el-table>
-        <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum"
-          :limit.sync="queryParams.pageSize" />
+        <pagination
+          v-show="total > 0"
+          :total="total"
+          :page.sync="queryParams.pageNum"
+          :limit.sync="queryParams.pageSize"
+        />
       </el-tab-pane>
-
     </el-tabs>
 
     <!-- 维护数据源策略 -->
-    <el-dialog :title="dataTitle" @close="handleClose" :visible.sync="open" width="600px" append-to-body>
-      <el-form ref="dataForm" :model="dataForm" :rules="rules" label-width="110px" style="padding-left:29px">
+    <el-dialog
+      :title="dataTitle"
+      @close="handleClose"
+      :visible.sync="open"
+      width="600px"
+      append-to-body
+    >
+      <el-form
+        ref="dataForm"
+        :model="dataForm"
+        :rules="rules"
+        label-width="110px"
+        style="padding-left: 29px"
+      >
         <el-row>
           <el-col :span="22">
-            <el-form-item label="名称">
+            <el-form-item label="名称 :">
               <el-input v-model="dataForm.a" placeholder="请输入名称" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="写库">
-              <el-select v-model="dataForm.b" placeholder="阿里云库" style="width: 100%">
+            <el-form-item label="写库 :">
+              <el-select
+                v-model="dataForm.b"
+                placeholder="阿里云库"
+                style="width: 100%"
+              >
                 <el-option label="阿里云库" value="阿里云库"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="读库">
-              <el-select v-model="dataForm.c" placeholder="阿里云库" style="width: 100%">
+            <el-form-item label="读库 :">
+              <el-select
+                v-model="dataForm.c"
+                placeholder="阿里云库"
+                style="width: 100%"
+              >
                 <el-option label="阿里云库" value="阿里云库"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="备注">
-              <el-input type="textarea" v-model="dataForm.d" placeholder="请输入备注" />
+            <el-form-item label="备注 :">
+              <el-input
+                type="textarea"
+                v-model="dataForm.d"
+                placeholder="请输入备注"
+              />
             </el-form-item>
           </el-col>
         </el-row>
@@ -119,53 +255,83 @@
     </el-dialog>
 
     <!-- 维护数据源管理 -->
-    <el-dialog :title="managementTitle" @close="handleClose" :visible.sync="managementOpen" width="600px" append-to-body>
-      <el-form ref="dataForm" :model="managementForm" :rules="rules" label-width="110px" style="padding-left:29px">
+    <el-dialog
+      :title="managementTitle"
+      @close="handleClose"
+      :visible.sync="managementOpen"
+      width="600px"
+      append-to-body
+    >
+      <el-form
+        ref="dataForm"
+        :model="managementForm"
+        :rules="rules"
+        label-width="110px"
+        style="padding-left: 29px"
+      >
         <el-row>
           <el-col :span="22">
-            <el-form-item label="名称">
+            <el-form-item label="名称 :">
               <el-input v-model="managementForm.a" placeholder="请输入名称" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="数据驱动名">
-              <el-input v-model="managementForm.b" placeholder="请输入数据驱动名" />
+            <el-form-item label="数据驱动名 :">
+              <el-input
+                v-model="managementForm.b"
+                placeholder="请输入数据驱动名"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="连接地址">
-              <el-input v-model="managementForm.c" placeholder="请输入连接地址" />
+            <el-form-item label="连接地址 :">
+              <el-input
+                v-model="managementForm.c"
+                placeholder="请输入连接地址"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="连接参数">
-              <el-input v-model="managementForm.d" placeholder="请输入连接参数" />
+            <el-form-item label="连接参数 :">
+              <el-input
+                v-model="managementForm.d"
+                placeholder="请输入连接参数"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="银行开户名">
-              <el-input v-model="managementForm.e" placeholder="请输入银行开户名" />
+            <el-form-item label="银行开户名 :">
+              <el-input
+                v-model="managementForm.e"
+                placeholder="请输入银行开户名"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="用户名">
+            <el-form-item label="用户名 :">
               <el-input v-model="managementForm.f" placeholder="请输入用户名" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="密码">
+            <el-form-item label="密码 :">
               <el-input v-model="managementForm.g" placeholder="请输入密码" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="备注">
-              <el-input type="textarea" v-model="managementForm.h" placeholder="请输入备注" />
+            <el-form-item label="备注 :">
+              <el-input
+                type="textarea"
+                v-model="managementForm.h"
+                placeholder="请输入备注"
+              />
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitManagementForm">确 定</el-button>
+        <el-button type="primary" @click="submitManagementForm"
+          >确 定</el-button
+        >
       </div>
     </el-dialog>
   </div>
@@ -189,7 +355,7 @@ export default {
   components: { Treeselect },
   data() {
     return {
-      activeName: 'first',
+      activeName: "first",
       dataTitle: "",
       managementTitle: "",
       disabled: true,
@@ -225,8 +391,8 @@ export default {
           c: "192.168.123.70",
           d: "111",
           e: "fafafdfs",
-          f: '123456',
-          g: '备注备注备注'
+          f: "123456",
+          g: "备注备注备注",
         },
         {
           a: "库克科技",
@@ -234,15 +400,15 @@ export default {
           c: "192.168.123.70",
           d: "111",
           e: "dsdagada",
-          f: '123456',
-          g: '备注备注备注'
+          f: "123456",
+          g: "备注备注备注",
         },
       ],
       dataForm: {},
       managementForm: {},
       // 总条数
       total: 100,
-      managementOpen:false,
+      managementOpen: false,
       // 是否显示新建经销商
       open: false,
       // 是否展开，默认全部展开
@@ -291,17 +457,17 @@ export default {
     /** 修改按钮操作 */
     modifyBtn(x) {
       if (x === true) {
-        this.dataTitle = "新增数据源策略"
+        this.dataTitle = "新增数据源策略";
       } else {
-        this.dataTitle = "维护数据源策略"
+        this.dataTitle = "维护数据源策略";
       }
       this.open = true;
     },
     addManagementForm(x) {
       if (x === true) {
-        this.managementTitle = "新增数据源"
+        this.managementTitle = "新增数据源";
       } else {
-        this.managementTitle = "维护数据源"
+        this.managementTitle = "维护数据源";
       }
       this.managementOpen = true;
     },
@@ -310,24 +476,26 @@ export default {
       this.dataForm = {};
     },
     /** 删除按钮操作 */
-    handleDelete(index,row) {
-      console.log(index,row)
-      this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
+    handleDelete(row) {
+      console.log(row);
+      this.$confirm("此操作将永久删除该数据, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
           this.$message({
-            type: 'success',
-            message: '删除成功!'
+            type: "success",
+            message: "删除成功!",
           });
-        }).catch(() => {
+        })
+        .catch(() => {
           this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });          
+            type: "info",
+            message: "已取消删除",
+          });
         });
-    }
+    },
   },
   /* created() {
     this.getList();
@@ -427,15 +595,14 @@ export default {
   //       }
   //     });
   //   },
-    
+
   // }
 };
 </script>
 <style scoped rel="stylesheet/scss" lang="scss">
 .pagination-container {
   ::v-deep .el-pagination {
-    top: 0
+    top: 0;
   }
-
 }
 </style>

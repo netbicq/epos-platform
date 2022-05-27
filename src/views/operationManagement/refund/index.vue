@@ -62,11 +62,11 @@
           >导出</el-button
         >
       </el-col>
+      <right-toolbar :showSearch.sync="showSearch"></right-toolbar>
     </el-row>
 
     <el-table
       :data="tableData"
-      @selection-change="handleSelectionChange"
       height="600"
       id="tabkeins"
     >
@@ -136,15 +136,15 @@
           <el-button
             size="mini"
             type="text"
-           icon="el-icon-finished" 
+            icon="el-icon-finished"
             @click="examine(scope.row)"
             >审核</el-button
           >
-          <el-button
-            size="mini"
-            type="text"
-            @click="handleUpdate(scope.row)"
-            ><svg-icon icon-class="tuikuannew"  class-name='custom-class' />退款</el-button
+          <el-button size="mini" type="text" @click="handleUpdate(scope.row)"
+            ><svg-icon
+              icon-class="tuikuannew"
+              class-name="custom-class"
+            />退款</el-button
           >
         </template>
       </el-table-column>
@@ -170,7 +170,6 @@
       </div>
 
       <div slot="footer" class="dialog-footer">
-        <!-- <el-button type="primary" @click="submitForm">确 定</el-button> -->
         <el-button @click="cancel">关 闭</el-button>
       </div>
     </el-dialog>
@@ -191,43 +190,43 @@
       >
         <el-row>
           <el-col :span="22">
-            <el-form-item label="订单号:" prop="OrderId">
+            <el-form-item label="订单号 : " prop="OrderId">
               <span>{{ refundForm.OrderId }}</span>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="22">
-            <el-form-item label="交易金额:" prop="transaction">
+            <el-form-item label="交易金额 : " prop="transaction">
               <span>{{ refundForm.transaction }}</span>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="22">
-            <el-form-item label="退款金额:" prop="refund">
+            <el-form-item label="退款金额 : " prop="refund">
               <span>{{ refundForm.refund }}</span>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="22">
-            <el-form-item label="实际退款:" prop="effective">
+            <el-form-item label="实际退款 : " prop="effective">
               <span>{{ refundForm.effective }}</span>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="22">
-            <el-form-item label="状态:" prop="state">
+            <el-form-item label="状态 : " prop="state">
               <span>{{ refundForm.state }}</span>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="22">
-            <el-form-item label="退款原因:" prop="reason">
-              <div style="height: 100px">
+            <el-form-item label="退款原因 : " prop="reason">
+              <div class="Reason">
                 {{ refundForm.reason }}
               </div>
             </el-form-item>
@@ -235,7 +234,7 @@
         </el-row>
         <el-row>
           <el-col :span="22">
-            <el-form-item label="附件:" prop="enclosure">
+            <el-form-item label="附件 : " prop="enclosure">
               <viewer :images="refundForm.fileList">
                 <img
                   v-for="(k, i) in refundForm.fileList"
@@ -252,8 +251,7 @@
       </el-form>
 
       <div slot="footer" class="dialog-footer">
-        <!-- <el-button type="primary" @click="submitForm">确 定</el-button> -->
-        <el-button @click="cancel">取 消</el-button>
+        <el-button type="primary" @click="cancel">确 定</el-button>
       </div>
     </el-dialog>
 
@@ -261,6 +259,7 @@
     <el-dialog
       :title="title"
       :visible.sync="examineOpen"
+     @close="handleClose"
       width="700px"
       height="540px"
       append-to-body
@@ -275,7 +274,7 @@
       >
         <el-row>
           <el-col :span="22">
-            <el-form-item prop="remarks" label="备注:">
+            <el-form-item prop="remarks" label="备注 :">
               <el-input
                 type="textarea"
                 v-model="examineForm.remarks"
@@ -287,7 +286,7 @@
           </el-col>
         </el-row>
         <el-col :span="22">
-          <el-form-item label="意见:" prop="state">
+          <el-form-item label="审核 :" prop="state">
             <el-radio-group size="medium" v-model="examineForm.state">
               <el-radio
                 v-for="(item, index) in fielptions"
@@ -302,9 +301,9 @@
       <div style="height: 10px"></div>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
-        <!-- <el-button @click="cancel">取 消</el-button> -->
       </div>
     </el-dialog>
+
     <!-- 退款操作 -->
     <el-dialog
       :title="title"
@@ -328,15 +327,6 @@
 </template>
 
 <script>
-import XLSX, { WorkSheet } from "xlsx";
-import {
-  listType,
-  getType,
-  delType,
-  addType,
-  updateType,
-  refreshCache,
-} from "@/api/system/dict/type";
 import moment from "moment";
 export default {
   name: "Dict",
@@ -344,7 +334,6 @@ export default {
 
   data() {
     return {
-      i: 0,
       showImg: false,
       imgSrc: "",
       account: "",
@@ -354,11 +343,10 @@ export default {
           value: 1,
         },
         {
-          label: "不同意",
+          label: "拒绝",
           value: 2,
         },
       ],
-      total: 1,
       tableData: [
         {
           collectionOrder: "15645154856156456415642",
@@ -457,7 +445,7 @@ export default {
       // 显示搜索条件
       showSearch: true,
       // 总条数
-      total: 0,
+      total: 100,
       // 字典表格数据
       typeList: [],
       // 弹出层标题
@@ -490,9 +478,18 @@ export default {
         effective: "35",
         state: "已退款",
         reason:
-          "太帅了太帅了太帅了太帅了太帅了太帅了太帅了太帅了太帅了太帅了太帅了太帅了太帅了太帅了太帅了太帅了",
+          "太帅了太帅了太帅了太帅了太帅了太帅了太帅了太帅了太帅了太帅了太帅了太帅了太帅了太帅了太帅",
         fileList: [
           {
+            name: "food.jpeg",
+            url: "https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100",
+          },{
+            name: "food.jpeg",
+            url: "https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100",
+          },{
+            name: "food.jpeg",
+            url: "https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100",
+          },{
             name: "food.jpeg",
             url: "https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100",
           },
@@ -514,9 +511,7 @@ export default {
       },
     };
   },
-  //   created() {
-  //     this.getList();
-  //   },
+
   methods: {
     //导出EXCLE
     derive() {
@@ -532,7 +527,7 @@ export default {
       try {
         this.$FileSaver.saveAs(
           new Blob([table_write], { type: "application/octet-stream" }),
-          time + "退款.xlsx"
+           "退款明细"+time +".xlsx"
         );
       } catch (e) {
         if (typeof console !== "undefined") console.log(e, table_write);
@@ -548,44 +543,27 @@ export default {
     remarks(row) {
       console.log(row);
       this.account = row;
-
-      this.checksOpen = true;
       this.title = "审批备注";
+      this.checksOpen = true;
     },
     //查看退款原因
     reimburse(row) {
       this.account = row;
-
-      this.checksOpen = true;
       this.title = "退款原因";
+       this.checksOpen = true;
     },
     //查看退款详情
     details() {
-      this.refundOpen = true;
       this.title = "退款详情";
-    },
-    //退款审核
-    examine(rew) {
-      this.examineOpen = true;
-      this.title = "退款审核";
+      this.refundOpen = true;
     },
     //
-
     // 取消按钮
     cancel() {
       this.open = false;
       this.checksOpen = false;
       this.refundOpen = false;
       this.examineOpen = false;
-      this.reset();
-    },
-    // 表单重置
-    reset() {
-      (this.examineForm = {
-        remarks: "",
-        state: "",
-      }),
-        this.resetForm("examineForm");
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -596,7 +574,6 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.dateRange = [];
-      this.resetForm("queryForm");
       this.handleQuery();
     },
     /** 退款按钮操作 */
@@ -604,18 +581,30 @@ export default {
       this.open = true;
       this.title = "退款申请";
     },
-    //审批同意
+    //确认退款
     agree() {
       console.log("同意");
       this.open = false;
     },
-    /** 提交按钮 */
-    submitForm: function () {
-      console.log(this.examineForm);
-     
+    //退款审核
+    examine(row) {
+      this.title = "退款审核";
+      this.examineOpen = true;
     },
-    /** 删除按钮操作 */
-    handleDelete(row) {},
+    /** 审批提交 */
+    submitForm () {
+      this.examineOpen = false;
+      this.$message({
+            type: "success",
+            message: "审批成功!",
+          });
+      console.log(this.examineForm);
+      this.examineForm={}
+    },
+     // 关闭按钮
+    handleClose() {
+      this.examineForm = {};
+    },
   },
 };
 </script>
@@ -625,5 +614,9 @@ export default {
   margin: 0 auto;
   font-size: 16px;
   line-height: 30px;
+}
+.Reason {
+  max-height: 150px;
+  overflow: auto;
 }
 </style>
