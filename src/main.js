@@ -68,6 +68,8 @@ import Prism from 'prismjs';
 VueMarkdownEditor.use(vuepressTheme, {
   Prism,
 });
+import md5 from 'js-md5';
+Vue.prototype.$md5 = md5;
 
 Vue.use(VueMarkdownEditor);
 

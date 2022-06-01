@@ -1,13 +1,14 @@
 import { login, logout, getInfo, refreshToken } from '@/api/login'
 import { getToken, setToken, setExpiresIn, removeToken } from '@/utils/auth'
-
+import Cookies from 'js-cookie'
 const user = {
   state: {
     token: getToken(),
     name: '',
     avatar: '',
     roles: [],
-    permissions: []
+    permissions: [],
+    time: ''
   },
 
   mutations: {
@@ -30,27 +31,32 @@ const user = {
       state.permissions = permissions
     }
   },
-
   actions: {
     // 登录
     Login({ commit }, userInfo) {
-      const username = userInfo.username.trim()
+      const username = userInfo.userName.trim()
       const password = userInfo.password
-      const code = userInfo.code
-      const uuid = userInfo.uuid
+      /* const code = userInfo.code
+      const uuid = userInfo.uuid */
       return new Promise((resolve, reject) => {
-        login(username, password, code, uuid).then(res => {
-          let data = res.data
+        login(username, password).then(res => {
+          let data = res.result
           setToken(data.access_token)
           commit('SET_TOKEN', data.access_token)
           setExpiresIn(data.expires_in)
           commit('SET_EXPIRES_IN', data.expires_in)
+
+          /* var date = new Date();
+          var min = date.getMinutes();
+          date.setMinutes(min + data.expires_in);
+          Cookies.set("expirationtime", date.toLocaleString()) */
           resolve()
         }).catch(error => {
           reject(error)
         })
       })
     },
+
 
     // 获取用户信息
     GetInfo({ commit, state }) {
@@ -74,7 +80,7 @@ const user = {
     },
 
     // 刷新token
-    RefreshToken({commit, state}) {
+    RefreshToken({ commit, state }) {
       return new Promise((resolve, reject) => {
         refreshToken(state.token).then(res => {
           setExpiresIn(res.data)
@@ -85,7 +91,7 @@ const user = {
         })
       })
     },
-    
+
     // 退出系统
     LogOut({ commit, state }) {
       return new Promise((resolve, reject) => {

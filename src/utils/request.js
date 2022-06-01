@@ -1,12 +1,23 @@
 import axios from 'axios'
 import { Notification, MessageBox, Message, Loading } from 'element-ui'
+import { refreshToken } from '@/api/login'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 import errorCode from '@/utils/errorCode'
 import { tansParams, blobValidate } from "@/utils/ruoyi";
 import cache from '@/plugins/cache'
 import { saveAs } from 'file-saver'
+import Cookies from 'js-cookie'
 
+function compareDate(currentTime, expirationtime) {
+  var oDate1 = new Date(expirationtime);
+  var oDate2 = new Date(currentTime);
+  if (oDate1.getTime() > oDate2.getTime()) {
+    return false; //没过期
+  } else {
+    return true; //过期了
+  }
+};
 let downloadLoadingInstance;
 // 是否显示重新登录
 export let isRelogin = { show: false };
@@ -61,28 +72,39 @@ service.interceptors.request.use(config => {
   }
   return config
 }, error => {
-    console.log(error)
-    Promise.reject(error)
+  console.log(error)
+  Promise.reject(error)
 })
 
 // 响应拦截器
 service.interceptors.response.use(res => {
-    // 未设置状态码则默认成功状态
-    const code = res.data.code || 200;
-    // 获取错误信息
-    const msg = errorCode[code] || res.data.msg || errorCode['default']
-    // 二进制数据则直接返回
-    if(res.request.responseType ===  'blob' || res.request.responseType ===  'arraybuffer'){
-      return res.data
-    }
-    if (code === 401) {
-      if (!isRelogin.show) {
-        isRelogin.show = true;
-        MessageBox.confirm('登录状态已过期，您可以继续留在该页面，或者重新登录', '系统提示', {
-          confirmButtonText: '重新登录',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }
+
+  /* console.log(compareDate(new Date(), Cookies.get('expirationtime')), '是否过期')
+  // token是否过期
+  if (compareDate(new Date(), Cookies.get('expirationtime')) === false) {
+
+    store.dispatch('RefreshToken').then(() => {
+      console.log(res, '新的令牌')
+    })
+  } */
+
+  
+  // 未设置状态码则默认成功状态
+  const code = res.data.code || 200;
+  // 获取错误信息
+  const msg = errorCode[code] || res.data.msg || errorCode['default']
+  // 二进制数据则直接返回
+  if (res.request.responseType === 'blob' || res.request.responseType === 'arraybuffer') {
+    return res.data
+  }
+  if (code === 401) {
+    if (!isRelogin.show) {
+      isRelogin.show = true;
+      MessageBox.confirm('登录状态已过期，您可以继续留在该页面，或者重新登录', '系统提示', {
+        confirmButtonText: '重新登录',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }
       ).then(() => {
         isRelogin.show = false;
         store.dispatch('LogOut').then(() => {
@@ -92,22 +114,22 @@ service.interceptors.response.use(res => {
         isRelogin.show = false;
       });
     }
-      return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
-    } else if (code === 500) {
-      Message({
-        message: msg,
-        type: 'error'
-      })
-      return Promise.reject(new Error(msg))
-    } else if (code !== 200) {
-      Notification.error({
-        title: msg
-      })
-      return Promise.reject('error')
-    } else {
-      return res.data
-    }
-  },
+    return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
+  } else if (code === 500) {
+    Message({
+      message: msg,
+      type: 'error'
+    })
+    return Promise.reject(new Error(msg))
+  } else if (code !== 200) {
+    Notification.error({
+      title: msg
+    })
+    return Promise.reject('error')
+  } else {
+    return res.data
+  }
+},
   error => {
     console.log('err' + error)
     let { message } = error;
