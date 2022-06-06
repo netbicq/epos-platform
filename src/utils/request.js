@@ -10,8 +10,8 @@ import { saveAs } from 'file-saver'
 import Cookies from 'js-cookie'
 
 function compareDate(currentTime, expirationtime) {
-  var oDate1 = new Date(expirationtime);
-  var oDate2 = new Date(currentTime);
+  var oDate1 = new Date(expirationtime); // 过期时间
+  var oDate2 = new Date(currentTime); // 当前时间
   if (oDate1.getTime() > oDate2.getTime()) {
     return false; //没过期
   } else {
@@ -79,16 +79,6 @@ service.interceptors.request.use(config => {
 // 响应拦截器
 service.interceptors.response.use(res => {
 
-  /* console.log(compareDate(new Date(), Cookies.get('expirationtime')), '是否过期')
-  // token是否过期
-  if (compareDate(new Date(), Cookies.get('expirationtime')) === false) {
-
-    store.dispatch('RefreshToken').then(() => {
-      console.log(res, '新的令牌')
-    })
-  } */
-
-  
   // 未设置状态码则默认成功状态
   const code = res.data.code || 200;
   // 获取错误信息

@@ -176,49 +176,54 @@
         <el-row>
           <el-col :span="22">
             <el-form-item label="经销商名称 :">
-              <el-input v-model="openForm.a" placeholder="请输入经销商名称" />
+              <el-input v-model="openForm.name" placeholder="请输入经销商名称" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
             <el-form-item label="联系人 :">
-              <el-input v-model="openForm.b" placeholder="请输入联系人" />
+              <el-input v-model="openForm.contactName" placeholder="请输入联系人" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
             <el-form-item label="联系电话 :" prop="phone">
-              <el-input v-model="openForm.c" placeholder="请输入联系电话" />
+              <el-input v-model="openForm.contactTel" placeholder="请输入联系电话" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
             <el-form-item label="银行账号 :">
-              <el-input v-model="openForm.d" placeholder="请输入银行账号" />
+              <el-input v-model="openForm.bankAccount" placeholder="请输入银行账号" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
             <el-form-item label="银行开户名 :">
-              <el-input v-model="openForm.e" placeholder="请输入银行开户名" />
+              <el-input v-model="openForm.bankAccountName" placeholder="请输入银行开户名" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
             <el-form-item label="开户银行 :">
-              <el-input v-model="openForm.f" placeholder="请输入开户银行" />
+              <el-input v-model="openForm.bankName" placeholder="请输入开户银行" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
             <el-form-item label="经销商账号 :">
-              <el-input v-model="openForm.g" placeholder="请输入经销商账号" />
+              <el-input v-model="openForm.strategyId" placeholder="请输入经销商账号" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
+            <el-form-item label="用户名 :">
+              <el-input v-model="openForm.userName" placeholder="请输入经销商账号" />
+            </el-form-item>
+          </el-col>
+          <!-- <el-col :span="22">
             <el-form-item label="门店数量 :">
               <el-input v-model="openForm.h" placeholder="请输入门店数量" />
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="22">
             <el-form-item label="备注 :">
               <el-input
                 type="textarea"
-                v-model="openForm.j"
+                v-model="openForm.remark"
                 placeholder="请输入备注"
               />
             </el-form-item>
@@ -308,7 +313,9 @@
 
 <script>
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
-
+import {
+ addAgency
+} from "@/api/system/dealerMgt";
 export default {
   name: "DealerMgt",
   data() {
@@ -398,13 +405,10 @@ export default {
     },
     // 提交新增维护经销商按钮
     submitForm() {
-      this.openForm = {};
-      this.open = false;
-      console.log(this.openForm);
-      this.$message({
-          message: '修改成功',
-          type: 'success'
-        });
+      addAgency(this.openForm).then(res => {
+        this.open = false;
+        this.openForm = {};
+      });
     },
     // 提交设备通道按钮
     passageSubmit() {

@@ -30,7 +30,7 @@
             >
           </el-form-item>
         </el-form>
-
+        <!-- 新增数据源策略 -->
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
             <el-button
@@ -43,10 +43,11 @@
               >新增</el-button
             >
           </el-col>
-          <right-toolbar :showSearch.sync="showSearch"></right-toolbar>
-          <!-- @queryTable="getList" -->
+          <right-toolbar
+            :showSearch.sync="showSearch"
+            @queryTable="getList"
+          ></right-toolbar>
         </el-row>
-
         <el-table
           height="600"
           v-if="refreshTable"
@@ -56,16 +57,25 @@
           :default-expand-all="isExpandAll"
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
         >
-          <el-table-column prop="a" width="260" label="名称"></el-table-column>
           <el-table-column
-            prop="b"
+            prop="name"
+            width="260"
+            label="名称"
+          ></el-table-column>
+          <el-table-column
+            prop="writeSourceId"
             width="300"
             label="写库"
             align="center"
           ></el-table-column>
-          <el-table-column prop="c" width="300" label="读库" align="center">
+          <el-table-column
+            prop="readSourceId"
+            width="300"
+            label="读库"
+            align="center"
+          >
           </el-table-column>
-          <el-table-column label="备注" prop="d"> </el-table-column>
+          <el-table-column label="备注" prop="remark"> </el-table-column>
           <el-table-column
             label="操作"
             width="200"
@@ -77,10 +87,14 @@
                 size="mini"
                 type="text"
                 icon="el-icon-edit"
-                @click="modifyBtn"
+                @click="modifyBtn(scope.row, false)"
                 >修改</el-button
               >
-              <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)"
+              <el-button
+                size="mini"
+                type="text"
+                icon="el-icon-delete"
+                @click="handleDelete(scope.row, true)"
                 >删除</el-button
               >
             </template>
@@ -123,7 +137,7 @@
             >
           </el-form-item>
         </el-form>
-
+        <!-- 新增数据源 -->
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
             <el-button
@@ -131,15 +145,16 @@
               plain
               icon="el-icon-plus"
               size="mini"
-              @click="addManagementForm(true)"
+              @click="addManagementForm('', true)"
               v-hasPermi="['system:dept:add']"
               >新增</el-button
             >
           </el-col>
-          <right-toolbar :showSearch.sync="showSearch"></right-toolbar>
-          <!-- @queryTable="getList" -->
+          <right-toolbar
+            :showSearch.sync="showSearch"
+            @queryTable="getList"
+          ></right-toolbar>
         </el-row>
-
         <el-table
           height="600"
           v-if="refreshTable"
@@ -149,19 +164,29 @@
           :default-expand-all="isExpandAll"
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
         >
-          <el-table-column prop="a" width="260" label="名称"></el-table-column>
           <el-table-column
-            prop="b"
-            width="300"
+            prop="name"
+            width="120"
+            label="名称"
+          ></el-table-column>
+          <el-table-column
+            prop="driverClassName"
+            width="230"
             label="数据驱动名"
             align="center"
           ></el-table-column>
-          <el-table-column prop="c" width="300" label="连接地址" align="center">
+          <el-table-column
+            prop="urlPrepend"
+            width="300"
+            label="连接地址"
+            align="center"
+          >
           </el-table-column>
-          <el-table-column label="连接参数" prop="d"> </el-table-column>
-          <el-table-column label="用户名" prop="e"> </el-table-column>
-          <el-table-column label="密码" prop="f"> </el-table-column>
-          <el-table-column label="备注" prop="g"> </el-table-column>
+          <el-table-column label="连接参数" width="350" prop="urlAppend">
+          </el-table-column>
+          <el-table-column label="用户名" prop="username"> </el-table-column>
+          <el-table-column label="密码" prop="password"> </el-table-column>
+          <el-table-column label="备注" prop="remark"> </el-table-column>
           <el-table-column
             label="操作"
             width="200"
@@ -173,14 +198,14 @@
                 size="mini"
                 type="text"
                 icon="el-icon-edit"
-                @click="addManagementForm()"
+                @click="addManagementForm(scope.row, false)"
                 >修改</el-button
               >
               <el-button
                 size="mini"
                 type="text"
                 icon="el-icon-delete"
-                @click="handleDelete(scope.row)"
+                @click="handleDelete(scope.row, false)"
                 >删除
               </el-button>
             </template>
@@ -213,28 +238,38 @@
         <el-row>
           <el-col :span="22">
             <el-form-item label="名称 :">
-              <el-input v-model="dataForm.a" placeholder="请输入名称" />
+              <el-input v-model="dataForm.name" placeholder="请输入名称" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
             <el-form-item label="写库 :">
               <el-select
-                v-model="dataForm.b"
-                placeholder="阿里云库"
+                v-model="dataForm.writeSourceId"
+                placeholder="请选择"
                 style="width: 100%"
               >
-                <el-option label="阿里云库" value="阿里云库"></el-option>
+                <el-option
+                  v-for="item in managementList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                ></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="22">
             <el-form-item label="读库 :">
               <el-select
-                v-model="dataForm.c"
-                placeholder="阿里云库"
+                v-model="dataForm.readSourceId"
+                placeholder="请选择"
                 style="width: 100%"
               >
-                <el-option label="阿里云库" value="阿里云库"></el-option>
+                <el-option
+                  v-for="item in managementList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                ></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -242,7 +277,7 @@
             <el-form-item label="备注 :">
               <el-input
                 type="textarea"
-                v-model="dataForm.d"
+                v-model="dataForm.remark"
                 placeholder="请输入备注"
               />
             </el-form-item>
@@ -272,13 +307,16 @@
         <el-row>
           <el-col :span="22">
             <el-form-item label="名称 :">
-              <el-input v-model="managementForm.a" placeholder="请输入名称" />
+              <el-input
+                v-model="managementForm.name"
+                placeholder="请输入名称"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="22">
             <el-form-item label="数据驱动名 :">
               <el-input
-                v-model="managementForm.b"
+                v-model="managementForm.driverClassName"
                 placeholder="请输入数据驱动名"
               />
             </el-form-item>
@@ -286,7 +324,7 @@
           <el-col :span="22">
             <el-form-item label="连接地址 :">
               <el-input
-                v-model="managementForm.c"
+                v-model="managementForm.urlPrepend"
                 placeholder="请输入连接地址"
               />
             </el-form-item>
@@ -294,34 +332,40 @@
           <el-col :span="22">
             <el-form-item label="连接参数 :">
               <el-input
-                v-model="managementForm.d"
+                v-model="managementForm.urlAppend"
                 placeholder="请输入连接参数"
               />
             </el-form-item>
           </el-col>
-          <el-col :span="22">
+          <!-- <el-col :span="22">
             <el-form-item label="银行开户名 :">
               <el-input
                 v-model="managementForm.e"
                 placeholder="请输入银行开户名"
               />
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="22">
             <el-form-item label="用户名 :">
-              <el-input v-model="managementForm.f" placeholder="请输入用户名" />
+              <el-input
+                v-model="managementForm.username"
+                placeholder="请输入用户名"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="22">
             <el-form-item label="密码 :">
-              <el-input v-model="managementForm.g" placeholder="请输入密码" />
+              <el-input
+                v-model="managementForm.password"
+                placeholder="请输入密码"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="22">
             <el-form-item label="备注 :">
               <el-input
                 type="textarea"
-                v-model="managementForm.h"
+                v-model="managementForm.remark"
                 placeholder="请输入备注"
               />
             </el-form-item>
@@ -339,22 +383,17 @@
 
 <script>
 import {
-  listDept,
-  getDept,
-  delDept,
-  addDept,
-  updateDept,
-  listDeptExcludeChild,
-} from "@/api/system/dept";
+ addDataSource,getStrategyData,getSourceData,addStrategyData,deleteDataSource,deleteStrategyData,editDataSource,editStrategyData
+} from "@/api/system/dataSource";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
-import moment from "moment";
 export default {
   name: "Dept",
   dicts: ["sys_normal_disable"],
   components: { Treeselect },
   data() {
     return {
+      isAddDataSource:'',
       activeName: "first",
       dataTitle: "",
       managementTitle: "",
@@ -364,48 +403,12 @@ export default {
       // 显示搜索条件
       showSearch: true,
       // 数据源策略
-      deptList: [
-        {
-          a: "库克科技",
-          b: "阿里云库",
-          c: "阿里云库",
-          d: "经销商在创建门店时，是否系统自动审核生效",
-        },
-        {
-          a: "库克科技",
-          b: "阿里云库",
-          c: "阿里云库",
-          d: "经销商在创建门店时，是否系统自动审核生效",
-        },
-        {
-          a: "库克科技",
-          b: "阿里云库",
-          c: "阿里云库",
-          d: "经销商在创建门店时，是否系统自动审核生效",
-        },
-      ],
-      managementList: [
-        {
-          a: "库克科技",
-          b: "阿里云库",
-          c: "192.168.123.70",
-          d: "111",
-          e: "fafafdfs",
-          f: "123456",
-          g: "备注备注备注",
-        },
-        {
-          a: "库克科技",
-          b: "阿里云库",
-          c: "192.168.123.70",
-          d: "111",
-          e: "dsdagada",
-          f: "123456",
-          g: "备注备注备注",
-        },
-      ],
+      deptList: [],
+      // 数据源数据
+      managementList: [],
       dataForm: {},
       managementForm: {},
+      editDataSourceID:'',
       // 总条数
       total: 100,
       managementOpen: false,
@@ -433,19 +436,20 @@ export default {
       },
     };
   },
+  created() {
+    this.getList();
+  },
   methods: {
-    // 提交数据源策略按钮
-    submitForm() {
-      console.log(this.dataForm);
-      this.open = false;
-      this.dataForm = {};
+    getList() {
+      /* this.loading = true; */
+      getStrategyData().then(res => {
+        this.deptList=res.result
+      });
+      getSourceData().then(res => {
+        this.managementList=res.result
+      });
     },
-    // 提交数据源
-    submitManagementForm() {
-      console.log(this.managementForm);
-      this.managementOpen = false;
-      this.managementForm = {};
-    },
+    
     /** 重置按钮操作 */
     resetQuery() {
       this.queryParams.Filter = "";
@@ -454,40 +458,89 @@ export default {
     handleQuery() {
       console.log(this.queryParams);
     },
-    /** 修改按钮操作 */
-    modifyBtn(x) {
-      if (x === true) {
+    /** 新增/修改按钮操作 */
+    modifyBtn(row,flag) {
+      this.isAddDataSource=flag
+      if (flag === true) {
         this.dataTitle = "新增数据源策略";
       } else {
         this.dataTitle = "维护数据源策略";
+        this.dataForm = JSON.parse(JSON.stringify(row));   
       }
       this.open = true;
     },
-    addManagementForm(x) {
-      if (x === true) {
+    addManagementForm(row,flag) {      
+      this.isAddDataSource=flag
+      if (flag === true) {
         this.managementTitle = "新增数据源";
       } else {
         this.managementTitle = "维护数据源";
+        this.managementForm = JSON.parse(JSON.stringify(row));        
       }
       this.managementOpen = true;
     },
-    // 关闭按钮
-    handleClose() {
+    // 提交数据源管理
+    submitManagementForm() {
+      if(this.isAddDataSource===true){
+      addDataSource(this.managementForm).then(res => {
+      this.managementOpen = false;
+      this.managementForm = {};
+      this.getList();      
+       }); 
+      }else{          
+      delete this.managementForm.createTime;  
+      delete this.managementForm.sort;   
+      delete this.managementForm.createBy;   
+      delete this.managementForm.updateBy;   
+      delete this.managementForm.updateTime;   
+      editDataSource(this.managementForm).then(res => {
+      this.managementOpen = false;  
+      this.managementForm = {};
+      this.getList();
+       }); 
+      }      
+    },
+    // 提交数据源策略
+    submitForm() {
+      if(this.isAddDataSource===true){
+      addStrategyData(this.dataForm).then(res => {
+        this.open = false;
+        this.dataForm = {};
+      });
+      }else{   
+        delete this.dataForm.sort;          
+      editStrategyData(this.dataForm).then(res => {
+      this.open = false;  
       this.dataForm = {};
+      this.getList();
+       }); 
+      }      
     },
     /** 删除按钮操作 */
-    handleDelete(row) {
-      console.log(row);
+    handleDelete(row,flag) {      
       this.$confirm("此操作将永久删除该数据, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       })
         .then(() => {
-          this.$message({
+          if(flag===true){
+            deleteStrategyData(row.id).then(res => {
+           this.$message({
             type: "success",
             message: "删除成功!",
           });
+           this.getList();
+         });
+         }else{
+           deleteDataSource(row.id).then(res => {
+           this.$message({
+            type: "success",
+            message: "删除成功!",
+          });
+           this.getList();
+         });
+         }         
         })
         .catch(() => {
           this.$message({
@@ -496,107 +549,12 @@ export default {
           });
         });
     },
+    // 关闭按钮
+    handleClose() {
+      this.dataForm = {};
+      this.managementForm={}
+    },
   },
-  /* created() {
-    this.getList();
-  }, */
-  // methods: {
-  //   /** 查询部门列表 */
-  //   getList() {
-  //     this.loading = true;
-  //     listDept(this.queryParams).then(response => {
-  //       this.deptList = this.handleTree(response.data, "deptId");
-  //       this.loading = false;
-  //     });
-  //   },
-  //   /** 转换部门数据结构 */
-  //   normalizer(node) {
-  //     if (node.children && !node.children.length) {
-  //       delete node.children;
-  //     }
-  //     return {
-  //       id: node.deptId,
-  //       label: node.deptName,
-  //       children: node.children
-  //     };
-  //   },
-  //   // 表单重置
-  //   reset() {
-  //     this.form = {
-  //       deptId: undefined,
-  //       parentId: undefined,
-  //       deptName: undefined,
-  //       orderNum: undefined,
-  //       leader: undefined,
-  //       phone: undefined,
-  //       email: undefined,
-  //       status: "0"
-  //     };
-  //     this.resetForm("form");
-  //   },
-  //   /** 搜索按钮操作 */
-  //   handleQuery() {
-  //     this.getList();
-  //   },
-  //   /** 重置按钮操作 */
-  //   resetQuery() {
-  //     this.resetForm("queryForm");
-  //     this.handleQuery();
-  //   },
-  //   /** 新增按钮操作 */
-  //   handleAdd(row) {
-  //     this.reset();
-  //     if (row != undefined) {
-  //       this.form.parentId = row.deptId;
-  //     }
-  //     this.open = true;
-  //     this.title = "添加部门";
-  //     listDept().then(response => {
-  //       this.deptOptions = this.handleTree(response.data, "deptId");
-  //     });
-  //   },
-  //   /** 展开/折叠操作 */
-  //   toggleExpandAll() {
-  //     this.refreshTable = false;
-  //     this.isExpandAll = !this.isExpandAll;
-  //     this.$nextTick(() => {
-  //       this.refreshTable = true;
-  //     });
-  //   },
-  //   /** 修改按钮操作 */
-  //   handleUpdate(row) {
-  //     this.reset();
-  //     getDept(row.deptId).then(response => {
-  //       this.form = response.data;
-  //       this.open = true;
-  //       this.title = "修改部门";
-  //     });
-  //     listDeptExcludeChild(row.deptId).then(response => {
-  //       this.deptOptions = this.handleTree(response.data, "deptId");
-  //     });
-  //   },
-  //   /** 提交按钮 */
-  //   submitForm: function() {
-  //     this.$refs["form"].validate(valid => {
-  //       if (valid) {
-  //         if (this.form.deptId != undefined) {
-  //           updateDept(this.form).then(response => {
-  //             this.$modal.msgSuccess("修改成功");
-  //             this.open = false;
-  //             this.getList();
-  //           });
-  //         } else {
-  //           addDept(this.form).then(response => {
-  //             this.$modal.msgSuccess("新增成功");
-  //             this.open = false;
-  //             this.getList();
-  //           });
-  //         }
-  //       }
-  //     });
-  //   },
-
-  // }
 };
 </script>
 <style scoped rel="stylesheet/scss" lang="scss">

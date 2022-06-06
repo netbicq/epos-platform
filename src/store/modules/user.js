@@ -41,15 +41,14 @@ const user = {
       return new Promise((resolve, reject) => {
         login(username, password).then(res => {
           let data = res.result
-          setToken(data.access_token)
+          setToken(data.access_token)         
           commit('SET_TOKEN', data.access_token)
           setExpiresIn(data.expires_in)
           commit('SET_EXPIRES_IN', data.expires_in)
-
-          /* var date = new Date();
+          var date = new Date();
           var min = date.getMinutes();
           date.setMinutes(min + data.expires_in);
-          Cookies.set("expirationtime", date.toLocaleString()) */
+          Cookies.set("expirationtime", date.toLocaleString())
           resolve()
         }).catch(error => {
           reject(error)
