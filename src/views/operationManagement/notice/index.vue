@@ -1,104 +1,38 @@
 <template>
   <div class="app-container">
-    <el-form
-      :model="queryParams"
-      ref="queryForm"
-      size="small"
-      :inline="true"
-      v-show="showSearch"
-      label-width="68px"
-    >
+    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item prop="title">
-        <el-input
-          v-model="queryParams.title"
-          placeholder="请输入标题"
-          clearable
-          style="width: 240px"
-          @keyup.enter.native="handleQuery"
-        />
+        <el-input v-model="queryParams.title" placeholder="请输入标题" clearable style="width: 240px"
+          @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item>
-        <el-button
-          type="primary"
-          icon="el-icon-search"
-          size="mini"
-          @click="handleQuery"
-          >搜索</el-button
-        >
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
-          >重置</el-button
-        >
+        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['system:dict:add']"
-          >新增</el-button
-        >
+        <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd"
+          v-hasPermi="['system:dict:add']">新增</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch"></right-toolbar>
     </el-row>
 
     <el-table :data="tableData" height="600">
       <el-table-column label="标题" align="center" prop="title" />
-      <el-table-column
-        label="显示开始时间"
-        align="center"
-        prop="stime"
-        :show-overflow-tooltip="true"
-      />
-      <el-table-column
-        label="显示结束时间"
-        align="center"
-        prop="etime"
-        :show-overflow-tooltip="true"
-      />
+      <el-table-column label="显示开始时间" align="center" prop="stime" :show-overflow-tooltip="true" />
+      <el-table-column label="显示结束时间" align="center" prop="etime" :show-overflow-tooltip="true" />
       <el-table-column label="状态" align="center" prop="status" />
-      <el-table-column
-        label="创建人"
-        align="center"
-        prop="name"
-        :show-overflow-tooltip="true"
-      />
-      <el-table-column
-        label="创建时间"
-        align="center"
-        prop="date"
-        width="180"
-      />
-      <el-table-column
-        label="操作"
-        align="center"
-        class-name="small-padding fixed-width"
-      >
+      <el-table-column label="创建人" align="center" prop="name" :show-overflow-tooltip="true" />
+      <el-table-column label="创建时间" align="center" prop="date" width="180" />
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['system:dict:edit']"
-            >修改</el-button
-          >
+          <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)"
+            v-hasPermi="['system:dict:edit']">修改</el-button>
 
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-delete"
-           @click="handleDelete(scope.row)"
-            v-hasPermi="['system:dict:remove']"
-            >删除</el-button
-          >
-          <el-dropdown
-            size="mini"
-            @command="(command) => handleCommand(command, scope.row)"
-          >
+          <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)"
+            v-hasPermi="['system:dict:remove']">删除</el-button>
+          <el-dropdown size="mini" @command="(command) => handleCommand(command, scope.row)">
             <span class="el-dropdown-link">
               <i class="el-icon-d-arrow-right el-icon--right"></i>更多
             </span>
@@ -111,28 +45,11 @@
       </el-table-column>
     </el-table>
 
-    <pagination
-      v-show="total > 0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-    />
+    <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize" />
 
     <!-- 添加或修改参数配置对话框 -->
-    <el-dialog
-      :title="title"
-      :visible.sync="open"
-      @close="handleClose"
-      width="600px"
-      append-to-body
-    >
-      <el-form
-        ref="form"
-        :model="formData"
-        :rules="rules"
-        label-width="120px"
-        style="padding-left: 29px"
-      >
+    <el-dialog :title="title" :visible.sync="open" @close="handleClose" width="600px" append-to-body>
+      <el-form ref="form" :model="formData" :rules="rules" label-width="120px" style="padding-left: 29px">
         <el-row>
           <el-col :span="22">
             <el-form-item label="标题 :" prop="title">
@@ -143,28 +60,16 @@
         <el-row>
           <el-col :span="22">
             <el-form-item label="显示开始日期 :" prop="StartDate">
-              <el-date-picker
-                format="yyyy-MM-dd"
-                v-model="formData.StartDate"
-                value-format="yyyy-MM-dd"
-                :style="{ width: '100%' }"
-                placeholder="请选择开始日期"
-                clearable
-              ></el-date-picker>
+              <el-date-picker format="yyyy-MM-dd" v-model="formData.StartDate" value-format="yyyy-MM-dd"
+                :style="{ width: '100%' }" placeholder="请选择开始日期" clearable></el-date-picker>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="22">
             <el-form-item label="显示结束日期 :" prop="endDate">
-              <el-date-picker
-                format="yyyy-MM-dd"
-                value-format="yyyy-MM-dd"
-                v-model="formData.endDate"
-                :style="{ width: '100%' }"
-                placeholder="请选结束日期"
-                clearable
-              ></el-date-picker>
+              <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="formData.endDate"
+                :style="{ width: '100%' }" placeholder="请选结束日期" clearable></el-date-picker>
             </el-form-item>
           </el-col>
         </el-row>
@@ -181,12 +86,8 @@
         <el-row>
           <el-col :span="22">
             <el-form-item label="通知内容 :">
-              <el-input
-                :autosize="{ minRows: 3, maxRows: 8 }"
-                v-model="formData.con"
-                type="textarea"
-                placeholder="请输入通知内容"
-              />
+              <el-input :autosize="{ minRows: 3, maxRows: 8 }" v-model="formData.con" type="textarea"
+                placeholder="请输入通知内容" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -346,7 +247,7 @@ export default {
         StartDate: "",
         state: "",
         endDate: "",
-        con:''
+        con: ''
       },
       // 表单校验
       rules: {
@@ -373,9 +274,9 @@ export default {
     },
     /** 搜索按钮操作 */
     handleQuery() {
-       console.log(this.queryParams);
+      console.log(this.queryParams);
       this.queryParams.pageNum = 1;
-      
+
     },
     /** 重置按钮操作 */
     resetQuery() {
@@ -386,9 +287,9 @@ export default {
     handleAdd() {
       this.title = "新增通知公告";
       this.open = true;
-      
+
     },
-   // 关闭按钮
+    // 关闭按钮
     handleClose() {
       this.formData = {};
     },
@@ -398,9 +299,9 @@ export default {
       this.open = true;
     },
     /** 提交按钮 */
-    submitForm(){
+    submitForm() {
       this.open = false;
-      this.formData={};
+      this.formData = {};
     },
 
     //更多按钮触发操作

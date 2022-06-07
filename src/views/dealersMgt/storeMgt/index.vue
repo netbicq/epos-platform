@@ -1,161 +1,52 @@
 <template>
   <div class="app-container">
-    <el-form
-      :model="queryParams"
-      ref="queryForm"
-      size="small"
-      :inline="true"
-      v-show="showSearch"
-    >
+    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch">
       <el-form-item prop="deptName">
-        <el-input
-          v-model="queryParams.Filter"
-          placeholder="请输入名称 负责人 联系电话等"
-          style="width: 225px"
-          clearable
-        />
+        <el-input v-model="queryParams.Filter" placeholder="请输入名称 负责人 联系电话等" style="width: 225px" clearable />
       </el-form-item>
       <el-form-item>
-        <el-button
-          type="primary"
-          icon="el-icon-search"
-          size="mini"
-          @click="handleQuery"
-          >搜索</el-button
-        >
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
-          >重置</el-button
-        >
+        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['system:dept:add']"
-          >新增</el-button
-        >
+        <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd"
+          v-hasPermi="['system:dept:add']">新增</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch"></right-toolbar>
     </el-row>
-    <el-table
-      height="600"
-      v-if="refreshTable"
-      v-loading="loading"
-      :data="deptList"
-      row-key="deptId"
-      :default-expand-all="isExpandAll"
-      :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-    >
-      <el-table-column
-        prop="a"
-        label="门店名称"
-        fixed
-        width="180"
-      ></el-table-column>
-      <el-table-column
-        prop="b"
-        label="门店联系人"
-        fixed
-        width="90"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="c"
-        label="门店电话"
-        align="center"
-        fixed
-        width="110"
-      >
+    <el-table height="600" v-if="refreshTable" v-loading="loading" :data="deptList" row-key="deptId"
+      :default-expand-all="isExpandAll" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
+      <el-table-column prop="a" label="门店名称" width="180"></el-table-column>
+      <el-table-column prop="b" label="门店联系人" width="90" align="center"></el-table-column>
+      <el-table-column prop="c" label="门店电话" align="center" width="110">
       </el-table-column>
       <el-table-column prop="d" label="门店地址" width="200"> </el-table-column>
-      <el-table-column
-        prop="e"
-        label="经销商名称"
-        width="180"
-      ></el-table-column>
-      <el-table-column
-        prop="f"
-        label="经销商电话"
-        width="110"
-        align="center"
-      ></el-table-column>
+      <el-table-column prop="e" label="经销商名称" width="180"></el-table-column>
+      <el-table-column prop="f" label="经销商电话" width="110" align="center"></el-table-column>
       <el-table-column prop="g" label="经销商联系人" width="120" align="center">
       </el-table-column>
-      <el-table-column
-        prop="h"
-        label="门店用户名"
-        width="100"
-      ></el-table-column>
-      <el-table-column
-        prop="i"
-        label="应用版本"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="j"
-        align="center"
-        :formatter="carTimeFilter"
-        label="开通时间"
-        width="100"
-      ></el-table-column>
-      <el-table-column
-        prop="k"
-        :formatter="carTimeFilter"
-        label="有效期"
-        width="100"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="l"
-        label="用户数量"
-        align="center"
-      ></el-table-column>
+      <el-table-column prop="h" label="门店用户名" width="100"></el-table-column>
+      <el-table-column prop="i" label="应用版本" align="center"></el-table-column>
+      <el-table-column prop="j" align="center" :formatter="carTimeFilter" label="开通时间" width="100"></el-table-column>
+      <el-table-column prop="k" :formatter="carTimeFilter" label="有效期" width="100" align="center"></el-table-column>
+      <el-table-column prop="l" label="用户数量" align="center"></el-table-column>
       <el-table-column prop="m" label="状态" align="center"></el-table-column>
-      <el-table-column
-        label="操作"
-        align="center"
-        width="150"
-        class-name="small-padding fixed-width"
-      >
+      <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button size="mini" icon="el-icon-edit" type="text" @click="handleUpdate"
-            >修改</el-button
-          >
-         
-          <el-button size="mini" icon="el-icon-lock" type="text" @click="lockBtn(scope.row)"
-            >锁定</el-button
-          >
-           <el-button size="mini" icon="el-icon-finished" type="text" @click="checkBtn(scope.row)">审核</el-button>
+          <el-button size="mini" icon="el-icon-edit" type="text" @click="handleUpdate">修改</el-button>
+
+          <el-button size="mini" icon="el-icon-lock" type="text" @click="lockBtn(scope.row)">锁定</el-button>
+          <el-button size="mini" icon="el-icon-finished" type="text" @click="checkBtn(scope.row)">审核</el-button>
         </template>
       </el-table-column>
     </el-table>
-    <pagination
-      v-show="total > 0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-    />
+    <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize" />
 
     <!-- 门店维护 -->
-    <el-dialog
-      :title="title"
-      @close="handleClose"
-      :visible.sync="open"
-      width="600px"
-      append-to-body
-    >
-      <el-form
-        ref="dataForm"
-        :model="dataForm"
-        :rules="rules"
-        label-width="100px"
-        style="padding-left: 29px"
-      >
+    <el-dialog :title="title" @close="handleClose" :visible.sync="open" width="600px" append-to-body>
+      <el-form ref="dataForm" :model="dataForm" :rules="rules" label-width="100px" style="padding-left: 29px">
         <el-row>
           <el-col :span="22">
             <el-form-item label="经销商 :">
@@ -164,40 +55,47 @@
           </el-col>
           <el-col :span="22">
             <el-form-item label="门店名称 :">
-              <el-input v-model="dataForm.b" placeholder="请输入门店名称" />
+              <el-input v-model="dataForm.name" placeholder="请输入门店名称" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
             <el-form-item label="门店联系人 :">
-              <el-input v-model="dataForm.c" placeholder="请输入门店联系人" />
+              <el-input v-model="dataForm.contactName" placeholder="请输入门店联系人" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
             <el-form-item label="门店电话 :" prop="phone">
-              <el-input v-model="dataForm.d" placeholder="请输入门店电话" />
+              <el-input v-model="dataForm.contactTel" placeholder="请输入门店电话" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="22">
+            <el-form-item label="门店邮箱 :" prop="phone">
+              <el-input v-model="dataForm.email" placeholder="请输入门店电话" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
             <el-form-item label="门店地址 :">
-              <el-input v-model="dataForm.e" placeholder="请输入门店地址" />
+              <el-input v-model="dataForm.address" placeholder="请输入门店地址" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
             <el-form-item label="门店用户名 :">
-              <el-input v-model="dataForm.f" placeholder="请输入门店用户名" />
+              <el-input v-model="dataForm.agencyId" placeholder="请输入门店用户名" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
             <el-form-item label="应用版本 :">
-              <el-select
-                placeholder="专业版"
-                v-model="dataForm.g"
-                style="width: 100%"
-              >
+              <el-select placeholder="专业版" v-model="dataForm.editionType" style="width: 100%">
                 <el-option label="专业版" value="专业版"></el-option>
                 <el-option label="企业版" value="企业版"></el-option>
                 <el-option label="旗舰版" value="旗舰版"></el-option>
               </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="22">
+            <el-form-item label="启用时间 :">
+              <el-date-picker v-model="dataForm.startDate" style="width:100%;" type="date" placeholder="请选择日期">
+              </el-date-picker>
             </el-form-item>
           </el-col>
         </el-row>
@@ -211,6 +109,9 @@
 
 <script>
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import {
+  addTenant
+} from "@/api/system/storeMgt";
 import moment from "moment";
 export default {
   name: "StoreMgt",
@@ -257,15 +158,7 @@ export default {
       // 表单参数
       dataForm: {},
       // 表单校验
-      rules: {
-        phone: [
-          {
-            pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
-            message: "请输入正确的手机号码",
-            trigger: "blur",
-          },
-        ],
-      },
+      rules: {},
     };
   },
   methods: {
@@ -275,9 +168,20 @@ export default {
     },
     // 提交按钮
     submitForm() {
-      console.log(this.dataForm);
-      this.open = false;
-      this.dataForm = {};
+      this.$refs["dataForm"].validate(valid => {
+        if (valid) {
+          console.log(this.dataForm)
+          addTenant(this.dataForm).then(res => {
+            if (res.type == success && res.code == 200) {
+              this.$message.success('新增成功');
+              this.open = false;
+              this.dataForm = {};
+            } else {
+               this.$message.warning('新增失败，请重试');
+            }
+          });
+        }
+      })
     },
     /** 重置按钮操作 */
     resetQuery() {
@@ -305,17 +209,17 @@ export default {
     checkBtn(row) {
       console.log(row);
       this.$message({
-            type: "success",
-            message: "审核成功!",
-          });
+        type: "success",
+        message: "审核成功!",
+      });
     },
     // 锁定按钮
     lockBtn(row) {
       console.log(row)
       this.$message({
-          message: '已成功锁定',
-          type: 'success'
-        });
+        message: '已成功锁定',
+        type: 'success'
+      });
 
     }
   },
@@ -430,8 +334,8 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-  ::v-deep .el-dialog__body{
-  border-top: 1px solid rgb(223,228,237);
-  border-bottom: 1px solid rgb(223,228,237);
+::v-deep .el-dialog__body {
+  border-top: 1px solid rgb(223, 228, 237);
+  border-bottom: 1px solid rgb(223, 228, 237);
 }
 </style>

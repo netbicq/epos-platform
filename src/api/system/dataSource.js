@@ -33,17 +33,19 @@ export function editStrategyData(data) {
   })
 }
 // 获取策略表数据
-export function getStrategyData() {
+export function getStrategyData(query) {
   return request({
-    url: '/platform/ds/lists',
+    url: '/platform/ds/pagelists',
     method: 'get',
+    params: query
   })
 }
 // 获取数据源数据
-export function getSourceData() {
+export function getSourceData(query) {
   return request({
-    url: '/platform/ds/list',
+    url: '/platform/ds/pagelist',
     method: 'get',
+    params: query
   })
 }
 // 根据ID删除数据源
