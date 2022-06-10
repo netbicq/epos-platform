@@ -8,10 +8,10 @@ export function addTenant(data) {
     data: data
   })
 }
-// 获取经销商列表
-export function getAllAgency(query) {
+// 获取门店列表
+export function getTenant(query) {
   return request({
-    url: '/platform/Agency/findAllAgency',
+    url: '/platform/Te/pageTenant',
     method: 'get',
     params: query
   })

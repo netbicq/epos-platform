@@ -18,7 +18,7 @@
           </el-col>
           <right-toolbar :showSearch.sync="showSearch" @queryTable="getStrategyData"></right-toolbar>
         </el-row>
-        <el-table height="600" v-if="refreshTable" v-loading="loading" :data="deptList" row-key="deptId"
+        <el-table height="600" size="medium" v-if="refreshTable" v-loading="loading" :data="deptList" row-key="deptId"
           :default-expand-all="isExpandAll" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
           <el-table-column prop="name" width="260" label="名称"></el-table-column>
           <el-table-column prop="writeSourceId" width="300" label="写库" align="center"></el-table-column>
@@ -55,8 +55,9 @@
           </el-col>
           <right-toolbar :showSearch.sync="showSearch" @queryTable="getSourceData"></right-toolbar>
         </el-row>
-        <el-table height="600" v-if="refreshTable" v-loading="loading" :data="managementList" row-key="deptId"
-          :default-expand-all="isExpandAll" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
+        <el-table height="600" size="medium" v-if="refreshTable" v-loading="loading" :data="managementList"
+          row-key="deptId" :default-expand-all="isExpandAll"
+          :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
           <el-table-column prop="name" width="120" label="名称"></el-table-column>
           <el-table-column prop="driverClassName" width="230" label="数据驱动名" align="center"></el-table-column>
           <el-table-column prop="urlPrepend" width="300" label="连接地址" align="center"></el-table-column>
@@ -203,13 +204,13 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        Filter: "",
+        Filter: undefined,
       },
       // 策略查询参数
       strategyParams: {
         pageNum: 1,
         pageSize: 10,
-        Filter: "",
+        Filter: undefined,
       },
       // 表单校验
       rules: {
@@ -237,8 +238,8 @@ export default {
     // 获取数据源
     getSourceData() {
       this.loading = true;
-     var indexPages=0
-      if (this.queryParams.parameter == ''||this.queryParams.parameter == null||this.queryParams.parameter == undefined) {
+      var indexPages = 0
+      if (this.queryParams.parameter == undefined) {
         indexPages = this.queryParams.pageNum - 1
       }
       const queryParams = {
@@ -247,28 +248,44 @@ export default {
         parameter: this.queryParams.Filter,
       }
       getSourceData(queryParams).then(res => {
-        this.managementList = res.result.data
-        this.total = parseInt(res.result.items)
-        this.loading = false;
-      });
+        if (res.type == "success" && res.code == 200) {
+          this.managementList = res.result.data
+          this.total = parseInt(res.result.items)
+          this.loading = false;
+        } else {
+          this.$message.error('获取数据失败，请重试');
+        }
+      }).catch((err) => {
+        this.$notify.error({
+          title: err
+        });
+      })
     },
     // 获取策略
     getStrategyData() {
       this.loading = true;
       var indexPage = 0
-      if (this.queryParams.parameter == ''||this.queryParams.parameter == null||this.queryParams.parameter == undefined) {
+      if (this.queryParams.parameter == undefined) {
         indexPage = this.strategyParams.pageNum - 1
-      } 
+      }
       const queryParams = {
         pageIndex: indexPage,
         size: this.strategyParams.pageSize,
         parameter: this.strategyParams.Filter,
       }
       getStrategyData(queryParams).then(res => {
-        this.deptList = res.result.data
-        this.totalStrategy = parseInt(res.result.items)
-        this.loading = false;
-      });
+        if (res.type == "success" && res.code == 200) {
+          this.deptList = res.result.data
+          this.totalStrategy = parseInt(res.result.items)
+          this.loading = false;
+        } else {
+          this.$message.error('获取数据失败，请重试');
+        }
+      }).catch((err) => {
+        this.$notify.error({
+          title: err
+        });
+      })
     },
     /* handleClick(tab) {
       if (tab.index == 0) {
@@ -315,8 +332,10 @@ export default {
                 this.getSourceData();
                 this.managementForm = {};
               } else {
-                this.$message.warning('新增失败，请重试');
+                this.$message.error('新增失败，请重试');
               }
+            }).catch((err) => {
+              this.$message.error(err);
             });
           } else {
             delete this.managementForm.createTime;
@@ -326,14 +345,15 @@ export default {
             delete this.managementForm.updateTime;
             editDataSource(this.managementForm).then(res => {
               if (res.type == success && res.code == 200) {
-                this.$message.success('新增成功');
+                this.$message.success('编辑成功');
                 this.managementOpen = false;
                 this.getSourceData();
                 this.managementForm = {};
               } else {
-                this.$message.warning('新增失败，请重试');
+                this.$message.error('编辑失败，请重试');
               }
-
+            }).catch((err) => {
+              this.$message.error(err);
             });
           }
         }
@@ -352,9 +372,13 @@ export default {
                 this.dataForm = {};
                 this.getStrategyData();
               } else {
-                this.$message.warning('新增失败，请重试');
+                this.$message.error('新增失败，请重试');
               }
-            });
+            }).catch((err) => {
+              this.$notify.error({
+                title: err
+              });
+            })
           } else {
             delete this.dataForm.sort;
             editStrategyData(this.dataForm).then(res => {
@@ -364,10 +388,13 @@ export default {
                 this.dataForm = {};
                 this.getStrategyData();
               } else {
-                this.$message.warning('新增失败，请重试');
+                this.$message.error('编辑失败，请重试');
               }
-
-            });
+            }).catch((err) => {
+              this.$notify.error({
+                title: err
+              });
+            })
           }
         }
       })
@@ -389,6 +416,8 @@ export default {
               } else {
                 this.$message.warning('删除失败，请重试');
               }
+            }).catch((err) => {
+              this.$message.error(err);
             });
           } else {
             deleteDataSource(row.id).then(res => {
@@ -398,6 +427,8 @@ export default {
               } else {
                 this.$message.warning('删除失败，请重试');
               }
+            }).catch((err) => {
+              this.$message.error(err);
             });
           }
         })

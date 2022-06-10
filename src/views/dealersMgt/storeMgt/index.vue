@@ -5,7 +5,7 @@
         <el-input v-model="queryParams.Filter" placeholder="请输入名称 负责人 联系电话等" style="width: 225px" clearable />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button type="primary" icon="el-icon-search" size="mini" @click="getList">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
@@ -14,35 +14,32 @@
         <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd"
           v-hasPermi="['system:dept:add']">新增</el-button>
       </el-col>
-      <right-toolbar :showSearch.sync="showSearch"></right-toolbar>
+      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
-    <el-table height="600" v-if="refreshTable" v-loading="loading" :data="deptList" row-key="deptId"
-      :default-expand-all="isExpandAll" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
-      <el-table-column prop="a" label="门店名称" width="180"></el-table-column>
-      <el-table-column prop="b" label="门店联系人" width="90" align="center"></el-table-column>
-      <el-table-column prop="c" label="门店电话" align="center" width="110">
-      </el-table-column>
-      <el-table-column prop="d" label="门店地址" width="200"> </el-table-column>
-      <el-table-column prop="e" label="经销商名称" width="180"></el-table-column>
-      <el-table-column prop="f" label="经销商电话" width="110" align="center"></el-table-column>
-      <el-table-column prop="g" label="经销商联系人" width="120" align="center">
-      </el-table-column>
+    <el-table height="600" size="medium" v-if="refreshTable" :default-expand-all="isExpandAll" v-loading="loading" :data="deptList" row-key="deptId"
+      >
+      <el-table-column prop="name" label="门店名称" width="180"></el-table-column>
       <el-table-column prop="h" label="门店用户名" width="100"></el-table-column>
-      <el-table-column prop="i" label="应用版本" align="center"></el-table-column>
+      <el-table-column prop="contactName" label="门店联系人" width="90" align="center"></el-table-column>
+      <el-table-column prop="contactTel" label="门店电话" align="center" width="110"/>
+      <el-table-column prop="address" label="门店地址" width="200"> </el-table-column>
+      <el-table-column prop="agencyName" label="经销商名称" width="180"></el-table-column>
+      <el-table-column prop="agencyTel" label="经销商电话" width="110" align="center"></el-table-column>
+      <el-table-column prop="agencyContactName" label="经销商联系人" width="120" align="center"/>
+      <el-table-column prop="editionType" label="应用版本" align="center"></el-table-column>
       <el-table-column prop="j" align="center" :formatter="carTimeFilter" label="开通时间" width="100"></el-table-column>
-      <el-table-column prop="k" :formatter="carTimeFilter" label="有效期" width="100" align="center"></el-table-column>
+      <el-table-column prop="validDate" :formatter="carTimeFilter" label="到期时间" width="100" align="center"></el-table-column>
       <el-table-column prop="l" label="用户数量" align="center"></el-table-column>
-      <el-table-column prop="m" label="状态" align="center"></el-table-column>
+      <el-table-column prop="status" label="状态" align="center"></el-table-column>
       <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button size="mini" icon="el-icon-edit" type="text" @click="handleUpdate">修改</el-button>
-
           <el-button size="mini" icon="el-icon-lock" type="text" @click="lockBtn(scope.row)">锁定</el-button>
           <el-button size="mini" icon="el-icon-finished" type="text" @click="checkBtn(scope.row)">审核</el-button>
         </template>
       </el-table-column>
     </el-table>
-    <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize" />
+    <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize" @pagination="getList"/>
 
     <!-- 门店维护 -->
     <el-dialog :title="title" @close="handleClose" :visible.sync="open" width="600px" append-to-body>
@@ -54,47 +51,64 @@
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="门店名称 :">
+            <el-form-item label="门店名称 :" prop="name">
               <el-input v-model="dataForm.name" placeholder="请输入门店名称" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="门店联系人 :">
+            <el-form-item label="门店联系人 :" prop="contactName">
               <el-input v-model="dataForm.contactName" placeholder="请输入门店联系人" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="门店电话 :" prop="phone">
+            <el-form-item label="门店电话 :" prop="contactTel">
               <el-input v-model="dataForm.contactTel" placeholder="请输入门店电话" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="门店邮箱 :" prop="phone">
+            <el-form-item label="门店邮箱 :" prop="email">
               <el-input v-model="dataForm.email" placeholder="请输入门店电话" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="门店地址 :">
+            <el-form-item label="门店地址 :" prop="address">
               <el-input v-model="dataForm.address" placeholder="请输入门店地址" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="门店用户名 :">
+            <el-form-item label="门店用户名 :" prop="agencyId">
               <el-input v-model="dataForm.agencyId" placeholder="请输入门店用户名" />
             </el-form-item>
           </el-col>
-          <el-col :span="22">
-            <el-form-item label="应用版本 :">
-              <el-select placeholder="专业版" v-model="dataForm.editionType" style="width: 100%">
-                <el-option label="专业版" value="专业版"></el-option>
-                <el-option label="企业版" value="企业版"></el-option>
-                <el-option label="旗舰版" value="旗舰版"></el-option>
+          <el-col :span="11">
+            <el-form-item label="应用版本 :" prop="editionType">
+              <el-select placeholder="应用版本" v-model="dataForm.editionType" style="width: 100%">
+                <el-option label="专业版" value="1"></el-option>
+                <el-option label="企业版" value="2"></el-option>
+                <el-option label="旗舰版" value="3"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="22">
-            <el-form-item label="启用时间 :">
+          <el-col :span="11">
+            <el-form-item label="状态 :" prop="editionType">
+              <el-select placeholder="请选择状态" v-model="dataForm.status" style="width: 100%">
+                <el-option label="正常" value="1"></el-option>
+                <el-option label="已关闭" value="2"></el-option>
+                <el-option label="已过期" value="3"></el-option>
+                <el-option label="演示中" value="4"></el-option>
+                <el-option label="已释放" value="5"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="11">
+            <el-form-item label="启用时间 :" prop="startDate">
               <el-date-picker v-model="dataForm.startDate" style="width:100%;" type="date" placeholder="请选择日期">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="11">
+            <el-form-item label="到期时间 :" prop="validDate">
+              <el-date-picker v-model="dataForm.validDate" style="width:100%;" type="date" placeholder="请选择日期">
               </el-date-picker>
             </el-form-item>
           </el-col>
@@ -110,7 +124,7 @@
 <script>
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import {
-  addTenant
+  addTenant,getTenant
 } from "@/api/system/storeMgt";
 import moment from "moment";
 export default {
@@ -124,25 +138,9 @@ export default {
       // 显示搜索条件
       showSearch: true,
       // 表格树数据
-      deptList: [
-        {
-          a: "重庆库克科技有限公司",
-          b: "黄瑶",
-          c: "15213025532",
-          d: "重庆江北区东原中心2号楼1303 ",
-          e: "重庆库克科技有限公司",
-          f: "15213025532",
-          g: "张涛",
-          h: "库克科技",
-          i: "专业版",
-          j: "Wed Mar 25 2020 10:39:52 GMT+0800 (GMT+08:00)",
-          k: "Wed Mar 25 2020 10:39:52 GMT+0800 (GMT+08:00)",
-          l: "852",
-          m: "关闭",
-        },
-      ],
+      deptList: [],
       // 总条数
-      total: 100,
+      total: 0,
       // 是否显示新建/维护门店
       open: false,
       // 是否展开，默认全部展开
@@ -153,36 +151,70 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        Filter: "",
+        Filter: undefined,
       },
       // 表单参数
       dataForm: {},
       // 表单校验
-      rules: {},
+      rules: {
+        name: [{ required: true, message: "名称不能为空", trigger: "blur" },],
+        contactName: [{ required: true, message: "联系人不能为空", trigger: "blur" }],
+        contactTel: [{
+          required: true,
+          pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
+          message: "请输入正确的手机号码",
+          trigger: "blur"
+        }],
+        email: [{
+            required: false,
+            type: "email",
+            message: "请输入正确的邮箱地址",
+            trigger: ["blur", "change"]
+          }],
+        address: [{ required: true, message: "门店地址不能为空", trigger: "blur" },],
+        agencyId: [{ required: true, message: "门店用户名不能为空", trigger: "blur" },],
+        editionType: [{ required: true, message: "请选择应用版本", trigger: "blur" },],
+        startDate: [{ required: true, message: "请选择启用时间", trigger: "blur" },],
+        validDate: [{ required: true, message: "请选择到期时间", trigger: "blur" },],
+      },
     };
   },
+  created() {
+    this.getList();
+  },
   methods: {
+    /** 查询门店账号列表 */
+    getList() {
+      this.loading = true;
+      var indexPage=0
+      if (this.queryParams.Filter == undefined) {
+        indexPage = this.queryParams.pageNum - 1
+      } 
+      const queryParams = {
+        pageIndex: indexPage,
+        size: this.queryParams.pageSize,
+        parameter: this.queryParams.Filter,
+      }
+      getTenant(queryParams).then(res => {
+        if (res.type == "success" && res.code == 200) {
+          this.deptList = res.result.data
+        this.total = parseInt(res.result.items)
+        this.loading = false;
+         }else {
+          this.$message.error('获取数据失败，请重试');
+        }
+      }).catch((err) => {
+        this.$notify.error({
+          title: err
+        });
+      })
+    },
+
     // 处理时间显示
     carTimeFilter(row, column, cellValue, index) {
       return moment(cellValue).format("YYYY-MM-DD");
     },
-    // 提交按钮
-    submitForm() {
-      this.$refs["dataForm"].validate(valid => {
-        if (valid) {
-          console.log(this.dataForm)
-          addTenant(this.dataForm).then(res => {
-            if (res.type == success && res.code == 200) {
-              this.$message.success('新增成功');
-              this.open = false;
-              this.dataForm = {};
-            } else {
-               this.$message.warning('新增失败，请重试');
-            }
-          });
-        }
-      })
-    },
+
     /** 重置按钮操作 */
     resetQuery() {
       this.queryParams.Filter = "";
@@ -201,9 +233,24 @@ export default {
       this.title = "门店维护";
       this.open = true;
     },
-    // 关闭按钮
-    handleClose() {
-      this.dataForm = {};
+
+    // 提交按钮
+    submitForm() {
+      this.$refs["dataForm"].validate(valid => {
+        if (valid) {
+          addTenant(this.dataForm).then(res => {
+             if (res.type == "success" && res.code == 200) {
+              this.$message.success('新增成功');
+              this.open = false;
+              this.dataForm = {};
+             } else {
+              this.$message.error('新增失败，请重试');
+            }
+          }).catch((err) => {
+            this.$message.error(err);
+          });
+        }
+      })
     },
     // 审核按钮
     checkBtn(row) {
@@ -221,7 +268,11 @@ export default {
         type: 'success'
       });
 
-    }
+    },
+    // 关闭按钮
+    handleClose() {
+      this.dataForm = {};
+    },
   },
   /* created() {
     this.getList();

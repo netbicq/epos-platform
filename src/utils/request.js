@@ -98,7 +98,7 @@ service.interceptors.response.use(res => {
       ).then(() => {
         isRelogin.show = false;
         store.dispatch('LogOut').then(() => {
-          location.href = this.$store.state.settings.indexPage
+          location.href = '/login'
         })
       }).catch(() => {
         isRelogin.show = false;
@@ -106,15 +106,14 @@ service.interceptors.response.use(res => {
     }
     return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
   } else if (code === 500) {
-    Message({
-      message: msg,
-      type: 'error'
-    })
+    /* Notification.error({
+      title: msg
+    }) */
     return Promise.reject(new Error(msg))
   } else if (code !== 200) {
-    Notification.error({
+    /* Notification.error({
       title: msg
-    })
+    }) */
     return Promise.reject('error')
   } else {
     return res.data
@@ -132,10 +131,8 @@ service.interceptors.response.use(res => {
     else if (message.includes("Request failed with status code")) {
       message = "系统接口" + message.substr(message.length - 3) + "异常";
     }
-    Message({
-      message: message,
-      type: 'error',
-      duration: 5 * 1000
+    Notification.error({
+      title: message
     })
     return Promise.reject(error)
   }
