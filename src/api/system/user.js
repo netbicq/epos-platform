@@ -2,11 +2,11 @@ import request from '@/utils/request'
 import { parseStrEmpty } from "@/utils/ruoyi";
 
 // 查询用户列表
-export function pageAllUser(query) {
+export function pageAllUser(data) {
   return request({
-    url: '/platform/User/pageAllUser',
-    method: 'get',
-    params: query
+    url: '/platform/User/pageAll',
+    method: 'post',
+    data: data
   })
 }
 

@@ -1,5 +1,5 @@
 import { login, logout, getInfo, refreshToken } from '@/api/login'
-import { getToken, setToken, setExpiresIn, removeToken } from '@/utils/auth'
+import { getToken, setToken, setExpiresIn, removeToken,userInfoData } from '@/utils/auth'
 import Cookies from 'js-cookie'
 const user = {
   state: {
@@ -36,19 +36,14 @@ const user = {
     Login({ commit }, userInfo) {
       const username = userInfo.userName.trim()
       const password = userInfo.password
-      /* const code = userInfo.code
-      const uuid = userInfo.uuid */
       return new Promise((resolve, reject) => {
         login(username, password).then(res => {
           let data = res.result
-          setToken(data.access_token)         
-          commit('SET_TOKEN', data.access_token)
-          setExpiresIn(data.expires_in)
-          commit('SET_EXPIRES_IN', data.expires_in)
-          var date = new Date();
-          var min = date.getMinutes();
-          date.setMinutes(min + data.expires_in);
-          Cookies.set("expirationtime", date.toLocaleString())
+          setToken(data.token)
+          commit('SET_TOKEN', data.token)
+          setExpiresIn(data.expireTime)
+          userInfoData(data.user)
+          commit('SET_EXPIRES_IN', data.expireTime)
           resolve()
         }).catch(error => {
           reject(error)
@@ -99,6 +94,8 @@ const user = {
           commit('SET_ROLES', [])
           commit('SET_PERMISSIONS', [])
           removeToken()
+          window.sessionStorage.removeItem('sessionObj')
+          window.sessionStorage.removeItem('userInfoData')
           resolve()
         }).catch(error => {
           reject(error)

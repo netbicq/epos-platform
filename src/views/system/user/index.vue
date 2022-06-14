@@ -474,7 +474,7 @@ export default {
                 this.open = false;
                 this.getList();
               } else {
-                this.$message.error('获取数据失败,请重试');
+                this.$message.error('新增失败,请重试');
               }
             }).catch((err) => {
               this.$notify.error({

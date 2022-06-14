@@ -27,3 +27,9 @@ export function setExpiresIn(time) {
 export function removeExpiresIn() {
   return Cookies.remove(ExpiresInKey)
 }
+export function userInfoData(userInfoData) {
+  return window.sessionStorage.setItem('userInfoData',JSON.stringify(userInfoData));
+}
+export function removeUserInfoData() {
+  return window.sessionStorage.removeItem('userInfoData');
+}

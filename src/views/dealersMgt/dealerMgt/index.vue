@@ -25,7 +25,7 @@
       <el-table-column prop="contactTel" label="联系电话" fixed width="140">
       </el-table-column>
       <el-table-column label="银行账号" prop="bankAccount" width="200"> </el-table-column>
-      <el-table-column prop="bankAccountName" label="银行开户名"  width="100"></el-table-column>
+      <el-table-column prop="bankAccountName" label="银行开户名" width="100"></el-table-column>
       <el-table-column prop="bankName" label="开户银行"></el-table-column>
       <el-table-column prop="g" label="云通道" width="100" align="center"></el-table-column>
       <el-table-column prop="strategyId" label="经销商账号" width="150"></el-table-column>
@@ -47,7 +47,7 @@
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item command="resetPassword">重置密码</el-dropdown-item>
               <el-dropdown-item command="setChannel">设置通道</el-dropdown-item>
-              <el-dropdown-item command="deleteRow">删除</el-dropdown-item>
+              <el-dropdown-item command="deleteRow">删除数据</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </template>
@@ -113,7 +113,7 @@
     </el-dialog>
     <!-- 添加设置通道 -->
     <el-dialog title="设备通道" :visible.sync="openPassage" width="600px" @close="handleClose" append-to-body>
-      <el-form ref="form" :model="passageForm"  style="padding-left: 29px" label-width="100px">
+      <el-form ref="form" :model="passageForm" style="padding-left: 29px" label-width="100px">
         <el-row>
           <el-col :span="22">
             <el-form-item label="经销商名称 :">
@@ -139,7 +139,7 @@
     </el-dialog>
     <!-- 查看经销商余额 -->
     <el-dialog title="经销商余额" @close="handleClose" :visible.sync="openDealer" width="550px" append-to-body>
-      <el-form ref="form" :model="dealerForm"  label-width="100px" style="padding-left: 29px">
+      <el-form ref="form" :model="dealerForm" label-width="100px" style="padding-left: 29px">
         <el-row>
           <el-col :span="22">
             <el-form-item label="经销商名称">
@@ -204,21 +204,22 @@ export default {
       dealerForm: {},
       // 表单校验
       rules: {
-         name: [{ required: true, message: "名称不能为空", trigger: "blur" },],
-         contactName: [{ required: true, message: "联系人不能为空", trigger: "blur" },],
+        name: [{ required: true, message: "名称不能为空", trigger: "blur" },],
+        contactName: [{ required: true, message: "联系人不能为空", trigger: "blur" },],
         contactTel: [
-          { required: true,
+          {
+            required: true,
             pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
             message: "请输入正确的手机号码",
             trigger: "blur",
           },
         ],
-         bankAccount: [{ required: true,type: 'number', message: "请输入正确的银行账户", trigger: "blur" },],
-         bankAccountName: [{ required: true, message: "开户名不能为空", trigger: "blur" },],
-         bankName: [{ required: true, message: "开户银行不能为空", trigger: "blur" },],
-         strategyId: [{ required: true, message: "名称不能为空", trigger: "blur" },],
-         quantity: [{ required: false, message: "经销商账号不能为空", trigger: "blur" },],
-         remark: [{ required: false},],
+        /* bankAccount: [{ required: false, type: 'number', message: "请输入正确的银行账户", trigger: "blur" },], */
+        bankAccountName: [{ required: true, message: "开户名不能为空", trigger: "blur" },],
+        bankName: [{ required: false, message: "开户银行不能为空", trigger: "blur" },],
+        strategyId: [{ required: true, message: "名称不能为空", trigger: "blur" },],
+        quantity: [{ required: false, message: "经销商账号不能为空", trigger: "blur" },],
+        remark: [{ required: false },],
       },
     };
   },
@@ -284,40 +285,43 @@ export default {
     },
     // 提交新增维护经销商按钮
     submitForm() {
-      if (this.isAddData) {
-        this.openForm.userName = "13310249009"
-        addAgency(this.openForm).then(res => {
-          if (res.type == "success" && res.code == 200) {
-            this.$message.success('新增成功');
-            this.open = false;
-            this.getList();
-            this.openForm = {};
+      this.$refs["openForm"].validate(valid => {
+        if (valid) {
+          if (this.isAddData) {
+            this.openForm.userName = "13310249009"
+            addAgency(this.openForm).then(res => {
+              if (res.type == "success" && res.code == 200) {
+                this.$message.success('新增成功');
+                this.open = false;
+                this.getList();
+                this.openForm = {};
+              } else {
+                this.$message.error('新增失败,请重试');
+                this.getList();
+              }
+            }).catch((err) => {
+              this.$notify.error({
+                title: err
+              });
+            })
           } else {
-            this.$message.error('新增失败,请重试');
-            this.getList();
+            this.openForm.userName = "13310249009"
+            editsAgency(this.openForm).then(res => {
+              if (res.type == "success" && res.code == 200) {
+                this.$message.success('修改成功');
+                this.getList();
+              } else {
+                this.$message.error('修改失败,请重试');
+                this.getList();
+              }
+            }).catch((err) => {
+              this.$notify.error({
+                title: err
+              });
+            })
           }
-        }).catch((err) => {
-          this.$notify.error({
-            title: err
-          });
-        })
-      } else {
-        this.openForm.userName = "13310249009"
-        editsAgency(this.openForm).then(res => {
-          if (res.type == "success" && res.code == 200) {
-            this.$message.success('修改成功');
-            this.getList();
-          } else {
-            this.$message.error('修改失败,请重试');
-            this.getList();
-          }
-        }).catch((err) => {
-          this.$notify.error({
-            title: err
-          });
-        })
-      }
-
+        }
+      })
     },
     // 提交设备通道按钮
     passageSubmit() {
@@ -374,10 +378,10 @@ export default {
               this.$message.warning('删除失败,请重试');
             }
           }).catch((err) => {
-          this.$notify.error({
-          title: err
-        });
-        })
+            this.$notify.error({
+              title: err
+            });
+          })
         }).catch(() => {
           /* this.$message.info({
             type: "info",

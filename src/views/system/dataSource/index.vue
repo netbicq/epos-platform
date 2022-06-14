@@ -345,12 +345,12 @@ export default {
             delete this.managementForm.updateTime;
             editDataSource(this.managementForm).then(res => {
               if (res.type == success && res.code == 200) {
-                this.$message.success('编辑成功');
+                this.$message.success('修改成功');
                 this.managementOpen = false;
                 this.getSourceData();
                 this.managementForm = {};
               } else {
-                this.$message.error('编辑失败，请重试');
+                this.$message.error('修改失败，请重试');
               }
             }).catch((err) => {
               this.$message.error(err);
@@ -383,12 +383,12 @@ export default {
             delete this.dataForm.sort;
             editStrategyData(this.dataForm).then(res => {
               if (res.type == success && res.code == 200) {
-                this.$message.success('新增成功');
+                this.$message.success('修改成功');
                 this.open = false;
                 this.dataForm = {};
                 this.getStrategyData();
               } else {
-                this.$message.error('编辑失败，请重试');
+                this.$message.error('修改失败，请重试');
               }
             }).catch((err) => {
               this.$notify.error({
