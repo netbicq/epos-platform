@@ -38,3 +38,11 @@ export function pageAgency(query) {
     params: query
   })
 }
+// 重置密码
+export function resetPassword(query) {
+  return request({
+    url: '/platform/Agency/resetPassword',
+    method: 'get',
+    params: query
+  })
+}

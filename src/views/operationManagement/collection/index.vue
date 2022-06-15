@@ -66,9 +66,9 @@
         <el-button
           type="warning"
           plain
-          icon="el-icon-plus"
+          icon="el-icon-download"
           size="mini"
-          @click="derive"
+          @click="handleExport"
           >导出</el-button
         >
       </el-col>
@@ -200,7 +200,6 @@ import moment from "moment";
 
 export default {
   name: "Dict",
-  dicts: ["sys_normal_disable"],
   data() {
     return {
       fileList: [
@@ -336,7 +335,7 @@ export default {
   //   },
   methods: {
     //导出excle
-    derive() {
+    handleExport() {
       var time = moment(new Date()).format("YYYYMMDDHHmm");
       var tables = document.getElementById("table");
       var table_book = this.$XLSX.utils.table_to_book(tables);

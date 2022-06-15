@@ -31,3 +31,11 @@ export function deleteTenant(dataSource) {
     method: 'get'
   })
 }
+// 锁定
+export function setStatues(query) {
+  return request({
+    url: '/platform/Te/setStatues/',
+    method: 'get',
+    params: query
+  })
+}

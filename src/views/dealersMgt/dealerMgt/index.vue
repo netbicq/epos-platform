@@ -18,7 +18,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table height="600" size="medium" v-if="refreshTable" v-loading="loading" :data="deptList" row-key="deptId"
+    <el-table height="575"  size="medium" v-if="refreshTable" v-loading="loading" :data="deptList" row-key="deptId"
       :default-expand-all="isExpandAll" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
       <el-table-column prop="name" width="180" fixed label="经销商名称"></el-table-column>
       <el-table-column prop="contactName" label="联系人" fixed width="100" align="center"></el-table-column>
@@ -139,11 +139,11 @@
     </el-dialog>
     <!-- 查看经销商余额 -->
     <el-dialog title="经销商余额" @close="handleClose" :visible.sync="openDealer" width="550px" append-to-body>
-      <el-form ref="form" :model="dealerForm" label-width="100px" style="padding-left: 29px">
+      <el-form  :model="dealerForm" label-width="100px" style="padding-left: 29px">
         <el-row>
           <el-col :span="22">
             <el-form-item label="经销商名称">
-              <el-input v-model="dealerForm.a" disabled="disabled" />
+              <el-input v-model="dealerForm.name" disabled="disabled" />
             </el-form-item>
           </el-col>
           <el-col :span="22" align="center">
@@ -163,8 +163,8 @@
 <script>
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import {
-  addAgency, getAllAgency, editsAgency, deleteAgency, pageAgency
-} from "@/api/system/dealerMgt";
+  addAgency, getAllAgency, editsAgency, deleteAgency, pageAgency,resetPassword
+} from "@/api/dealersMgt/dealerMgt";
 export default {
   name: "DealerMgt",
   data() {
@@ -273,7 +273,8 @@ export default {
       this.dealerForm = {};
     },
     // 查看经销商余额
-    dealerBalance() {
+    dealerBalance(row) {
+      this.dealerForm.name=row.name
       this.openDealer = true;
     },
     // 修改按钮
@@ -340,11 +341,35 @@ export default {
       this.openPassage = true;
     },
     // 重置密码
-    resetPassword() {
-      this.$message({
-        message: '已成功重置密码',
-        type: 'success'
-      });
+    resetPassword(row) {
+      const params = {
+        tenantId : row.id,
+        userId : JSON.parse(sessionStorage.getItem('userInfoData')).id
+      }
+      this.$confirm("是否确认重置密码?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          resetPassword(params).then(res => {
+            if (res.type == 'success' && res.code == 200) {
+              this.$message.success('重置成功');
+              this.getList();
+            } else {
+              this.$message.warning('重置失败,请重试');
+            }
+          }).catch((err) => {
+            this.$notify.error({
+              title: err
+            });
+          })
+        }).catch(() => {
+          /* this.$message.info({
+            type: "info",
+            message: "已取消删除",
+          }); */
+        });
     },
     // 更多操作触发
     handleCommand(command, row) {

@@ -52,7 +52,7 @@
         <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
       </el-row>
 
-      <el-table v-loading="loading" size="medium" :data="userList" @selection-change="handleSelectionChange">
+      <el-table height="575" id="table" v-loading="loading" size="medium" :data="userList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="50" align="center" />
         <el-table-column label="用户名称" width="180" align="center" key="userName" prop="userName" />
         <el-table-column label="用户昵称" width="180" align="center" key="nickName" prop="nickName" />
@@ -184,7 +184,7 @@ import { getToken } from "@/utils/auth";
 import { treeselect } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
-
+import moment from "moment";
 export default {
   name: "User",
   dicts: ['sys_normal_disable', 'sys_user_sex'],
@@ -497,9 +497,24 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('system/user/export', {
-        ...this.queryParams
-      }, `user_${new Date().getTime()}.xlsx`)
+      var time = moment(new Date()).format("YYYYMMDDHHmm");
+      var tables = document.getElementById("table");
+      var table_book = this.$XLSX.utils.table_to_book(tables);
+      var table_write = this.$XLSX.write(table_book, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array",
+      });
+      try {
+        this.$FileSaver.saveAs(
+          new Blob([table_write], { type: "application/octet-stream" }),
+           "用户管理"+time +".xlsx"
+        );
+      } catch (e) {
+        if (typeof console !== "undefined") console.log(e, table_write);
+      }
+      console.log(table_write)
+      return table_write;
     },
     /** 导入按钮操作 */
     handleImport() {

@@ -18,7 +18,7 @@
           </el-col>
           <right-toolbar :showSearch.sync="showSearch" @queryTable="getStrategyData"></right-toolbar>
         </el-row>
-        <el-table height="600" size="medium" v-if="refreshTable" v-loading="loading" :data="deptList" row-key="deptId"
+        <el-table height="575" size="medium" v-if="refreshTable" v-loading="loading" :data="deptList" row-key="deptId"
           :default-expand-all="isExpandAll" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
           <el-table-column prop="name" width="260" label="名称"></el-table-column>
           <el-table-column prop="writeSourceId" width="300" label="写库" align="center"></el-table-column>
