@@ -16,8 +16,8 @@
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
-    <el-table height="575" size="medium" v-if="refreshTable" :default-expand-all="isExpandAll" v-loading="loading" :data="deptList"
-      row-key="deptId">
+    <el-table height="575" size="medium" v-if="refreshTable" :default-expand-all="isExpandAll" v-loading="loading"
+      :data="deptList" row-key="deptId">
       <el-table-column prop="name" label="门店名称" width="180"></el-table-column>
       <el-table-column prop="contactTel" label="门店用户名" width="140"></el-table-column>
       <el-table-column prop="contactName" label="门店联系人" width="90" align="center"></el-table-column>
@@ -79,7 +79,7 @@
     <el-dialog :title="title" @close="handleClose" :visible.sync="open" width="600px" append-to-body>
       <el-form ref="dataForm" :model="dataForm" :rules="rules" label-width="100px" style="padding-left: 29px">
         <el-row>
-          <el-col :span="22" v-if="userType == 'AGENCY' ? true : false">
+          <el-col :span="22" v-if="isAgencyId">
             <el-form-item label="经销商 :" prop="agencyId">
               <el-input v-model="dataForm.agencyId" disabled="disabled" />
             </el-form-item>
@@ -171,6 +171,8 @@ export default {
         "DEMO": '演示中',
         "DISPOSED": '已释放',
       },
+      isAgencyId: false,
+      rowAgencyId:'',
       isAddData: '',
       disabled: true,
       title: "",
@@ -201,7 +203,7 @@ export default {
       userType: JSON.parse(sessionStorage.getItem('userInfoData')).userType,
       // 表单校验
       rules: {
-        name: [{ required: true, message: "名称不能为空", trigger: "blur" },],
+        /* name: [{ required: true, message: "名称不能为空", trigger: "blur" },],
         contactName: [{ required: true, message: "联系人不能为空", trigger: "blur" }],
         contactTel: [{
           required: true,
@@ -219,7 +221,7 @@ export default {
         editionType: [{ required: true, message: "请选择应用版本", trigger: "blur" },],
         status: [{ required: true, message: "请选择状态", trigger: "blur" },],
         startDate: [{ required: true, message: "请选择启用时间", trigger: "blur" },],
-        validDate: [{ required: true, message: "请选择到期时间", trigger: "blur" },],
+        validDate: [{ required: true, message: "请选择到期时间", trigger: "blur" },], */
       },
     };
   },
@@ -247,13 +249,7 @@ export default {
           this.deptList = res.result.data
           this.total = parseInt(res.result.items)
           this.loading = false;
-        } else {
-          this.$message.error('获取数据失败，请重试');
         }
-      }).catch((err) => {
-        this.$notify.error({
-          title: err
-        });
       })
     },
     // 处理时间显示
@@ -267,7 +263,10 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.title = "新增门店";
-      this.dataForm.agencyId = JSON.parse(sessionStorage.getItem('userInfoData')).userName
+      this.dataForm.agencyId = JSON.parse(sessionStorage.getItem('AgencyInfoData')).name
+      if (this.userType == 'AGENCY') {
+        this.isAgencyId = true
+      }
       this.isAddData = true,
         this.open = true;
     },
@@ -275,48 +274,49 @@ export default {
     handleUpdate(row) {
       console.log(row)
       this.title = "门店维护";
+      if (row.agencyId=='0') {
+        this.isAgencyId = false
+      } else {
+        this.isAgencyId = true
+      }
       this.dataForm = JSON.parse(JSON.stringify(row));
-      this.dataForm.agencyId = JSON.parse(sessionStorage.getItem('userInfoData')).userName
+      this.rowAgencyId=row.agencyId
+      this.dataForm.agencyId = row.agencyName
       this.isAddData = false,
         this.open = true;
     },
 
     // 提交按钮
     submitForm() {
+      console.log(this.userType)
       this.$refs["dataForm"].validate(valid => {
         if (valid) {
-          if (this.userType != 'AGENCY') {
-            this.dataForm.agencyId = 0
-          }
-          this.dataForm.agencyId = JSON.parse(sessionStorage.getItem('userInfoData')).id
           if (this.isAddData == true) {
+            if (this.userType == 'AGENCY') {
+              this.dataForm.agencyId = JSON.parse(sessionStorage.getItem('AgencyInfoData')).id
+            } else {
+              this.dataForm.agencyId = 0
+            }
             addTenant(this.dataForm).then(res => {
               if (res.type == "success" && res.code == 200) {
                 this.$message.success('新增成功');
                 this.open = false;
                 this.getList()
                 this.dataForm = {};
-              } else {
-                this.$message.error('新增失败，请重试');
               }
-            }).catch((err) => {
-              this.$message.error(err);
             });
           } else {
+            this.dataForm.agencyId = this.rowAgencyId
             delete this.dataForm.createTime;
             this.dataForm.validDate = new Date(this.dataForm.validDate).toISOString()
-            this.dataForm.startDate = new Date(this.dataForm.validDate).toISOString()
+            this.dataForm.startDate = new Date(this.dataForm.startDate).toISOString()
             editTenant(this.dataForm).then(res => {
               if (res.type == "success" && res.code == 200) {
                 this.$message.success('修改成功');
                 this.open = false;
                 this.getList()
                 this.dataForm = {};
-              } else {
-                this.$message.error('修改失败，请重试');
               }
-            }).catch((err) => {
-              this.$message.error(err);
             });
           }
 
@@ -350,17 +350,8 @@ export default {
             if (res.type == "success" && res.code == 200) {
               this.$message.success('锁定成功');
               this.getList()
-            } else {
-              this.$message.error('锁定成功，请重试');
             }
-          }).catch((err) => {
-            this.$message.error(err);
           });
-        }).catch(() => {
-          /* this.$message.info({
-            type: "info",
-            message: "已取消删除",
-          }); */
         });
 
     },

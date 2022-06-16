@@ -106,14 +106,14 @@ service.interceptors.response.use(res => {
     }
     return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
   } else if (code === 500) {
-    /* Notification.error({
+    Notification.error({
       title: msg
-    }) */
+    })
     return Promise.reject(new Error(msg))
   } else if (code !== 200) {
-    /* Notification.error({
+    Notification.error({
       title: msg
-    }) */
+    })
     return Promise.reject('error')
   } else {
     return res.data

@@ -1,109 +1,42 @@
 <template>
   <div class="app-container">
-    <el-form
-      :model="queryParams"
-      ref="queryForm"
-      size="small"
-      :inline="true"
-      v-show="showSearch"
-      label-width="68px"
-    >
+    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item>
-        <el-date-picker
-          v-model="queryParams.date"
-          style="width: 280px"
-          value-format="yyyy-MM-dd"
-          type="daterange"
-          range-separator="-"
-          start-placeholder="请选择开始日期"
-          end-placeholder="请选择结束日期"
-        ></el-date-picker>
+        <el-date-picker v-model="queryParams.date" style="width: 280px" value-format="yyyy-MM-dd" type="daterange"
+          range-separator="-" start-placeholder="请选择开始日期" end-placeholder="请选择结束日期"></el-date-picker>
       </el-form-item>
       <el-form-item prop="crux">
-        <el-input
-          v-model="queryParams.crux"
-          placeholder="请输入门店/事由/收款方式"
-          clearable
-          style="width: 240px"
-          @keyup.enter.native="handleQuery"
-        />
+        <el-input v-model="queryParams.crux" placeholder="请输入门店/事由/收款方式" clearable style="width: 240px"
+          @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item prop="amount">
-        <el-input
-          v-model="queryParams.amount"
-          placeholder="请输入交易金额"
-          clearable
-          style="width: 240px"
-          @keyup.enter.native="handleQuery"
-        />
+        <el-input v-model="queryParams.amount" placeholder="请输入交易金额" clearable style="width: 240px"
+          @keyup.enter.native="handleQuery" />
       </el-form-item>
 
       <el-form-item>
-        <el-button
-          type="primary"
-          icon="el-icon-search"
-          size="mini"
-          @click="handleQuery"
-          >搜索</el-button
-        >
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
-          >重置</el-button
-        >
+        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="derive"
-          >导出</el-button
-        >
+        <el-button type="warning" plain  icon="el-icon-download" size="mini" @click="outExcel">导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch"></right-toolbar>
     </el-row>
 
-    <el-table
-      :data="tableData"
-      height="600"
-      id="tabkeins"
-    >
-      <el-table-column
-        label="原收款订单号"
-        align="center"
-        prop="collectionOrder"
-        width="150"
-      />
-      <el-table-column
-        label="退款订单号"
-        align="center"
-        prop="refundOrder"
-        width="150"
-      />
-      <el-table-column
-        label="对方账号"
-        align="center"
-        prop="accountNumber"
-        width="150"
-      />
+    <el-table :data="tableData" height="600" id="tabkeins">
+      <el-table-column label="原收款订单号" align="center" prop="collectionOrder" width="150" />
+      <el-table-column label="退款订单号" align="center" prop="refundOrder" width="150" />
+      <el-table-column label="对方账号" align="center" prop="accountNumber" width="150" />
       <el-table-column label="对方户名" align="center" prop="name" />
       <el-table-column label="交易金额" align="center" prop="money" />
-      <el-table-column
-        label="退款金额"
-        align="center"
-        prop="monrefundAmountey"
-      />
+      <el-table-column label="退款金额" align="center" prop="monrefundAmountey" />
       <el-table-column label="门店名称" align="center" prop="store" />
       <el-table-column label="退款原因" align="center" prop="reason">
         <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            @click="reimburse(scope.row.reason)"
-            >查看</el-button
-          >
+          <el-button size="mini" type="text" @click="reimburse(scope.row.reason)">查看</el-button>
         </template>
       </el-table-column>
       <el-table-column label="退款方式" align="center" prop="refundMethod" />
@@ -112,59 +45,27 @@
       <el-table-column label="审核人" align="center" prop="reviewer" />
       <el-table-column label="审批备注" align="center" prop="remarks">
         <template slot-scope="scope">
-          <el-button size="mini" type="text" @click="remarks(scope.row.remarks)"
-            >查看</el-button
-          >
+          <el-button size="mini" type="text" @click="remarks(scope.row.remarks)">查看</el-button>
         </template>
       </el-table-column>
       <el-table-column label="退款人" align="center" prop="refunder" />
       <el-table-column label="状态" align="center" prop="status" width="80" />
-      <el-table-column
-        width="200"
-        label="操作"
-        align="center"
-        class-name="small-padding fixed-width"
-      >
+      <el-table-column width="200" label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-view"
-            @click="details(scope.row)"
-            >查看</el-button
-          >
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-finished"
-            @click="examine(scope.row)"
-            >审核</el-button
-          >
-          <el-button size="mini" type="text" @click="handleUpdate(scope.row)"
-            ><svg-icon
-              icon-class="tuikuannew"
-              class-name="custom-class"
-            />退款</el-button
-          >
+          <el-button size="mini" type="text" icon="el-icon-view" @click="details(scope.row)">查看</el-button>
+          <el-button size="mini" type="text" icon="el-icon-finished" @click="examine(scope.row)">审核</el-button>
+          <el-button size="mini" type="text" @click="handleUpdate(scope.row)">
+            <svg-icon icon-class="tuikuannew" class-name="custom-class" />退款
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <pagination
-      v-show="1"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-      @pagination="getList"
-    />
+    <pagination v-show="1" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize"
+      @pagination="getList" />
 
     <!-- 审批备注 -->
-    <el-dialog
-      :title="title"
-      :visible.sync="checksOpen"
-      width="600px"
-      append-to-body
-    >
+    <el-dialog :title="title" :visible.sync="checksOpen" width="600px" append-to-body>
       <div>
         {{ account }}
       </div>
@@ -175,19 +76,8 @@
     </el-dialog>
 
     <!-- 退款详情 -->
-    <el-dialog
-      :title="title"
-      :visible.sync="refundOpen"
-      width="600px"
-      height="540px"
-      append-to-body
-    >
-      <el-form
-        ref="refundForm"
-        :model="refundForm"
-        :rules="rules"
-        label-width="100px"
-      >
+    <el-dialog :title="title" :visible.sync="refundOpen" width="600px" height="540px" append-to-body>
+      <el-form ref="refundForm" :model="refundForm" :rules="rules" label-width="100px">
         <el-row>
           <el-col :span="22">
             <el-form-item label="订单号 : " prop="OrderId">
@@ -236,14 +126,8 @@
           <el-col :span="22">
             <el-form-item label="附件 : " prop="enclosure">
               <viewer :images="refundForm.fileList">
-                <img
-                  v-for="(k, i) in refundForm.fileList"
-                  :src="k.url"
-                  :key="i"
-                  height="100px"
-                  width="100px"
-                  style="margin-left: 10px"
-                />
+                <img v-for="(k, i) in refundForm.fileList" :src="k.url" :key="i" height="100px" width="100px"
+                  style="margin-left: 10px" />
               </viewer>
             </el-form-item>
           </el-col>
@@ -256,44 +140,22 @@
     </el-dialog>
 
     <!-- 退款审核 -->
-    <el-dialog
-      :title="title"
-      :visible.sync="examineOpen"
-     @close="handleClose"
-      width="700px"
-      height="540px"
-      append-to-body
-    >
-      <el-form
-        ref="examineForm"
-        :model="examineForm"
-        :rules="rules"
-        label-width="60px"
-        label-position="left"
-        style="margin-left: 50px"
-      >
+    <el-dialog :title="title" :visible.sync="examineOpen" @close="handleClose" width="700px" height="540px"
+      append-to-body>
+      <el-form ref="examineForm" :model="examineForm" :rules="rules" label-width="60px" label-position="left"
+        style="margin-left: 50px">
         <el-row>
           <el-col :span="22">
             <el-form-item prop="remarks" label="备注 :">
-              <el-input
-                type="textarea"
-                v-model="examineForm.remarks"
-                placeholder="审批备注"
-                :autosize="{ minRows: 4, maxRows: 4 }"
-                :style="{ width: '100%' }"
-              ></el-input>
+              <el-input type="textarea" v-model="examineForm.remarks" placeholder="审批备注"
+                :autosize="{ minRows: 4, maxRows: 4 }" :style="{ width: '100%' }"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-col :span="22">
           <el-form-item label="审核 :" prop="state">
             <el-radio-group size="medium" v-model="examineForm.state">
-              <el-radio
-                v-for="(item, index) in fielptions"
-                :key="index"
-                :label="item.value"
-                >{{ item.label }}</el-radio
-              >
+              <el-radio v-for="(item, index) in fielptions" :key="index" :label="item.value">{{ item.label }}</el-radio>
             </el-radio-group>
           </el-form-item>
         </el-col>
@@ -305,13 +167,7 @@
     </el-dialog>
 
     <!-- 退款操作 -->
-    <el-dialog
-      :title="title"
-      :visible.sync="open"
-      width="550px"
-      height="540px"
-      append-to-body
-    >
+    <el-dialog :title="title" :visible.sync="open" width="550px" height="540px" append-to-body>
       <div class="refund-div">
         正在退款给：xxxxxx门店，退款金额为：123.45元<br />
         收款账号：XXXXXXXXXXXX<br />
@@ -328,6 +184,7 @@
 
 <script>
 import moment from "moment";
+import { xlsx } from '@/utils/xlsx'
 export default {
   name: "Dict",
   dicts: ["sys_normal_disable"],
@@ -434,6 +291,12 @@ export default {
           status: "1",
         },
       ],
+      listHander: {
+        reason: '退款原因',
+        status: '状态',
+        remarks: '备注',
+        refundMethod: '付款方式'
+      },
       // 遮罩层
       loading: true,
       // 选中数组
@@ -483,13 +346,13 @@ export default {
           {
             name: "food.jpeg",
             url: "https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100",
-          },{
+          }, {
             name: "food.jpeg",
             url: "https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100",
-          },{
+          }, {
             name: "food.jpeg",
             url: "https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100",
-          },{
+          }, {
             name: "food.jpeg",
             url: "https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100",
           },
@@ -514,27 +377,12 @@ export default {
 
   methods: {
     //导出EXCLE
-    derive() {
-      var time = moment(new Date()).format("YYYYMMDDHHmm");
-      var tables = document.getElementById("tabkeins");
-      var table_book = this.$XLSX.utils.table_to_book(tables);
-      var table_write = this.$XLSX.write(table_book, {
-        bookType: "xlsx",
-        bookSST: true,
-        type: "array",
-      });
-      console.log(table_write);
-      try {
-        this.$FileSaver.saveAs(
-          new Blob([table_write], { type: "application/octet-stream" }),
-           "退款明细"+time +".xlsx"
-        );
-      } catch (e) {
-        if (typeof console !== "undefined") console.log(e, table_write);
-      }
-      return table_write;
+    outExcel() {
+      // this.jsonData是要导出的数据内容（表格里的内容），
+      // this.listHander对应要导出内容的表头
+      // 学生：指向的是excel文件名
+      xlsx(this.tableData, this.listHander, '学生')
     },
-
     //上传附件
     handlePreview(file) {
       console.log(file);
@@ -550,7 +398,7 @@ export default {
     reimburse(row) {
       this.account = row;
       this.title = "退款原因";
-       this.checksOpen = true;
+      this.checksOpen = true;
     },
     //查看退款详情
     details() {
@@ -592,16 +440,16 @@ export default {
       this.examineOpen = true;
     },
     /** 审批提交 */
-    submitForm () {
+    submitForm() {
       this.examineOpen = false;
       this.$message({
-            type: "success",
-            message: "审批成功!",
-          });
+        type: "success",
+        message: "审批成功!",
+      });
       console.log(this.examineForm);
-      this.examineForm={}
+      this.examineForm = {}
     },
-     // 关闭按钮
+    // 关闭按钮
     handleClose() {
       this.examineForm = {};
     },
@@ -615,6 +463,7 @@ export default {
   font-size: 16px;
   line-height: 30px;
 }
+
 .Reason {
   max-height: 150px;
   overflow: auto;

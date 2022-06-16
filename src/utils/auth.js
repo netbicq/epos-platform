@@ -33,3 +33,9 @@ export function userInfoData(userInfoData) {
 export function removeUserInfoData() {
   return window.sessionStorage.removeItem('userInfoData');
 }
+export function AgencyInfoData(AgencyInfoData) {
+  return window.sessionStorage.setItem('AgencyInfoData',JSON.stringify(AgencyInfoData));
+}
+export function removeAgencyInfoData() {
+  return window.sessionStorage.removeItem('AgencyInfoData');
+}

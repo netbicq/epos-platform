@@ -166,13 +166,7 @@ export default {
           this.deptList = res.result.data
           this.total = parseInt(res.result.items)
           this.loading = false;
-        } else {
-          this.$message.error('获取数据失败，请重试');
         }
-      }).catch((err) => {
-        this.$notify.error({
-          title: err
-        });
       })
     },
 
@@ -203,12 +197,8 @@ export default {
                 this.open = false;
                 this.getList()
                 this.formData = {};
-              } else {
-                this.$message.error('新增失败，请重试');
               }
-            }).catch((err) => {
-              this.$message.error(err);
-            });
+            })
           } else {
             editNotice(this.formData).then(res => {
               if (res.type == "success" && res.code == 200) {
@@ -216,14 +206,9 @@ export default {
                 this.open = false;
                 this.getList()
                 this.formData = {};
-              } else {
-                this.$message.error('修改失败，请重试');
               }
-            }).catch((err) => {
-              this.$message.error(err);
-            });
+            })
           }
-
         }
       })
 
@@ -240,21 +225,9 @@ export default {
             if (res.type == 'success' && res.code == 200) {
               this.$message.success('删除成功');
               this.getList();
-            } else {
-              this.$message.warning('删除失败,请重试');
             }
-          }).catch((err) => {
-            this.$notify.error({
-              title: err
-            });
           })
-        }).catch(() => {
-          /* this.$message.info({
-            type: "info",
-            message: "已取消删除",
-          }); */
-        });
-
+        })
     },
     // 隐藏/显示
     handleStatusChange(row) {
@@ -267,13 +240,7 @@ export default {
         if (res.type == 'success' && res.code == 200) {
           this.$message.success('设置成功');
           //this.getList();
-        } else {
-          this.$message.warning('设置失败,请重试');
         }
-      }).catch((err) => {
-        this.$notify.error({
-          title: err
-        });
       })
     },
     /** 重置按钮操作 */

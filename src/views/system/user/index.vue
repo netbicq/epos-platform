@@ -328,13 +328,7 @@ export default {
           this.userList = res.result.data
           this.total = parseInt(res.result.items)
           this.loading = false;
-        } else {
-          this.$message.error('获取数据失败，请重试');
         }
-      }).catch((err) => {
-        this.$notify.error({
-          title: err
-        });
       })
     },
     /** 查询部门下拉树结构 */
@@ -473,13 +467,7 @@ export default {
                 this.$modal.msgSuccess("新增成功");
                 this.open = false;
                 this.getList();
-              } else {
-                this.$message.error('新增失败,请重试');
-              }
-            }).catch((err) => {
-              this.$notify.error({
-                title: err
-              });
+              } 
             })
           }
         }

@@ -252,13 +252,7 @@ export default {
           this.managementList = res.result.data
           this.total = parseInt(res.result.items)
           this.loading = false;
-        } else {
-          this.$message.error('获取数据失败，请重试');
-        }
-      }).catch((err) => {
-        this.$notify.error({
-          title: err
-        });
+        } 
       })
     },
     // 获取策略
@@ -278,13 +272,7 @@ export default {
           this.deptList = res.result.data
           this.totalStrategy = parseInt(res.result.items)
           this.loading = false;
-        } else {
-          this.$message.error('获取数据失败，请重试');
-        }
-      }).catch((err) => {
-        this.$notify.error({
-          title: err
-        });
+        } 
       })
     },
     /* handleClick(tab) {
@@ -331,12 +319,8 @@ export default {
                 this.managementOpen = false;
                 this.getSourceData();
                 this.managementForm = {};
-              } else {
-                this.$message.error('新增失败，请重试');
-              }
-            }).catch((err) => {
-              this.$message.error(err);
-            });
+              } 
+            })
           } else {
             delete this.managementForm.createTime;
             delete this.managementForm.sort;
@@ -349,12 +333,8 @@ export default {
                 this.managementOpen = false;
                 this.getSourceData();
                 this.managementForm = {};
-              } else {
-                this.$message.error('修改失败，请重试');
-              }
-            }).catch((err) => {
-              this.$message.error(err);
-            });
+              } 
+            })
           }
         }
       })
@@ -371,13 +351,7 @@ export default {
                 this.open = false;
                 this.dataForm = {};
                 this.getStrategyData();
-              } else {
-                this.$message.error('新增失败，请重试');
-              }
-            }).catch((err) => {
-              this.$notify.error({
-                title: err
-              });
+              } 
             })
           } else {
             delete this.dataForm.sort;
@@ -387,13 +361,7 @@ export default {
                 this.open = false;
                 this.dataForm = {};
                 this.getStrategyData();
-              } else {
-                this.$message.error('修改失败，请重试');
-              }
-            }).catch((err) => {
-              this.$notify.error({
-                title: err
-              });
+              } 
             })
           }
         }
@@ -413,31 +381,17 @@ export default {
               if (res.type == success && res.code == 200) {
                 this.$message.success('删除成功');
                 this.getStrategyData();
-              } else {
-                this.$message.warning('删除失败，请重试');
-              }
-            }).catch((err) => {
-              this.$message.error(err);
-            });
+              } 
+            })
           } else {
             deleteDataSource(row.id).then(res => {
               if (res.type == success && res.code == 200) {
                 this.$message.success('删除成功');
                 this.getSourceData();
-              } else {
-                this.$message.warning('删除失败，请重试');
               }
-            }).catch((err) => {
-              this.$message.error(err);
-            });
+            })
           }
         })
-        .catch(() => {
-          /* this.$message.info({
-            type: "info",
-            message: "已取消删除",
-          }); */
-        });
     },
     // 关闭按钮
     handleClose() {

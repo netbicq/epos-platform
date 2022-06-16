@@ -214,9 +214,9 @@ export default {
             trigger: "blur",
           },
         ],
-        /* bankAccount: [{ required: false, type: 'number', message: "请输入正确的银行账户", trigger: "blur" },], */
+        bankAccount: [{ required: true, type: 'number', message: "请输入正确的银行账户", trigger: "blur" },],
         bankAccountName: [{ required: true, message: "开户名不能为空", trigger: "blur" },],
-        bankName: [{ required: false, message: "开户银行不能为空", trigger: "blur" },],
+        bankName: [{ required: true, message: "开户银行不能为空", trigger: "blur" },],
         strategyId: [{ required: true, message: "名称不能为空", trigger: "blur" },],
         quantity: [{ required: false, message: "经销商账号不能为空", trigger: "blur" },],
         remark: [{ required: false },],
@@ -244,13 +244,7 @@ export default {
           this.deptList = res.result.data
           this.total = parseInt(res.result.items)
           this.loading = false;
-        } else {
-          this.$message.error('获取数据失败,请重试');
         }
-      }).catch((err) => {
-        this.$notify.error({
-          title: err
-        });
       })
     },
 
@@ -296,14 +290,7 @@ export default {
                 this.open = false;
                 this.getList();
                 this.openForm = {};
-              } else {
-                this.$message.error('新增失败,请重试');
-                this.getList();
               }
-            }).catch((err) => {
-              this.$notify.error({
-                title: err
-              });
             })
           } else {
             this.openForm.userName = "13310249009"
@@ -311,14 +298,7 @@ export default {
               if (res.type == "success" && res.code == 200) {
                 this.$message.success('修改成功');
                 this.getList();
-              } else {
-                this.$message.error('修改失败,请重试');
-                this.getList();
               }
-            }).catch((err) => {
-              this.$notify.error({
-                title: err
-              });
             })
           }
         }
@@ -356,20 +336,9 @@ export default {
             if (res.type == 'success' && res.code == 200) {
               this.$message.success('重置成功');
               this.getList();
-            } else {
-              this.$message.warning('重置失败,请重试');
-            }
-          }).catch((err) => {
-            this.$notify.error({
-              title: err
-            });
+            } 
           })
-        }).catch(() => {
-          /* this.$message.info({
-            type: "info",
-            message: "已取消删除",
-          }); */
-        });
+        })
     },
     // 更多操作触发
     handleCommand(command, row) {
@@ -399,21 +368,9 @@ export default {
             if (res.type == 'success' && res.code == 200) {
               this.$message.success('删除成功');
               this.getList();
-            } else {
-              this.$message.warning('删除失败,请重试');
             }
-          }).catch((err) => {
-            this.$notify.error({
-              title: err
-            });
           })
-        }).catch(() => {
-          /* this.$message.info({
-            type: "info",
-            message: "已取消删除",
-          }); */
-        });
-
+        })
     },
 
     // 锁定按钮

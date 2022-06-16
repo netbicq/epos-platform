@@ -1,5 +1,5 @@
 import { login, logout, getInfo, refreshToken } from '@/api/login'
-import { getToken, setToken, setExpiresIn, removeToken,userInfoData } from '@/utils/auth'
+import { getToken, setToken, setExpiresIn, removeToken,userInfoData,AgencyInfoData,removeAgencyInfoData } from '@/utils/auth'
 import Cookies from 'js-cookie'
 const user = {
   state: {
@@ -43,6 +43,8 @@ const user = {
           commit('SET_TOKEN', data.token)
           setExpiresIn(data.expireTime)
           userInfoData(data.user)
+          
+          AgencyInfoData(data.agencyCreateDto)
           commit('SET_EXPIRES_IN', data.expireTime)
           resolve()
         }).catch(error => {
@@ -96,6 +98,7 @@ const user = {
           removeToken()
           window.sessionStorage.removeItem('sessionObj')
           window.sessionStorage.removeItem('userInfoData')
+          window.sessionStorage.removeItem('AgencyInfoData')
           resolve()
         }).catch(error => {
           reject(error)
