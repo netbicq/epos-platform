@@ -56,7 +56,7 @@
     <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageIndex" :limit.sync="queryParams.size"
       @pagination="getList" />
 
-    <!-- 添加维护经销商 -->
+    <!-- 添加修改经销商 -->
     <el-dialog :title="title" :visible.sync="open" width="600px" @close="handleClose" append-to-body>
       <el-form ref="openForm" :model="openForm" :rules="rules" label-width="100px" style="padding-left: 29px">
         <el-row>
@@ -163,7 +163,7 @@
 <script>
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import {
-  addAgency, getAllAgency, editsAgency, deleteAgency, pageAgency,resetPassword
+  addAgency, editsAgency, deleteAgency, pageAgency,resetPassword
 } from "@/api/dealersMgt/dealerMgt";
 export default {
   name: "DealerMgt",
@@ -196,7 +196,7 @@ export default {
         size: 10,
         parameter: undefined,
       },
-      // 维护经销商表单参数
+      // 修改经销商表单参数
       openForm: {},
       // 设备通道表单参数
       passageForm: {},
@@ -214,7 +214,7 @@ export default {
             trigger: "blur",
           },
         ],
-        bankAccount: [{ required: true, type: 'number', message: "请输入正确的银行账户", trigger: "blur" },],
+        bankAccount: [{ required: true, message: "请输入正确的银行账户", trigger: "blur" },],
         bankAccountName: [{ required: true, message: "开户名不能为空", trigger: "blur" },],
         bankName: [{ required: true, message: "开户银行不能为空", trigger: "blur" },],
         strategyId: [{ required: true, message: "名称不能为空", trigger: "blur" },],
@@ -273,12 +273,12 @@ export default {
     },
     // 修改按钮
     maintainBtn(flag, row) {
-      this.title = "维护经销商";
+      this.title = "修改经销商";
       this.open = true;
       this.openForm = JSON.parse(JSON.stringify(row))
       this.isAddData = flag
     },
-    // 提交新增维护经销商按钮
+    // 提交新增修改经销商按钮
     submitForm() {
       this.$refs["openForm"].validate(valid => {
         if (valid) {

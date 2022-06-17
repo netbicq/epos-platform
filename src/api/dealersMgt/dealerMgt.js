@@ -16,13 +16,6 @@ export function editsAgency(data) {
     data: data
   })
 }
-// 获取经销商列表
-/* export function getAllAgency() {
-  return request({
-    url: '/platform/Agency/findAllAgency',
-    method: 'get',
-  })
-} */
 // 根据ID删除经销商
 export function deleteAgency(dataSource) {
   return request({

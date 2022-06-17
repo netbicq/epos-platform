@@ -1,3 +1,4 @@
+import config from '@/utils/request'
 'use strict'
 const path = require('path')
 

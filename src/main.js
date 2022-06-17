@@ -127,5 +127,14 @@ new Vue({
   el: '#app',
   router,
   store,
+  methods: {
+    getUser() {
+      getUserProfile().then(response => {
+        this.user = response.data;
+        this.roleGroup = response.roleGroup;
+        this.postGroup = response.postGroup;
+      });
+    }
+  },
   render: h => h(App)
 })

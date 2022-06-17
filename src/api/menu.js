@@ -274,7 +274,7 @@ export const getRouters = () => {
                             "name": "Editing",
                             "path": "editing",
                             "hidden": false,
-                            "component": "editing/index",
+                            "component": "system/editing/index",
                             "meta": {
                                 "title": "文档编辑",
                                 "icon": "excel",

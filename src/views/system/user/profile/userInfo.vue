@@ -4,15 +4,15 @@
       <el-input v-model="user.nickName" maxlength="30" />
     </el-form-item> 
     <el-form-item label="手机号码" prop="phonenumber">
-      <el-input v-model="user.phonenumber" maxlength="11" />
+      <el-input v-model="user.phone" maxlength="11" />
     </el-form-item>
     <el-form-item label="邮箱" prop="email">
       <el-input v-model="user.email" maxlength="50" />
     </el-form-item>
     <el-form-item label="性别">
       <el-radio-group v-model="user.sex">
-        <el-radio label="0">男</el-radio>
-        <el-radio label="1">女</el-radio>
+        <el-radio label="男">男</el-radio>
+        <el-radio label="女">女</el-radio>
       </el-radio-group>
     </el-form-item>
     <el-form-item>
@@ -24,7 +24,6 @@
 
 <script>
 import { updateUserProfile } from "@/api/system/user";
-
 export default {
   props: {
     user: {

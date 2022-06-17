@@ -75,7 +75,7 @@
     <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize"
       @pagination="getList" />
 
-    <!-- 门店维护 -->
+    <!-- 门店修改 -->
     <el-dialog :title="title" @close="handleClose" :visible.sync="open" width="600px" append-to-body>
       <el-form ref="dataForm" :model="dataForm" :rules="rules" label-width="100px" style="padding-left: 29px">
         <el-row>
@@ -184,7 +184,7 @@ export default {
       deptList: [],
       // 总条数
       total: 0,
-      // 是否显示新建/维护门店
+      // 是否显示新建/修改门店
       open: false,
       // 是否展开，默认全部展开
       isExpandAll: true,
@@ -273,7 +273,7 @@ export default {
     // 修改按钮
     handleUpdate(row) {
       console.log(row)
-      this.title = "门店维护";
+      this.title = "门店修改";
       if (row.agencyId=='0') {
         this.isAgencyId = false
       } else {
@@ -288,7 +288,6 @@ export default {
 
     // 提交按钮
     submitForm() {
-      console.log(this.userType)
       this.$refs["dataForm"].validate(valid => {
         if (valid) {
           if (this.isAddData == true) {
@@ -368,21 +367,9 @@ export default {
             if (res.type == 'success' && res.code == 200) {
               this.$message.success('删除成功');
               this.getList();
-            } else {
-              this.$message.warning('删除失败,请重试');
-            }
-          }).catch((err) => {
-            this.$notify.error({
-              title: err
-            });
+            } 
           })
-        }).catch(() => {
-          /* this.$message.info({
-            type: "info",
-            message: "已取消删除",
-          }); */
-        });
-
+        })
     },
     // 关闭按钮
     handleClose() {
