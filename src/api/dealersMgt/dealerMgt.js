@@ -23,6 +23,13 @@ export function deleteAgency(dataSource) {
     method: 'get'
   })
 }
+// 根据ID查询门店数量
+export function queryMargin(dataSource) {
+  return request({
+    url: '/platform/Agency/queryMargin?id=' + dataSource,
+    method: 'get'
+  })
+}
 // 分页
 export function pageAgency(query) {
   return request({

@@ -17,10 +17,10 @@ export function editPricePolicy(data) {
   })
 }
 
-// 删除售价策略获取经销商信息
+// 删除售价策略
 export function deletePricePolicy(data) {
   return request({
-    url: '/platform/manager/deletePricePolicy/',
+    url: '/platform/manager/deletePricePolicy/'+data,
     method: 'post',
     data: data
   })

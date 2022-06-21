@@ -1,14 +1,11 @@
 import axios from 'axios'
 import { Notification, MessageBox, Message, Loading } from 'element-ui'
-import { refreshToken } from '@/api/login'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 import errorCode from '@/utils/errorCode'
 import { tansParams, blobValidate } from "@/utils/ruoyi";
 import cache from '@/plugins/cache'
 import { saveAs } from 'file-saver'
-import Cookies from 'js-cookie'
-
 function compareDate(currentTime, expirationtime) {
   var oDate1 = new Date(expirationtime); // 过期时间
   var oDate2 = new Date(currentTime); // 当前时间
@@ -18,15 +15,19 @@ function compareDate(currentTime, expirationtime) {
     return true; //过期了
   }
 };
+
+const proBaseUrl = window.g.proBaseUrl;
+let baseURLStr;
+process.env.NODE_ENV === 'development' ? baseURLStr = process.env.VUE_APP_BASE_API : baseURLStr = proBaseUrl ;
 let downloadLoadingInstance;
 // 是否显示重新登录
 export let isRelogin = { show: false };
-
 axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
 // 创建axios实例
 const service = axios.create({
   // axios中请求配置有baseURL选项，表示请求URL公共部分
-  baseURL: process.env.VUE_APP_BASE_API,
+  baseURL: baseURLStr,
+  //baseURL: process.env.VUE_APP_BASE_API,
   // 超时
   timeout: 10000
 })

@@ -15,30 +15,33 @@
         <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd"
           v-hasPermi="['system:dept:add']">新增</el-button>
       </el-col>
-      <right-toolbar :showSearch.sync="showSearch"></right-toolbar>
+      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table height="575" v-if="refreshTable" v-loading="loading" :data="deptList" row-key="deptId"
       :default-expand-all="isExpandAll" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
       <el-table-column prop="a" fixed label="经销商名称" width="150"></el-table-column>
-      <el-table-column prop="b" label="经销商联系人" width="120" fixed align="center"></el-table-column>
-      <el-table-column prop="c" label="经销商联系电话" fixed width="140" align="center">
+      <el-table-column prop="contactName" label="经销商联系人" width="120" fixed align="center"></el-table-column>
+      <el-table-column prop="contactTel" label="经销商联系电话" fixed width="140" align="center">
       </el-table-column>
-      <el-table-column label="购买版本" width="100" prop="L" align="center">
+      <el-table-column label="购买版本" width="100" prop="editionTypeStr" align="center">
       </el-table-column>
-      <el-table-column label="购买数量" width="100" prop="d" align="center">
+      <el-table-column label="购买数量" width="100" prop="amount" align="center">
       </el-table-column>
-      <el-table-column prop="e" width="120" label="购买金额" align="center"></el-table-column>
-      <el-table-column prop="f" label="支付方式" width="100" align="center"></el-table-column>
+      <el-table-column prop="sumMoney" width="120" label="购买金额" align="center"></el-table-column>
+      <el-table-column prop="payType" label="支付方式" width="100" align="center"></el-table-column>
       <el-table-column prop="g" label="购买时间" :formatter="carTimeFilter" width="140" align="center">
       </el-table-column>
-      <el-table-column prop="h" label="合同号" width="180"></el-table-column>
+      <el-table-column prop="contractCode" label="合同号" width="180"></el-table-column> 
+      <el-table-column prop="statusStr" label="状态" width="50" align="center">
+        <template slot-scope="scope">
+          <div v-text="scope.statusStr == '1' ? '激活' : '关闭'"></div>
+        </template>
       </el-table-column>
-      <el-table-column prop="j" label="备注"></el-table-column>
-      <el-table-column prop="k" label="状态" width="50" align="center"></el-table-column>
+      <el-table-column prop="remark" label="备注"></el-table-column>
       <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate">修改</el-button>
+          <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)">修改</el-button>
           <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)">删除</el-button>
           <el-button size="mini" type="text" icon="el-icon-finished" @click="checkBtn(scope.row)">审核</el-button>
         </template>
@@ -126,7 +129,7 @@
 
 <script>
 import {
-  findAgencyById, pageAgency
+  findAgencyById, pageAgency,getAccount
 } from "@/api/dealersMgt/storePurchase";
 import moment from "moment";
 export default {
@@ -139,21 +142,7 @@ export default {
       // 显示搜索条件
       showSearch: true,
       // 表格树数据
-      deptList: [
-        {
-          a: "重庆库克科技有限公司",
-          b: "黄瑶",
-          c: "15213025532",
-          d: "100",
-          e: "3000",
-          f: "银行卡",
-          g: "Wed Mar 25 2020 10:39:52 GMT+0800 (GMT+08:00)",
-          h: "6212262201023557228",
-          j: "打钱",
-          k: "激活",
-          L: " 专业版"
-        },
-      ],
+      deptList: [],
       // 总条数
       total: 100,
       // 是否显示新建经销商
@@ -184,8 +173,31 @@ export default {
   },
   created() {
     // this.getAllAgency();
+    this.getList();
   },
   methods: {
+    /** 查询门店账号列表 */
+    getList() {
+      this.loading = true;
+      var indexPage = 0
+      if (this.queryParams.Filter == null) {
+        indexPage = this.queryParams.pageNum - 1
+      }
+      const queryParams = {
+        pageIndex: indexPage,
+        size: this.queryParams.pageSize,
+        parameter:this.queryParams.Filter,         
+        sortField: "string",
+        sorting: "string"
+      }
+      getAccount(queryParams).then(res => {
+        if (res.type == "success" && res.code == 200) {
+          this.deptList = res.result.data
+          this.total = parseInt(res.result.items)
+          this.loading = false;
+        }
+      })
+    },
     // 处理时间显示
     carTimeFilter(row, column, cellValue, index) {
       return moment(cellValue).format("YYYY-MM-DD");
@@ -228,24 +240,19 @@ export default {
     },
     // 删除按钮
     handleDelete(row) {
-      console.log(row);
       this.$confirm("此操作将永久删除该数据, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       })
         .then(() => {
-          this.$message({
-            type: "success",
-            message: "删除成功!",
-          });
+          deleteTenant(row.id).then(res => {
+            if (res.type == 'success' && res.code == 200) {
+              this.$message.success('删除成功');
+              this.getList();
+            }
+          })
         })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除",
-          });
-        });
     },
   },
 };

@@ -26,11 +26,11 @@ export function findAgencyById(query) {
     params: query
   })
 }
-// 获取所有经销商
-export function pageAgency(query) {
+// 获取列表
+export function getAccount(data) {
   return request({
-    url: '/platform/Agency/pageAgency/',
-    method: 'get',
-    params: query
+    url: '/platform/Te/getAccount',
+    method: 'post',
+    data: data
   })
 }

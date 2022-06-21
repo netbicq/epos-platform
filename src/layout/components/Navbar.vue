@@ -101,22 +101,22 @@ export default {
         path: '/docPage',
       });
       window.open(routeData.href, '_blank');
-  },
-  toggleSideBar() {
-    this.$store.dispatch('app/toggleSideBar')
-  },
-  async logout() {
-    this.$confirm('确定注销并退出系统吗？', '提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning'
-    }).then(() => {
-      this.$store.dispatch('LogOut').then(() => {
-        location.href = this.$store.state.settings.indexPage
-      })
-    }).catch(() => { });
+    },
+    toggleSideBar() {
+      this.$store.dispatch('app/toggleSideBar')
+    },
+    async logout() {
+      this.$confirm('确定注销并退出系统吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$store.dispatch('LogOut').then(() => {
+          location.href = this.$store.state.settings.indexPage
+        })
+      }).catch(() => { });
+    }
   }
-}
 }
 </script>
 

@@ -172,7 +172,7 @@ export default {
         "DISPOSED": '已释放',
       },
       isAgencyId: false,
-      rowAgencyId:'',
+      rowAgencyId: '',
       isAddData: '',
       disabled: true,
       title: "",
@@ -194,7 +194,7 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        Filter: undefined,
+        Filter: null,
       },
       // 表单参数
       dataForm: {
@@ -203,7 +203,7 @@ export default {
       userType: JSON.parse(sessionStorage.getItem('userInfoData')).userType,
       // 表单校验
       rules: {
-        /* name: [{ required: true, message: "名称不能为空", trigger: "blur" },],
+        name: [{ required: true, message: "名称不能为空", trigger: "blur" },],
         contactName: [{ required: true, message: "联系人不能为空", trigger: "blur" }],
         contactTel: [{
           required: true,
@@ -221,7 +221,7 @@ export default {
         editionType: [{ required: true, message: "请选择应用版本", trigger: "blur" },],
         status: [{ required: true, message: "请选择状态", trigger: "blur" },],
         startDate: [{ required: true, message: "请选择启用时间", trigger: "blur" },],
-        validDate: [{ required: true, message: "请选择到期时间", trigger: "blur" },], */
+        validDate: [{ required: true, message: "请选择到期时间", trigger: "blur" },],
       },
     };
   },
@@ -233,7 +233,7 @@ export default {
     getList() {
       this.loading = true;
       var indexPage = 0
-      if (this.queryParams.Filter == undefined) {
+      if (this.queryParams.Filter == null) {
         indexPage = this.queryParams.pageNum - 1
       }
       const queryParams = {
@@ -242,7 +242,9 @@ export default {
         parameter: {
           filter: this.queryParams.Filter,
           agencyId: null
-        }
+        },
+        sortField: "string",
+        sorting: "string"
       }
       getTenant(queryParams).then(res => {
         if (res.type == "success" && res.code == 200) {
@@ -274,13 +276,13 @@ export default {
     handleUpdate(row) {
       console.log(row)
       this.title = "门店修改";
-      if (row.agencyId=='0') {
+      if (row.agencyId == '0') {
         this.isAgencyId = false
       } else {
         this.isAgencyId = true
       }
       this.dataForm = JSON.parse(JSON.stringify(row));
-      this.rowAgencyId=row.agencyId
+      this.rowAgencyId = row.agencyId
       this.dataForm.agencyId = row.agencyName
       this.isAddData = false,
         this.open = true;
@@ -367,7 +369,7 @@ export default {
             if (res.type == 'success' && res.code == 200) {
               this.$message.success('删除成功');
               this.getList();
-            } 
+            }
           })
         })
     },

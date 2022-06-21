@@ -112,12 +112,12 @@
       </div>
     </el-dialog>
     <!-- 添加设置通道 -->
-    <el-dialog title="设备通道" :visible.sync="openPassage" width="600px" @close="handleClose" append-to-body>
-      <el-form ref="form" :model="passageForm" style="padding-left: 29px" label-width="100px">
+    <el-dialog title="设置通道" :visible.sync="openPassage" width="600px" @close="handleClose" append-to-body>
+      <el-form  :model="passageForm" style="padding-left: 29px" label-width="100px">
         <el-row>
           <el-col :span="22">
             <el-form-item label="经销商名称 :">
-              <el-input v-model="passageForm.a" disabled="disabled" />
+              <el-input v-model="passageForm.name" disabled="disabled" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
@@ -163,7 +163,7 @@
 <script>
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import {
-  addAgency, editsAgency, deleteAgency, pageAgency,resetPassword
+  addAgency, editsAgency, deleteAgency, pageAgency,resetPassword,queryMargin
 } from "@/api/dealersMgt/dealerMgt";
 export default {
   name: "DealerMgt",
@@ -268,8 +268,12 @@ export default {
     },
     // 查看经销商余额
     dealerBalance(row) {
-      this.dealerForm.name=row.name
-      this.openDealer = true;
+      this.dealerForm.name = row.name
+      queryMargin(row.id).then(res => {
+        if (res.type == "success" && res.code == 200) {
+          this.openDealer = true;
+        }
+      })
     },
     // 修改按钮
     maintainBtn(flag, row) {
@@ -317,7 +321,8 @@ export default {
       console.log(this.dealerForm);
     },
     // 设置通道
-    setChannel() {
+    setChannel(row) {
+      this.passageForm = JSON.parse(JSON.stringify(row))
       this.openPassage = true;
     },
     // 重置密码
@@ -380,107 +385,7 @@ export default {
         message: '已成功锁定',
         type: 'success'
       });
-
     }
   },
-  /* created() {
-    this.getList();
-  }, */
-  // methods: {
-  //   /** 查询部门列表 */
-  //   getList() {
-  //     this.loading = true;
-  //     listDept(this.queryParams).then(response => {
-  //       this.deptList = this.handleTree(response.data, "deptId");
-  //       this.loading = false;
-  //     });
-  //   },
-  //   /** 转换部门数据结构 */
-  //   normalizer(node) {
-  //     if (node.children && !node.children.length) {
-  //       delete node.children;
-  //     }
-  //     return {
-  //       id: node.deptId,
-  //       label: node.deptName,
-  //       children: node.children
-  //     };
-  //   },
-  //   // 表单重置
-  //   reset() {
-  //     this.form = {
-  //       deptId: undefined,
-  //       parentId: undefined,
-  //       deptName: undefined,
-  //       orderNum: undefined,
-  //       leader: undefined,
-  //       phone: undefined,
-  //       email: undefined,
-  //       status: "0"
-  //     };
-  //     this.resetForm("form");
-  //   },
-  //   /** 新增按钮操作 */
-  //   handleAdd(row) {
-  //     this.reset();
-  //     if (row != undefined) {
-  //       this.form.parentId = row.deptId;
-  //     }
-  //     this.open = true;
-  //     this.title = "添加部门";
-  //     listDept().then(response => {
-  //       this.deptOptions = this.handleTree(response.data, "deptId");
-  //     });
-  //   },
-  //   /** 展开/折叠操作 */
-  //   toggleExpandAll() {
-  //     this.refreshTable = false;
-  //     this.isExpandAll = !this.isExpandAll;
-  //     this.$nextTick(() => {
-  //       this.refreshTable = true;
-  //     });
-  //   },
-  //   /** 修改按钮操作 */
-  //   handleUpdate(row) {
-  //     this.reset();
-  //     getDept(row.deptId).then(response => {
-  //       this.form = response.data;
-  //       this.open = true;
-  //       this.title = "修改部门";
-  //     });
-  //     listDeptExcludeChild(row.deptId).then(response => {
-  //       this.deptOptions = this.handleTree(response.data, "deptId");
-  //     });
-  //   },
-  //   /** 提交按钮 */
-  //   submitForm: function() {
-  //     this.$refs["form"].validate(valid => {
-  //       if (valid) {
-  //         if (this.form.deptId != undefined) {
-  //           updateDept(this.form).then(response => {
-  //             this.$modal.msgSuccess("修改成功");
-  //             this.open = false;
-  //             this.getList();
-  //           });
-  //         } else {
-  //           addDept(this.form).then(response => {
-  //             this.$modal.msgSuccess("新增成功");
-  //             this.open = false;
-  //             this.getList();
-  //           });
-  //         }
-  //       }
-  //     });
-  //   },
-  //   /** 删除按钮操作 */
-  //   handleDelete(row) {
-  //     this.$modal.confirm('是否确认删除名称为"' + row.deptName + '"的数据项？').then(function() {
-  //       return delDept(row.deptId);
-  //     }).then(() => {
-  //       this.getList();
-  //       this.$modal.msgSuccess("删除成功");
-  //     }).catch(() => {});
-  //   }
-  // }
 };
 </script>
