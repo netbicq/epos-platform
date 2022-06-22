@@ -9,21 +9,35 @@ export function addAccount(data) {
   })
 }
 // 编辑门店账号
-export function editTenant(data) {
+export function editOrder(data) {
   return request({
-    url: '/platform/Te/editTenant',
+    url: '/platform/Te/editOrder',
     method: 'post',
     data: data
   })
 }
 
 
-// 根据ID获取经销商信息
-export function findAgencyById(query) {
+// 获取所有经销商信息
+export function getAgencySelector(query) {
   return request({
-    url: '/platform/Agency/findById/',
+    url: '/platform/Agency/getAgencySelector',
     method: 'get',
     params: query
+  })
+}
+// 审核
+export function checkAgencyOrder(query) {
+  return request({
+    url: '/platform/Te/audit?agencyOrderId='+query,
+    method: 'get',
+  })
+}
+// 删除门店
+export function deleteAccount(query) {
+  return request({
+    url: '/platform/Te/deleteAccount/'+query,
+    method: 'get',
   })
 }
 // 获取列表

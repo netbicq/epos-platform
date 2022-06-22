@@ -16,6 +16,14 @@ export function editsAgency(data) {
     data: data
   })
 }
+// 设置云通道
+export function SetAgencyChannel(data) {
+  return request({
+    url: '/platform/Agency/SetAgencyChannel',
+    method: 'post',
+    data: data
+  })
+}
 // 根据ID删除经销商
 export function deleteAgency(dataSource) {
   return request({
@@ -39,10 +47,16 @@ export function pageAgency(query) {
   })
 }
 // 重置密码
-export function resetPassword(query) {
+export function resetPassword(dataSource) {
   return request({
-    url: '/platform/Agency/resetPassword',
+    url: '/platform/Agency/resetPassword?agencyID='+ dataSource,
     method: 'get',
-    params: query
+  })
+}
+// 获取所有策略
+export function getAllStrategy() {
+  return request({
+    url: '/platform/ds/lists',
+    method: 'get',
   })
 }

@@ -2,18 +2,18 @@
   <div class="editorBox">
     <el-tabs v-model="activeName" @tab-click="handleClick">
       <el-tab-pane label="企业端文档说明" name="first">
-        <!-- <v-md-editor :disabled-menus="[]" @upload-image="handleUploadImage" v-model="Enterprise" height="800px"
-          @save="EditContent('Enterprise')"></v-md-editor> -->
+        <v-md-editor :disabled-menus="[]" @upload-image="handleUploadImage" v-model="Enterprise" height="800px"
+          @save="EditContent('Enterprise')"></v-md-editor>
       </el-tab-pane>
 
       <el-tab-pane label="小程序文档说明" name="second">
-       <!--  <v-md-editor :disabled-menus="[]" @upload-image="handleUploadImage" v-model="Applets" height="800px"
-          @save="EditContent('Applets')"></v-md-editor> -->
+        <v-md-editor :disabled-menus="[]" @upload-image="handleUploadImage" v-model="Applets" height="800px"
+          @save="EditContent('Applets')"></v-md-editor>
       </el-tab-pane>
 
       <el-tab-pane label="平台端文档说明" name="third">
         <v-md-editor :disabled-menus="[]" @upload-image="handleUploadImage" v-model="platform" height="800px"
-          @save="EditContent"></v-md-editor>
+          @save="EditContent('platform')"></v-md-editor>
       </el-tab-pane>
     </el-tabs>
 
@@ -64,16 +64,14 @@ export default {
       })
     },
     // 新增文档
-    EditContent(text) {
-      console.log(text)
-      /* if (Types == 'Applets') {
+    EditContent(Types) {
+      if (Types == 'Applets') {
         this.queryParams.content=this.Applets
       } else if (Types == 'platform') {
-        this.queryParams.content=text
+        this.queryParams.content=this.platform
       } else if (Types == 'Enterprise') {
         this.queryParams.content=this.Enterprise
-      } */
-      this.queryParams.content = text
+      }
       console.log(this.queryParams)
       editDocument(this.queryParams).then(res => {
         if (res.type == "success" && res.code == 200) {
@@ -81,21 +79,6 @@ export default {
           this.getList();
         }
       })
-    },
-    // 上传文件
-    handleUploadImage(event, insertImage, files) {
-      // 拿到 files 之后上传到文件服务器，然后向编辑框中插入对应的内容
-
-      console.log(event, insertImage, files);
-
-      // 此处只做示例
-      insertImage({
-        url:
-          'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1269952892,3525182336&fm=26&gp=0.jpg',
-        desc: '七龙珠',
-        // width: 'auto',
-        // height: 'auto',
-      });
     },
     // 选择文档
     handleClick(tab) {
@@ -113,7 +96,22 @@ export default {
           id: this.AppletsId
         }
       }
-    }
+    },
+    // 上传文件
+    handleUploadImage(event, insertImage, files) {
+      // 拿到 files 之后上传到文件服务器，然后向编辑框中插入对应的内容
+
+      console.log(event, insertImage, files);
+
+      // 此处只做示例
+      insertImage({
+        url:
+          'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1269952892,3525182336&fm=26&gp=0.jpg',
+        desc: '七龙珠',
+        // width: 'auto',
+        // height: 'auto',
+      });
+    },
   },
 }
 

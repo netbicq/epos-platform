@@ -49,52 +49,97 @@ export default {
       cIndex: '',
       text: '',
       titles: [],
+      aplatform: '',
+      Applets: '',
+      Enterprise: ''
     };
   },
   mounted() {
     this.getList()
+    this.getParameters()
   },
   methods: {
+
     getList() {
       pageDocument().then(res => {
-      if (res.type == "success" && res.code == 200) {
-        var a = res.result.find((item) => { if (item.edition_type == "platform") { return item } }).content //平台
-        var Applets = res.result.find((item) => { if (item.edition_type == "Applets") { return item } }).content  //小程序
-        this.text = res.result.find((item) => { if (item.edition_type == "Enterprise") { return item } }).content//企业
-        console.log(res.result)
-        setInterval(this.valChange, 10)
+        if (res.type == "success" && res.code == 200) {
+          this.aplatform = res.result.find((item) => { if (item.edition_type == "platform") { return item } }).content //平台
+          this.Applets = res.result.find((item) => { if (item.edition_type == "Applets") { return item } }).content  //小程序
+          this.text = res.result.find((item) => { if (item.edition_type == "Enterprise") { return item } }).content//企业
+          this.Enterprise = res.result.find((item) => { if (item.edition_type == "Enterprise") { return item } }).content//企业
+          console.log(res.result)
+          setTimeout(this.valChange, 10)
+          this.getParameters()
+        }
+      })
+    },
+    getParameters() {
+
+      //var arr = "?parameters=Applets";
+
+      var arr = window.location.href;
+      var strs = arr.split("?")[1];
+      console.log(strs)
+      if (strs == undefined) {
+        this.text = this.Enterprise
+      } else {
+        var paramt = strs.split("&");
+        var obj = {};
+        for (let i = 0; i < paramt.length; i++) {
+          let g = paramt[i].split("=");
+          obj[g[0]] = g[1];
+        }
+        console.log(obj.parameters, 'parameters');
+        var parameters = obj.parameters
+        if (parameters == 'Enterprise') {
+          this.text = this.Enterprise
+        } else if (parameters == 'aplatform') {
+          this.text = this.aplatform
+        } else if (parameters == 'Applets') {
+          this.text = this.Applets
+        }
       }
-    })
+    },
+    handleSelect(key, keyPath) {
+      this.cur = key
+      if (key == "企业端文档") {
+        this.text = this.Enterprise
+        setTimeout(this.valChange, 10)
+      } else if (key == "平台端文档") {
+        this.text = this.aplatform
+        setTimeout(this.valChange, 10)
+      } else if (key == "小程序文档") {
+        this.text = this.Applets
+        setTimeout(this.valChange, 10)
+      }
     },
     valChange() {
       const anchors = document.querySelectorAll('h1,h2,h3,h4,h5,h6');
-        console.log(this.$refs.preview.$el, 'aaa')
-        console.log(anchors, 'aaa')
-        const titles = Array.from(anchors).filter((title) => !!title.innerText.trim());
-        if (!titles.length) {
-          this.titles = [];
-          return;
-        }
-        const hTags = Array.from(new Set(titles.map((title) => title.tagName))).sort();
-        function LabelFun(tagName) {
-          var LabeStyle = {}
-          if (tagName == "H1") {
-            LabeStyle = {
-              "fontSize": "1.2rem",
-              "fontWeight": 600
-            }
-            return LabeStyle
+      const titles = Array.from(anchors).filter((title) => !!title.innerText.trim());
+      if (!titles.length) {
+        this.titles = [];
+        return;
+      }
+      const hTags = Array.from(new Set(titles.map((title) => title.tagName))).sort();
+      function LabelFun(tagName) {
+        var LabeStyle = {}
+        if (tagName == "H1") {
+          LabeStyle = {
+            "fontSize": "1.2rem",
+            "fontWeight": 600
           }
-          return ""
+          return LabeStyle
         }
-        this.titles = titles.map((el) => (
-          {
-            title: el.innerText,
-            lineIndex: el.getAttribute('data-v-md-line'),
-            indent: hTags.indexOf(el.tagName),
-            Label: LabelFun(el.tagName)
-          }
-        ));
+        return ""
+      }
+      this.titles = titles.map((el) => (
+        {
+          title: el.innerText,
+          lineIndex: el.getAttribute('data-v-md-line'),
+          indent: hTags.indexOf(el.tagName),
+          Label: LabelFun(el.tagName)
+        }
+      ));
     },
     handleAnchorClick(anchor) {
       const { preview } = this.$refs;
@@ -111,10 +156,7 @@ export default {
     current(i) {
       this.cIndex = i
     },
-    handleSelect(key, keyPath) {
-      this.cur = key
-      console.log(key, keyPath);
-    }
+
   },
 };
 </script>

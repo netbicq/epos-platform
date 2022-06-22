@@ -18,68 +18,75 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table height="575" v-if="refreshTable" v-loading="loading" :data="deptList" row-key="deptId"
+    <el-table height="575" size="medium" v-if="refreshTable" v-loading="loading" :data="deptList" row-key="deptId"
       :default-expand-all="isExpandAll" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
-      <el-table-column prop="a" fixed label="经销商名称" width="150"></el-table-column>
-      <el-table-column prop="contactName" label="经销商联系人" width="120" fixed align="center"></el-table-column>
-      <el-table-column prop="contactTel" label="经销商联系电话" fixed width="140" align="center">
+      <el-table-column prop="name" label="经销商名称" width="150"></el-table-column>
+      <el-table-column prop="contactName" label="经销商联系人" width="130" align="center"></el-table-column>
+      <el-table-column prop="contactTel" label="经销商联系电话" width="160" align="center">
       </el-table-column>
-      <el-table-column label="购买版本" width="100" prop="editionTypeStr" align="center">
+      <el-table-column label="购买版本" width="120" prop="editionType" align="center">
+        <template slot-scope="scope">
+          <div class="editionTypeStrBgc" :class="scope.row.editionType">
+            {{ lockStatusObj[scope.row.editionType] }}
+          </div>
+        </template>
       </el-table-column>
       <el-table-column label="购买数量" width="100" prop="amount" align="center">
       </el-table-column>
       <el-table-column prop="sumMoney" width="120" label="购买金额" align="center"></el-table-column>
       <el-table-column prop="payType" label="支付方式" width="100" align="center"></el-table-column>
-      <el-table-column prop="g" label="购买时间" :formatter="carTimeFilter" width="140" align="center">
-      </el-table-column>
-      <el-table-column prop="contractCode" label="合同号" width="180"></el-table-column> 
-      <el-table-column prop="statusStr" label="状态" width="50" align="center">
+      <el-table-column prop="orderTime" label="购买时间" width="230" align="center">
         <template slot-scope="scope">
-          <div v-text="scope.statusStr == '1' ? '激活' : '关闭'"></div>
+          <span>{{ parseTime(scope.row.orderTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="remark" label="备注"></el-table-column>
+      <el-table-column prop="contractCode" label="合同号" align="center" width="190"></el-table-column>
+      <el-table-column prop="statusStr" label="状态" align="center" width="120">
+        <template slot-scope="scope">
+          <div class="statusBtn" style="margin-right: 10px;" :class="scope.row.status == 'NORMAL' ? 'CLOSED' : 'NORMAL'">
+          </div>
+          <span v-text="scope.row.status == 'NORMAL' ? '正常' : '已审核'"></span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="remark" label="备注" align="center"></el-table-column>
       <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)">修改</el-button>
           <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)">删除</el-button>
-          <el-button size="mini" type="text" icon="el-icon-finished" @click="checkBtn(scope.row)">审核</el-button>
+          <el-button size="mini" type="text" icon="el-icon-finished" @click="checkBtn(scope.row)" :disabled="scope.row.status == 'Audited'">审核</el-button>
         </template>
       </el-table-column>
     </el-table>
-    <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize" />
+    <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize"
+      @pagination="getList" />
 
     <!-- 购买记录维护 -->
     <el-dialog :title="titlt" @close="handleClose" :visible.sync="open" width="600px" append-to-body>
-      <el-form ref="form" :model="dataForm" :rules="rules" label-width="106px" style="padding-left: 29px">
+      <el-form ref="dataForm" :model="dataForm" :rules="rules" label-width="106px" style="padding-left: 29px">
         <el-row>
           <el-col :span="22">
             <el-form-item label="经销商名称 :">
-              <el-select placeholder="请选择经销商" filterable v-model="dataForm.a" style="width: 100%">
-                <el-option label="1" value="1"></el-option>
-                <el-option label="2" value="2"></el-option>
-                <el-option label="3" value="3"></el-option>
-                <el-option label="4" value="4"></el-option>
-                <el-option label="5" value="5"></el-option>
+              <el-select value-key="id" @change="agencyFormFun" placeholder="请选择经销商" filterable
+                v-model="agencyId" style="width: 100%">
+                <el-option v-for="item in allAgency" :key="item.id" :label="item.name" :value="item"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="22">
             <el-form-item label="经销商联系人 :">
-              <el-input v-model="dataForm.b" disabled="disabled" />
+              <el-input v-model="agencyForm.contactName" disabled="disabled" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
             <el-form-item label="联系电话 :" prop="phone">
-              <el-input v-model="dataForm.c" disabled="disabled" />
+              <el-input v-model="agencyForm.contactTel" disabled="disabled" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
             <el-form-item label="购买版本 :">
               <el-select placeholder="购买版本" v-model="dataForm.editionType" style="width: 100%">
-                <el-option label="专业版" value="Basic"></el-option>
-                <el-option label="企业版" value="Professional"></el-option>
-                <el-option label="旗舰版" value="Enterprise "></el-option>
+                <el-option v-for="(val, key, index) in  lockStatusObj" :label="val" :value="key" :key="index">
+                </el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -96,16 +103,17 @@
           <el-col :span="22">
             <el-form-item label="支付方式 :">
               <el-select placeholder="请选择支付方式" v-model="dataForm.payType" style="width: 100%">
-                <el-option label="微信" value="微信"></el-option>
-                <el-option label="支付宝" value="支付宝"></el-option>
-                <el-option label="个人银行" value="个人银行"></el-option>
-                <el-option label="对公银行" value="对公银行"></el-option>
+                <el-option label="微信" value="0"></el-option>
+                <el-option label="支付宝" value="1"></el-option>
+                <el-option label="个人银行" value="2"></el-option>
+                <el-option label="对公银行" value="3"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="22">
             <el-form-item label="购买时间 :">
-              <el-date-picker type="date" placeholder="选择日期" v-model="dataForm.orderTime" style="width: 100%"></el-date-picker>
+              <el-date-picker type="date" placeholder="选择日期" v-model="dataForm.orderTime" style="width: 100%">
+              </el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="22">
@@ -129,13 +137,19 @@
 
 <script>
 import {
-  findAgencyById, pageAgency,getAccount
+  editOrder, getAccount, checkAgencyOrder, addAccount, getAgencySelector,deleteAccount
 } from "@/api/dealersMgt/storePurchase";
 import moment from "moment";
 export default {
   name: "StorePurchase",
   data() {
     return {
+      lockStatusObj: {
+        "Basic": '专业版',
+        "Professional": '企业版',
+        "Enterprise": '旗舰版',
+      },
+      isAddData: '',
       titlt: "",
       // 遮罩层
       loading: false,
@@ -155,8 +169,11 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        Filter: "",
+        Filter: null,
       },
+      agencyId:'',
+      agencyForm: {},
+      allAgency: [],
       // 表单参数
       dataForm: {},
       // 表单校验
@@ -172,10 +189,13 @@ export default {
     };
   },
   created() {
-    // this.getAllAgency();
     this.getList();
+    this.getAllAgency();
   },
   methods: {
+    agencyFormFun(e) {
+      this.agencyForm = e
+    },
     /** 查询门店账号列表 */
     getList() {
       this.loading = true;
@@ -186,7 +206,7 @@ export default {
       const queryParams = {
         pageIndex: indexPage,
         size: this.queryParams.pageSize,
-        parameter:this.queryParams.Filter,         
+        parameter: this.queryParams.Filter,
         sortField: "string",
         sorting: "string"
       }
@@ -198,15 +218,13 @@ export default {
         }
       })
     },
-    // 处理时间显示
-    carTimeFilter(row, column, cellValue, index) {
-      return moment(cellValue).format("YYYY-MM-DD");
-    },
-    // 提交按钮
-    submitForm() {
-      this.open = false;
-      this.dataForm = {};
-      console.log(this.dataForm);
+    getAllAgency() {
+      getAgencySelector().then(res => {
+        if (res.type == "success" && res.code == 200) {
+          this.allAgency = res.result
+          console.log(this.allAgency)
+        }
+      })
     },
     /** 重置按钮操作 */
     resetQuery() {
@@ -219,6 +237,7 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.titlt = "新增门店账号";
+      this.isAddData = true
       this.open = true;
     },
     // 关闭按钮
@@ -226,17 +245,52 @@ export default {
       this.dataForm = {};
     },
     // 修改按钮
-    handleUpdate() {
+    handleUpdate(row) {
       this.titlt = "购买记录维护";
+      this.isAddData = false
+      this.dataForm = JSON.parse(JSON.stringify(row))
+      var rowAgency = this.allAgency.find((item) => { if (item.id == row.agencyId) { return item } })
+      this.agencyId=rowAgency.name
+      this.agencyForm=rowAgency
       this.open = true;
     },
     // 审核按钮
     checkBtn(row) {
-      console.log(row);
-      this.$message({
-        type: "success",
-        message: "审核成功!",
-      });
+      checkAgencyOrder(row.id).then(res => {
+        if (res.type == 'success' && res.code == 200) {
+          this.$message.success('审核成功');
+          this.getList();
+        }
+      })
+    },
+    // 提交按钮
+    submitForm() {
+      this.$refs["dataForm"].validate(valid => {
+        if (valid) {
+          if (this.isAddData) {
+            const Parameters=this.dataForm
+            Parameters.agencyId = this.agencyForm.id
+            addAccount(Parameters).then(res => {
+              if (res.type == "success" && res.code == 200) {
+                this.$message.success('新增成功');
+                this.open = false;
+                this.getList();
+                this.dataForm = {};
+              }
+            })
+          } else {
+            this.dataForm.orderTime = new Date(this.dataForm.orderTime).toISOString()
+            editOrder(this.dataForm).then(res => {
+              if (res.type == "success" && res.code == 200) {
+                this.$message.success('修改成功');
+                this.getList();
+                this.open = false;
+                this.dataForm = {};
+              }
+            })
+          }
+        }
+      })
     },
     // 删除按钮
     handleDelete(row) {
@@ -246,7 +300,7 @@ export default {
         type: "warning",
       })
         .then(() => {
-          deleteTenant(row.id).then(res => {
+          deleteAccount(row.id).then(res => {
             if (res.type == 'success' && res.code == 200) {
               this.$message.success('删除成功');
               this.getList();
@@ -258,4 +312,51 @@ export default {
 };
 </script>
 <style scoped rel="stylesheet/scss" lang="scss">
+.editionTypeStrBgc {
+  display: inline-block;
+  height: 32px;
+  padding: 0 10px;
+  line-height: 30px;
+  font-size: 12px;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 4px;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+
+.Enterprise {
+  background-color: #e8f4ff;
+  border-color: #d1e9ff;
+  color: #1890ff;
+}
+
+.Basic {
+  background-color: #fef0f0;
+  border-color: #fde2e2;
+  color: #f56c6c;
+}
+
+.Professional {
+  background-color: #f0f9eb;
+  border-color: #e1f3d8;
+  color: #67c23a;
+}
+
+.statusBtn {
+  width: 7px;
+  height: 7px;
+  margin-right: 3px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.NORMAL {
+  background-color: #67C23A;
+}
+
+.CLOSED {
+  background-color: #909399;
+}
 </style>

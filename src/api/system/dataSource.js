@@ -36,7 +36,7 @@ export function editStrategyData(data) {
 export function getStrategyData(query) {
   return request({
     url: '/platform/ds/pagelists',
-    method: 'get',
+    method: 'post',
     params: query
   })
 }

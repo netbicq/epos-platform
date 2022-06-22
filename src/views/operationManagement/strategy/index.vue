@@ -20,7 +20,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table :data="tableData" size="medium" v-loading="loading" height="575">
+    <el-table :data="tableData" size="medium" v-loading="loading" height="537">
       <el-table-column label="策略名称" align="center" prop="name" />
       <el-table-column label="开始日期" :formatter="carTimeFilter" align="center" prop="startDate" />
       <el-table-column label="结束日期" :formatter="carTimeFilter" align="center" prop="validDate" />
@@ -207,7 +207,7 @@ export default {
   },
   methods: {
     getList() {
-      this.loading = false;
+      this.loading = true;
       var indexPage = 0
       if (this.queryParams.edition == undefined) {
         indexPage = this.queryParams.pageNum - 1

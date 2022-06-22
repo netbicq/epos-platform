@@ -18,24 +18,24 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table height="575"  size="medium" v-if="refreshTable" v-loading="loading" :data="deptList" row-key="deptId"
+    <el-table height="537" size="medium" v-if="refreshTable" v-loading="loading" :data="deptList" row-key="deptId"
       :default-expand-all="isExpandAll" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
       <el-table-column prop="name" width="180" fixed label="经销商名称"></el-table-column>
       <el-table-column prop="contactName" label="联系人" fixed width="100" align="center"></el-table-column>
-      <el-table-column prop="contactTel" label="联系电话" fixed width="140">
+      <el-table-column prop="contactTel" label="联系电话" fixed width="160" align="center">
       </el-table-column>
-      <el-table-column label="银行账号" prop="bankAccount" width="200"> </el-table-column>
-      <el-table-column prop="bankAccountName" label="银行开户名" width="100"></el-table-column>
-      <el-table-column prop="bankName" label="开户银行"></el-table-column>
-      <el-table-column prop="g" label="云通道" width="100" align="center"></el-table-column>
-      <el-table-column prop="strategyId" label="经销商账号" width="150"></el-table-column>
+      <el-table-column label="银行账号" prop="bankAccount" width="200" align="center"> </el-table-column>
+      <el-table-column prop="bankAccountName" label="银行开户名" width="100" align="center"></el-table-column>
+      <el-table-column prop="bankName" label="开户银行" align="center"></el-table-column>
+      <el-table-column prop="strategyId" label="云通道" width="120" align="center"></el-table-column>
+      <el-table-column prop="userName" label="经销商账号" width="150"></el-table-column>
       <el-table-column label="门店剩余数量" align="center" width="100" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button size="mini" type="text" @click="dealerBalance(scope.row)">查看</el-button>
         </template>
       </el-table-column>
-      <el-table-column prop="remark" label="备注"></el-table-column>
-      <el-table-column prop="k" label="状态" align="center" width="80"></el-table-column>
+      <el-table-column prop="k" label="状态" align="center" width="100"></el-table-column>
+      <el-table-column prop="remark" label="备注" align="center"></el-table-column>
       <el-table-column label="操作" width="200" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button size="mini" type="text" icon="el-icon-edit" @click="maintainBtn(false, scope.row)">修改</el-button>
@@ -113,7 +113,7 @@
     </el-dialog>
     <!-- 添加设置通道 -->
     <el-dialog title="设置通道" :visible.sync="openPassage" width="600px" @close="handleClose" append-to-body>
-      <el-form  :model="passageForm" style="padding-left: 29px" label-width="100px">
+      <el-form :model="passageForm" style="padding-left: 29px" label-width="100px">
         <el-row>
           <el-col :span="22">
             <el-form-item label="经销商名称 :">
@@ -122,12 +122,8 @@
           </el-col>
           <el-col :span="22">
             <el-form-item label="云通道 :">
-              <el-select placeholder="请选择云通道" v-model="passageForm.b" style="width: 100%">
-                <el-option label="华东" value="华东"></el-option>
-                <el-option label="华南" value="华南"></el-option>
-                <el-option label="华北" value="华北"></el-option>
-                <el-option label="西南" value="西南"></el-option>
-                <el-option label="西北" value="西北"></el-option>
+              <el-select placeholder="请选择云通道" v-model="agencyForm.strategyId" style="width: 100%">
+                <el-option v-for="item in allStrategy" :key="item.id" :label="item.name" :value="item.id"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -139,7 +135,7 @@
     </el-dialog>
     <!-- 查看经销商余额 -->
     <el-dialog title="经销商余额" @close="handleClose" :visible.sync="openDealer" width="550px" append-to-body>
-      <el-form  :model="dealerForm" label-width="100px" style="padding-left: 29px">
+      <el-form :model="dealerForm" label-width="100px" style="padding-left: 29px">
         <el-row>
           <el-col :span="22">
             <el-form-item label="经销商名称">
@@ -147,9 +143,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="22" align="center">
-            <div>专业版：30</div>
-            <div>企业版：50</div>
-            <div>旗舰版：20</div>
+            <div v-for="(item, index) in remainderAmount" :key="index">{{ item.editionTypeStr }} :
+              {{ item.remainderAmount }}</div>
           </el-col>
         </el-row>
       </el-form>
@@ -163,12 +158,13 @@
 <script>
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import {
-  addAgency, editsAgency, deleteAgency, pageAgency,resetPassword,queryMargin
+  addAgency, editsAgency, deleteAgency, pageAgency, resetPassword, queryMargin, getAllStrategy, SetAgencyChannel
 } from "@/api/dealersMgt/dealerMgt";
 export default {
   name: "DealerMgt",
   data() {
     return {
+      allStrategy: [],
       isAddData: '',
       disabled: "true",
       title: "",
@@ -180,6 +176,7 @@ export default {
       deptList: [],
       // 总条数
       total: 0,
+      remainderAmount: [],
       // 是否显示新建经销商
       open: false,
       // 是否显示设备通道
@@ -202,9 +199,13 @@ export default {
       passageForm: {},
       // 经销商余额表单参数
       dealerForm: {},
+      agencyForm: {
+        id: "",
+        strategyId: ""
+      },
       // 表单校验
       rules: {
-        name: [{ required: true, message: "名称不能为空", trigger: "blur" },],
+        /* name: [{ required: true, message: "名称不能为空", trigger: "blur" },],
         contactName: [{ required: true, message: "联系人不能为空", trigger: "blur" },],
         contactTel: [
           {
@@ -219,7 +220,7 @@ export default {
         bankName: [{ required: true, message: "开户银行不能为空", trigger: "blur" },],
         strategyId: [{ required: true, message: "名称不能为空", trigger: "blur" },],
         quantity: [{ required: false, message: "经销商账号不能为空", trigger: "blur" },],
-        remark: [{ required: false },],
+        remark: [{ required: false },], */
       },
     };
   },
@@ -271,6 +272,8 @@ export default {
       this.dealerForm.name = row.name
       queryMargin(row.id).then(res => {
         if (res.type == "success" && res.code == 200) {
+          this.remainderAmount = res.result
+          console.log(this.remainderAmount)
           this.openDealer = true;
         }
       })
@@ -287,7 +290,7 @@ export default {
       this.$refs["openForm"].validate(valid => {
         if (valid) {
           if (this.isAddData) {
-            this.openForm.userName = "13310249009"
+            this.openForm.userName = JSON.parse(sessionStorage.getItem('userInfoData')).userName
             addAgency(this.openForm).then(res => {
               if (res.type == "success" && res.code == 200) {
                 this.$message.success('新增成功');
@@ -297,53 +300,67 @@ export default {
               }
             })
           } else {
-            this.openForm.userName = "13310249009"
             editsAgency(this.openForm).then(res => {
               if (res.type == "success" && res.code == 200) {
                 this.$message.success('修改成功');
                 this.getList();
+                this.open = false;
+                this.openForm = {};
               }
             })
           }
         }
       })
     },
-    // 提交设备通道按钮
+    // 提交云通道
     passageSubmit() {
-      this.passageForm = {};
-      this.openPassage = false;
-      console.log(this.passageForm);
-    },
-    // 提交经销商余额查询按钮
-    dealerSubmit() {
-      this.dealerForm = {};
-      this.openDealer = false;
-      console.log(this.dealerForm);
+      SetAgencyChannel(this.agencyForm).then(res => {
+        if (res.type == 'success' && res.code == 200) {
+          this.$message.success('设置成功');
+          this.getList();
+          this.agencyForm={}
+        }
+      })
+      this.openPassage=false
     },
     // 设置通道
     setChannel(row) {
+      if (row.strategyId == "0") {
+        this.agencyForm={}
+      } else {
+        this.agencyForm = {
+          id: row.id,
+          strategyId: row.strategyId
+        }
+      }
+      this.agencyForm.id = row.id
       this.passageForm = JSON.parse(JSON.stringify(row))
-      this.openPassage = true;
+      getAllStrategy().then(res => {
+        if (res.type == 'success' && res.code == 200) {
+          this.allStrategy = res.result
+          this.openPassage = true;
+        }
+      })
     },
     // 重置密码
     resetPassword(row) {
-      const params = {
-        tenantId : row.id,
-        userId : JSON.parse(sessionStorage.getItem('userInfoData')).id
-      }
+      const tenantId = row.id
       this.$confirm("是否确认重置密码?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       })
         .then(() => {
-          resetPassword(params).then(res => {
+          resetPassword(tenantId).then(res => {
             if (res.type == 'success' && res.code == 200) {
               this.$message.success('重置成功');
               this.getList();
-            } 
+            }
           })
         })
+    },
+    dealerSubmit() {
+      this.openDealer=false
     },
     // 更多操作触发
     handleCommand(command, row) {

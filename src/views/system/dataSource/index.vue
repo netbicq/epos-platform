@@ -1,8 +1,6 @@
 <template>
   <div class="app-container">
     <el-tabs v-model="activeName">
-      
-
       <el-tab-pane label="数据源" name="first">
         <el-form :model="queryParams" size="small" :inline="true" v-show="showSearch">
           <el-form-item prop="deptName">
@@ -21,7 +19,7 @@
           </el-col>
           <right-toolbar :showSearch.sync="showSearch" @queryTable="getSourceData"></right-toolbar>
         </el-row>
-        <el-table height="600" size="medium" v-if="refreshTable" v-loading="loading" :data="managementList"
+        <el-table height="537" size="medium" v-if="refreshTable" v-loading="loading" :data="managementList"
           row-key="deptId" :default-expand-all="isExpandAll"
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
           <el-table-column prop="name" width="120" label="名称"></el-table-column>
@@ -60,7 +58,7 @@
           </el-col>
           <right-toolbar :showSearch.sync="showSearch" @queryTable="getStrategyData"></right-toolbar>
         </el-row>
-        <el-table height="575" size="medium" v-if="refreshTable" v-loading="loading" :data="deptList" row-key="deptId"
+        <el-table height="537" size="medium" v-if="refreshTable" v-loading="loading" :data="deptList" row-key="deptId"
           :default-expand-all="isExpandAll" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
           <el-table-column prop="name" width="260" label="名称"></el-table-column>
           <el-table-column prop="writeSourceId" width="300" label="写库" align="center"></el-table-column>
@@ -79,9 +77,6 @@
           :limit.sync="strategyParams.pageSize" @pagination="getStrategyData" />
       </el-tab-pane>
     </el-tabs>
-
-    
-
     <!-- 修改数据源 -->
     <el-dialog :title="managementTitle" @close="handleClose" :visible.sync="managementOpen" width="600px"
       append-to-body>
@@ -277,7 +272,7 @@ export default {
         } 
       })
     },
-    /* handleClick(tab) {
+   /*  handleClick(tab) {
       if (tab.index == 0) {
         this.getStrategyData();
       } else if (tab.index == 1) {
