@@ -18,13 +18,13 @@
     </el-row>
     <el-table height="575" size="medium" v-if="refreshTable" :default-expand-all="isExpandAll" v-loading="loading"
       :data="deptList" row-key="deptId">
-      <el-table-column prop="name" label="门店名称" width="180"></el-table-column>
-      <el-table-column prop="contactTel" label="门店用户名" width="140"></el-table-column>
+      <el-table-column prop="name" label="门店名称" width="180" align="center"></el-table-column>
+     <!--  <el-table-column prop="contactTel" label="门店用户名" width="140" align="center"></el-table-column> -->
       <el-table-column prop="contactName" label="门店联系人" width="90" align="center"></el-table-column>
-      <el-table-column prop="contactTel" label="门店电话" width="140" />
-      <el-table-column prop="address" label="门店地址" width="220"> </el-table-column>
-      <el-table-column prop="agencyName" label="经销商名称" width="100"></el-table-column>
-      <el-table-column prop="agencyTel" label="经销商电话" width="110"></el-table-column>
+      <el-table-column prop="contactTel" label="门店电话" width="140" align="center" />
+      <el-table-column prop="address" label="门店地址" width="220" align="center"> </el-table-column>
+      <el-table-column prop="agencyName" label="经销商名称" width="100" align="center"></el-table-column>
+      <el-table-column prop="agencyTel" label="经销商电话" width="120" align="center"></el-table-column>
       <el-table-column prop="agencyContactName" label="经销商联系人" width="120" align="center" />
       <el-table-column prop="editionTypeStr" label="应用版本" align="center">
         <template slot-scope="scope">
@@ -33,12 +33,17 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="startDate" align="center" :formatter="carTimeFilter" label="开通时间" width="120">
+      <el-table-column prop="startDate" align="center" label="开通时间" width="120">
+        <template slot-scope="scope">
+          <span>{{ carTimeFilter(scope.row.startDate) }}</span>
+        </template>
       </el-table-column>
-      <el-table-column prop="validDate" :formatter="carTimeFilter" label="到期时间" width="120" align="center">
+      <el-table-column prop="validDate" label="到期时间" width="120" align="center">
+        <template slot-scope="scope">
+          <span>{{ carTimeFilter(scope.row.validDate) }}</span>
+        </template>
       </el-table-column>
-      <el-table-column prop="l" label="用户数量" width="120" align="center"></el-table-column>
-      <el-table-column prop="statusStr" label="状态">
+      <el-table-column prop="statusStr" label="状态" align="center">
         <template slot-scope="scope">
           <div slot="reference">
             <div class="statusBtn" style="margin-right: 10px;" :class="scope.row.status"></div>{{ scope.row.statusStr }}
@@ -48,19 +53,19 @@
       <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button size="mini" icon="el-icon-edit" type="text" @click="handleUpdate(scope.row)">修改</el-button>
-          <el-button size="mini" type="text">
-            <el-dropdown trigger="click" size="mini" @command="(command) => lockStatus(command, scope.row)">
-              <span class="el-dropdown-link">
-                <i class="el-icon-lock"></i>锁定
-              </span>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item v-for="(val, key, index) in  lockStatusObj" :command="key" :key="index">
-                  <div class="statusBtn" :class="key"></div> {{ val }}
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-          </el-button>
-          <el-dropdown size="mini" @command="(command) => handleCommand(command, scope.row)">
+          <el-button size="mini" type="text" icon="el-icon-delete" @click="deleteRow(scope.row)">删除</el-button>
+          <el-dropdown  size="mini" @command="(command) => lockStatus(command, scope.row)">
+            <span class="el-dropdown-link">
+              <i class="el-icon-lock el-icon--right"></i>锁定
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item v-for="(val, key, index) in  lockStatusObj" :command="key" :key="index">
+                <div class="statusBtn" :class="key"></div> {{ val }}
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+
+          <!-- <el-dropdown size="mini" @command="(command) => handleCommand(command, scope.row)">
             <span class="el-dropdown-link">
               <i class="el-icon-d-arrow-right el-icon--right"></i>更多
             </span>
@@ -68,7 +73,7 @@
               <el-dropdown-item command="checkBtn">审核</el-dropdown-item>
               <el-dropdown-item command="deleteRow">删除</el-dropdown-item>
             </el-dropdown-menu>
-          </el-dropdown>
+          </el-dropdown> -->
         </template>
       </el-table-column>
     </el-table>
@@ -109,11 +114,11 @@
               <el-input v-model="dataForm.address" placeholder="请输入门店地址" />
             </el-form-item>
           </el-col>
-          <el-col :span="22">
+          <!-- <el-col :span="22">
             <el-form-item label="门店用户名 :" prop="contactTel">
               <el-input v-model="dataForm.contactTel" placeholder="请输入门店用户名" />
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="22">
             <el-col :span="12">
               <el-form-item label="应用版本 :" prop="editionType">
@@ -159,7 +164,6 @@ import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import {
   addTenant, getTenant, deleteTenant, editTenant, setStatues
 } from "@/api/dealersMgt/storeMgt";
-import moment from "moment";
 export default {
   name: "StoreMgt",
   data() {
@@ -254,10 +258,6 @@ export default {
         }
       })
     },
-    // 处理时间显示
-    carTimeFilter(row, column, cellValue, index) {
-      return moment(cellValue).format("YYYY-MM-DD");
-    },
     /** 重置按钮操作 */
     resetQuery() {
       this.queryParams.Filter = "";
@@ -265,7 +265,11 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.title = "新增门店";
-      this.dataForm.agencyId = JSON.parse(sessionStorage.getItem('AgencyInfoData')).name
+      console.log(sessionStorage.getItem('AgencyInfoData'))
+      if (sessionStorage.getItem('AgencyInfoData') != "undefined") {
+        this.dataForm.agencyId = JSON.parse(sessionStorage.getItem('AgencyInfoData')).name
+      }
+
       if (this.userType == 'AGENCY') {
         this.isAgencyId = true
       }

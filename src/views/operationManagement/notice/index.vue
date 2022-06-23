@@ -28,7 +28,7 @@
           <el-switch v-model="scope.row.isShow" @change="handleStatusChange(scope.row)"></el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="创建人" align="center" prop="title" :show-overflow-tooltip="true" />
+      <el-table-column label="创建人" align="center" prop="nickName" :show-overflow-tooltip="true" />
       <el-table-column label="创建时间" align="center" :formatter="carTimeFilter" prop="createTime" width="180" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -200,6 +200,8 @@ export default {
               }
             })
           } else {
+            this.formData.validDate = new Date(this.formData.validDate).toISOString()
+            this.formData.startDate = new Date(this.formData.startDate).toISOString()
             editNotice(this.formData).then(res => {
               if (res.type == "success" && res.code == 200) {
                 this.$message.success('修改成功');

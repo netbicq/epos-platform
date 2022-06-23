@@ -20,21 +20,28 @@
 
     <el-table height="537" size="medium" v-if="refreshTable" v-loading="loading" :data="deptList" row-key="deptId"
       :default-expand-all="isExpandAll" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
-      <el-table-column prop="name" width="180" fixed label="经销商名称"></el-table-column>
-      <el-table-column prop="contactName" label="联系人" fixed width="100" align="center"></el-table-column>
-      <el-table-column prop="contactTel" label="联系电话" fixed width="160" align="center">
+      <el-table-column prop="name" align="center" width="150" label="经销商名称"></el-table-column>
+      <el-table-column prop="contactName" label="联系人" width="150" align="center"></el-table-column>
+      <el-table-column prop="contactTel" label="联系电话" width="160" align="center">
       </el-table-column>
       <el-table-column label="银行账号" prop="bankAccount" width="200" align="center"> </el-table-column>
       <el-table-column prop="bankAccountName" label="银行开户名" width="100" align="center"></el-table-column>
       <el-table-column prop="bankName" label="开户银行" align="center"></el-table-column>
-      <el-table-column prop="strategyId" label="云通道" width="120" align="center"></el-table-column>
-      <el-table-column prop="userName" label="经销商账号" width="150"></el-table-column>
+      <el-table-column prop="strategyName" label="云通道" width="120" align="center"></el-table-column>
+      <el-table-column prop="userName" label="经销商账号" align="center" width="150"></el-table-column>
       <el-table-column label="门店剩余数量" align="center" width="100" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button size="mini" type="text" @click="dealerBalance(scope.row)">查看</el-button>
         </template>
       </el-table-column>
-      <el-table-column prop="k" label="状态" align="center" width="100"></el-table-column>
+      <el-table-column prop="status" label="状态" align="center" width="100">
+        <template slot-scope="scope">
+          <div class="statusBtn" style="margin-right: 10px;"
+            :class="scope.row.status == 'NORMAL' ? 'NORMAL' : 'CLOSED'">
+          </div>
+          <span v-text="scope.row.status == 'NORMAL' ? '正常' : '锁定'"></span>
+        </template>
+      </el-table-column>
       <el-table-column prop="remark" label="备注" align="center"></el-table-column>
       <el-table-column label="操作" width="200" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -91,13 +98,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-form-item label="经销商账号 :" prop="strategyId">
-              <el-input v-model="openForm.strategyId" placeholder="请输入经销商账号" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="22">
-            <el-form-item label="门店数量 :" prop="quantity">
-              <el-input v-model="openForm.quantity" placeholder="请输入门店数量" />
+            <el-form-item label="经销商账号 :" prop="userName">
+              <el-input v-model="openForm.userName" placeholder="请输入经销商账号" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
@@ -205,7 +207,7 @@ export default {
       },
       // 表单校验
       rules: {
-        /* name: [{ required: true, message: "名称不能为空", trigger: "blur" },],
+        name: [{ required: true, message: "名称不能为空", trigger: "blur" },],
         contactName: [{ required: true, message: "联系人不能为空", trigger: "blur" },],
         contactTel: [
           {
@@ -218,9 +220,8 @@ export default {
         bankAccount: [{ required: true, message: "请输入正确的银行账户", trigger: "blur" },],
         bankAccountName: [{ required: true, message: "开户名不能为空", trigger: "blur" },],
         bankName: [{ required: true, message: "开户银行不能为空", trigger: "blur" },],
-        strategyId: [{ required: true, message: "名称不能为空", trigger: "blur" },],
-        quantity: [{ required: false, message: "经销商账号不能为空", trigger: "blur" },],
-        remark: [{ required: false },], */
+        userName: [{ required: false, message: "经销商账号不能为空", trigger: "blur" },],
+        remark: [{ required: false },],
       },
     };
   },
@@ -290,7 +291,7 @@ export default {
       this.$refs["openForm"].validate(valid => {
         if (valid) {
           if (this.isAddData) {
-            this.openForm.userName = JSON.parse(sessionStorage.getItem('userInfoData')).userName
+            this.openForm.strategyId = 0
             addAgency(this.openForm).then(res => {
               if (res.type == "success" && res.code == 200) {
                 this.$message.success('新增成功');
@@ -318,15 +319,15 @@ export default {
         if (res.type == 'success' && res.code == 200) {
           this.$message.success('设置成功');
           this.getList();
-          this.agencyForm={}
+          this.agencyForm = {}
         }
       })
-      this.openPassage=false
+      this.openPassage = false
     },
     // 设置通道
     setChannel(row) {
       if (row.strategyId == "0") {
-        this.agencyForm={}
+        this.agencyForm = {}
       } else {
         this.agencyForm = {
           id: row.id,
@@ -360,7 +361,7 @@ export default {
         })
     },
     dealerSubmit() {
-      this.openDealer=false
+      this.openDealer = false
     },
     // 更多操作触发
     handleCommand(command, row) {
@@ -406,3 +407,20 @@ export default {
   },
 };
 </script>
+<style scoped rel="stylesheet/scss" lang="scss">
+.statusBtn {
+  width: 7px;
+  height: 7px;
+  margin-right: 3px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.NORMAL {
+  background-color: #67C23A;
+}
+
+.CLOSED {
+  background-color: #909399;
+}
+</style>

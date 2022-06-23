@@ -60,11 +60,11 @@
         </el-row>
         <el-table height="537" size="medium" v-if="refreshTable" v-loading="loading" :data="deptList" row-key="deptId"
           :default-expand-all="isExpandAll" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
-          <el-table-column prop="name" width="260" label="名称"></el-table-column>
-          <el-table-column prop="writeSourceId" width="300" label="写库" align="center"></el-table-column>
-          <el-table-column prop="readSourceId" width="300" label="读库" align="center"></el-table-column>
-          <el-table-column label="备注" prop="remark"></el-table-column>
-          <el-table-column label="操作" width="200" align="center" class-name="small-padding fixed-width">
+          <el-table-column prop="name" width="260" label="名称" align="center"></el-table-column>
+          <el-table-column prop="writeSourceId" width="400" label="写库" align="center"></el-table-column>
+          <el-table-column prop="readSourceId" width="400"  label="读库" align="center"></el-table-column>
+          <el-table-column label="备注" prop="remark" align="center"></el-table-column>
+          <el-table-column label="操作" width="150"  align="center" class-name="small-padding fixed-width">
             <template slot-scope="scope">
               <el-button size="mini" type="text" icon="el-icon-edit" @click="modifyBtn(scope.row, false)">修改</el-button>
               <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row, true)">删除

@@ -9,7 +9,6 @@
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
-
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd"
@@ -17,13 +16,16 @@
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
-
     <el-table height="575" size="medium" v-if="refreshTable" v-loading="loading" :data="deptList" row-key="deptId"
       :default-expand-all="isExpandAll" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
-      <el-table-column prop="name" label="经销商名称" width="150"></el-table-column>
+      <el-table-column prop="name" label="经销商名称" align="center" width="150"></el-table-column>
       <el-table-column prop="contactName" label="经销商联系人" width="130" align="center"></el-table-column>
       <el-table-column prop="contactTel" label="经销商联系电话" width="160" align="center">
       </el-table-column>
+      <el-table-column label="购买数量" width="100" prop="amount" align="center">
+      </el-table-column>
+      <el-table-column prop="sumMoney" width="120" label="购买金额" align="center"></el-table-column>
+      <el-table-column prop="payType" label="支付方式" width="100" align="center"></el-table-column>
       <el-table-column label="购买版本" width="120" prop="editionType" align="center">
         <template slot-scope="scope">
           <div class="editionTypeStrBgc" :class="scope.row.editionType">
@@ -31,13 +33,9 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="购买数量" width="100" prop="amount" align="center">
-      </el-table-column>
-      <el-table-column prop="sumMoney" width="120" label="购买金额" align="center"></el-table-column>
-      <el-table-column prop="payType" label="支付方式" width="100" align="center"></el-table-column>
       <el-table-column prop="orderTime" label="购买时间" width="230" align="center">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.orderTime) }}</span>
+          <span>{{ carTimeFilter(scope.row.orderTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="contractCode" label="合同号" align="center" width="190"></el-table-column>

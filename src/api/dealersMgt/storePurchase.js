@@ -17,7 +17,6 @@ export function editOrder(data) {
   })
 }
 
-
 // 获取所有经销商信息
 export function getAgencySelector(query) {
   return request({

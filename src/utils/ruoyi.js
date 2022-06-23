@@ -1,10 +1,13 @@
 ﻿
-
+import moment from "moment";
 /**
  * 通用js方法封装处理
  * Copyright (c) 2019 ruoyi
  */
-
+// 处理时间显示
+export function carTimeFilter(cellValue) {
+  return moment(cellValue).format("YYYY-MM-DD")
+};
 // 日期格式化
 export function parseTime(time, pattern) {
   if (arguments.length === 0 || !time) {
