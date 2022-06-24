@@ -33,11 +33,11 @@ export function editStrategyData(data) {
   })
 }
 // 获取策略表数据
-export function getStrategyData(query) {
+export function getStrategyData(data) {
   return request({
     url: '/platform/ds/pagelists',
     method: 'post',
-    params: query
+    data: data
   })
 }
 // 获取数据源数据

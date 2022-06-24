@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch">
-      <el-form-item prop="deptName">
+      <el-form-item  prop="deptName">
         <el-input v-model="queryParams.parameter" placeholder="请输入名称 负责人 联系电话等" style="width: 225px" clearable />
       </el-form-item>
       <el-form-item>
@@ -220,7 +220,7 @@ export default {
         bankAccount: [{ required: true, message: "请输入正确的银行账户", trigger: "blur" },],
         bankAccountName: [{ required: true, message: "开户名不能为空", trigger: "blur" },],
         bankName: [{ required: true, message: "开户银行不能为空", trigger: "blur" },],
-        userName: [{ required: false, message: "经销商账号不能为空", trigger: "blur" },],
+        userName: [{ required: true, message: "经销商账号不能为空", trigger: "blur" },],
         remark: [{ required: false },],
       },
     };

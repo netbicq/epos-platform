@@ -47,3 +47,11 @@ export function getAccount(data) {
     data: data
   })
 }
+// 获取支付方式
+export function dictTypeSelector(data) {
+  return request({
+    url: '/platform/User/dictTypeSelector?dictType=payWay',
+    method: 'post',
+    data: data
+  })
+}

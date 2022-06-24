@@ -27,19 +27,11 @@ export function editDict(data) {
 
 
 
-// 分页
-export function getPageNotice(query) {
+// 分页获取词典
+export function pageDictType(data) {
   return request({
-    url: '/platform/manager/getPageNotice',
-    method: 'get',
-    params: query
-  })
-}
-// 设置通知状态
-export function setIsShow(query) {
-  return request({
-    url: '/platform/manager/setIsShow/{id}',
-    method: 'get',
-    params: query
+    url: '/platform/User/pageDictType',
+    method: 'post',
+    data: data
   })
 }

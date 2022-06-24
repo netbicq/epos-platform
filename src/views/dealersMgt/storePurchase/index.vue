@@ -14,7 +14,7 @@
         <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd"
           v-hasPermi="['system:dept:add']">新增</el-button>
       </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+      <right-toolbar :showSearch.sync="showSearch" @queryTable="Refresh"></right-toolbar>
     </el-row>
     <el-table height="575" size="medium" v-if="refreshTable" v-loading="loading" :data="deptList" row-key="deptId"
       :default-expand-all="isExpandAll" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
@@ -25,7 +25,7 @@
       <el-table-column label="购买数量" width="100" prop="amount" align="center">
       </el-table-column>
       <el-table-column prop="sumMoney" width="120" label="购买金额" align="center"></el-table-column>
-      <el-table-column prop="payType" label="支付方式" width="100" align="center"></el-table-column>
+      <el-table-column prop="dictType" label="支付方式" width="100" align="center"></el-table-column>
       <el-table-column label="购买版本" width="120" prop="editionType" align="center">
         <template slot-scope="scope">
           <div class="editionTypeStrBgc" :class="scope.row.editionType">
@@ -41,7 +41,8 @@
       <el-table-column prop="contractCode" label="合同号" align="center" width="190"></el-table-column>
       <el-table-column prop="statusStr" label="状态" align="center" width="120">
         <template slot-scope="scope">
-          <div class="statusBtn" style="margin-right: 10px;" :class="scope.row.status == 'NORMAL' ? 'CLOSED' : 'NORMAL'">
+          <div class="statusBtn" style="margin-right: 10px;"
+            :class="scope.row.status == 'NORMAL' ? 'CLOSED' : 'NORMAL'">
           </div>
           <span v-text="scope.row.status == 'NORMAL' ? '正常' : '已审核'"></span>
         </template>
@@ -51,7 +52,8 @@
         <template slot-scope="scope">
           <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)">修改</el-button>
           <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)">删除</el-button>
-          <el-button size="mini" type="text" icon="el-icon-finished" @click="checkBtn(scope.row)" :disabled="scope.row.status == 'Audited'">审核</el-button>
+          <el-button size="mini" type="text" icon="el-icon-finished" @click="checkBtn(scope.row)"
+            :disabled="scope.row.status == 'Audited'">审核</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -64,8 +66,8 @@
         <el-row>
           <el-col :span="22">
             <el-form-item label="经销商名称 :">
-              <el-select value-key="id" @change="agencyFormFun" placeholder="请选择经销商" filterable
-                v-model="agencyId" style="width: 100%">
+              <el-select value-key="id" @change="agencyFormFun" placeholder="请选择经销商" filterable v-model="agencyId"
+                style="width: 100%">
                 <el-option v-for="item in allAgency" :key="item.id" :label="item.name" :value="item"></el-option>
               </el-select>
             </el-form-item>
@@ -100,11 +102,9 @@
           </el-col>
           <el-col :span="22">
             <el-form-item label="支付方式 :">
-              <el-select placeholder="请选择支付方式" v-model="dataForm.payType" style="width: 100%">
-                <el-option label="微信" value="0"></el-option>
-                <el-option label="支付宝" value="1"></el-option>
-                <el-option label="个人银行" value="2"></el-option>
-                <el-option label="对公银行" value="3"></el-option>
+              <el-select value-key="id" placeholder="请选择支付方式" v-model="dataForm.payType" style="width: 100%">
+                <el-option v-for="item in  payWayArr" :label="item.name" :value="item.id" :key="item.id">
+                </el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -135,9 +135,8 @@
 
 <script>
 import {
-  editOrder, getAccount, checkAgencyOrder, addAccount, getAgencySelector,deleteAccount
+  editOrder, getAccount, checkAgencyOrder, addAccount, getAgencySelector, deleteAccount, dictTypeSelector
 } from "@/api/dealersMgt/storePurchase";
-import moment from "moment";
 export default {
   name: "StorePurchase",
   data() {
@@ -169,8 +168,9 @@ export default {
         pageSize: 10,
         Filter: null,
       },
-      agencyId:'',
+      agencyId: '',
       agencyForm: {},
+      payWayArr: [],
       allAgency: [],
       // 表单参数
       dataForm: {},
@@ -189,6 +189,7 @@ export default {
   created() {
     this.getList();
     this.getAllAgency();
+    this.getAllPayWay();
   },
   methods: {
     agencyFormFun(e) {
@@ -220,7 +221,14 @@ export default {
       getAgencySelector().then(res => {
         if (res.type == "success" && res.code == 200) {
           this.allAgency = res.result
-          console.log(this.allAgency)
+        }
+      })
+    },
+    getAllPayWay() {
+      dictTypeSelector().then(res => {
+        if (res.type == "success" && res.code == 200) {
+          this.payWayArr = res.result
+
         }
       })
     },
@@ -248,8 +256,8 @@ export default {
       this.isAddData = false
       this.dataForm = JSON.parse(JSON.stringify(row))
       var rowAgency = this.allAgency.find((item) => { if (item.id == row.agencyId) { return item } })
-      this.agencyId=rowAgency.name
-      this.agencyForm=rowAgency
+      this.agencyId = rowAgency.name
+      this.agencyForm = rowAgency
       this.open = true;
     },
     // 审核按钮
@@ -266,7 +274,7 @@ export default {
       this.$refs["dataForm"].validate(valid => {
         if (valid) {
           if (this.isAddData) {
-            const Parameters=this.dataForm
+            const Parameters = this.dataForm
             Parameters.agencyId = this.agencyForm.id
             addAccount(Parameters).then(res => {
               if (res.type == "success" && res.code == 200) {
@@ -306,6 +314,11 @@ export default {
           })
         })
     },
+    Refresh() {
+      this.getList();
+      this.getAllAgency();
+      this.getAllPayWay();
+    }
   },
 };
 </script>

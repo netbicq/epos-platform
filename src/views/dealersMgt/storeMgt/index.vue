@@ -23,9 +23,9 @@
       <el-table-column prop="contactName" label="门店联系人" width="90" align="center"></el-table-column>
       <el-table-column prop="contactTel" label="门店电话" width="140" align="center" />
       <el-table-column prop="address" label="门店地址" width="220" align="center"> </el-table-column>
-      <el-table-column prop="agencyName" label="经销商名称" width="100" align="center"></el-table-column>
+      <el-table-column prop="agencyName" label="经销商名称" width="140" align="center"></el-table-column>
       <el-table-column prop="agencyTel" label="经销商电话" width="120" align="center"></el-table-column>
-      <el-table-column prop="agencyContactName" label="经销商联系人" width="120" align="center" />
+      <el-table-column prop="agencyContactName" label="经销商联系人" width="140" align="center" />
       <el-table-column prop="editionTypeStr" label="应用版本" align="center">
         <template slot-scope="scope">
           <div slot="reference" class="editionTypeStrBgc" :class="scope.row.editionType">

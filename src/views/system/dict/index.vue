@@ -1,10 +1,19 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item prop="Filter">
-        <el-input v-model="queryParams.Filter" placeholder="请输入标题" clearable style="width: 240px"
+
+      <el-form-item prop="Filter" label="词典名称">
+        <el-input v-model="queryParams.parameter.dictName" placeholder="请输入词典名称" clearable style="width: 240px"
           @keyup.enter.native="getList" />
       </el-form-item>
+
+      <el-form-item label="词典类型" prop="status">
+        <el-select v-model="queryParams.parameter.dictType" placeholder="用户状态" clearable style="width: 240px"
+          @keyup.enter.native="getList">
+          <el-option label="支付方式" value="payWay"></el-option>
+        </el-select>
+      </el-form-item>
+
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="getList">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -19,17 +28,16 @@
     </el-row>
 
     <el-table :data="deptList" height="537" v-loading="loading">
-      <el-table-column label="标题" align="center" prop="title" />
-      <el-table-column label="内容" align="center" prop="content" />
-      <el-table-column label="显示开始时间" :formatter="carTimeFilter" align="center" prop="startDate" />
-      <el-table-column label="显示结束时间" :formatter="carTimeFilter" align="center" prop="validDate" />
-      <el-table-column label="状态" align="center" prop="isShow">
+      <el-table-column label="词典类型" align="center" prop="dictType">
         <template slot-scope="scope">
-          <el-switch v-model="scope.row.isShow" @change="handleStatusChange(scope.row)"></el-switch>
+          <div>
+            {{ payWayObj[scope.row.dictType] }}
+          </div>
         </template>
       </el-table-column>
-      <el-table-column label="创建人" align="center" prop="title" :show-overflow-tooltip="true" />
-      <el-table-column label="创建时间" align="center" :formatter="carTimeFilter" prop="createTime" width="180" />
+      <el-table-column label="词典名称" align="center" prop="name" />
+      <el-table-column label="词典值" align="center" prop="value" :show-overflow-tooltip="true" />
+
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)"
@@ -37,27 +45,19 @@
 
           <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)"
             v-hasPermi="['system:dict:remove']">删除</el-button>
-          <!-- <el-dropdown size="mini" @command="(command) => handleCommand(command, scope.row)">
-            <span class="el-dropdown-link">
-              <i class="el-icon-d-arrow-right el-icon--right"></i>更多
-            </span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="display">显示</el-dropdown-item>
-              <el-dropdown-item command="hide">不显示</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown> -->
         </template>
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize" @pagination="getList"/>
+    <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize"
+      @pagination="getList" />
 
     <!-- 添加或修改参数配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" @close="handleClose" width="600px" append-to-body>
       <el-form ref="formData" :model="formData" :rules="rules" label-width="120px" style="padding-left: 29px">
         <el-row>
           <el-col :span="22">
-            <el-form-item label="词典类型 :" prop="title">
+            <el-form-item label="词典类型 :" prop="dictType">
               <el-select placeholder="请选择词典类型" v-model="formData.dictType" style="width: 100%">
                 <el-option label="支付方式" value="payWay"></el-option>
               </el-select>
@@ -66,21 +66,21 @@
         </el-row>
         <el-row>
           <el-col :span="22">
-            <el-form-item label="拓展值 :" prop="title">
-              <el-input placeholder="请选择词典类型" v-model="formData.expand" />
+            <el-form-item label="拓展值 :" prop="expand">
+              <el-input placeholder="请输入拓展值" v-model="formData.expand" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="22">
-            <el-form-item label="词典名称 :" prop="title">
+            <el-form-item label="词典名称 :" prop="name">
               <el-input placeholder="请输入词典名称" v-model="formData.name" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="22">
-            <el-form-item label="词典值 :" prop="title">
+            <el-form-item label="词典值 :" prop="value">
               <el-input placeholder="请输入词典值" v-model="formData.value" />
             </el-form-item>
           </el-col>
@@ -95,9 +95,8 @@
 
 <script>
 import {
-  addDict, deleteDict,editDict
+  addDict, deleteDict, editDict, pageDictType
 } from "@/api/system/dict";
-import moment from "moment";
 export default {
   name: "Dict",
   data() {
@@ -114,50 +113,61 @@ export default {
       // 是否显示弹出层
       open: false,
       title: '',
+      payWayObj: {
+        "payWay": '支付方式'
+      },
       // 查询参数
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        Filter: "",
+        parameter: {
+          dictName: null,
+          dictType: null
+        },
       },
       // 表单参数
       formData: {},
       // 表单校验
       rules: {
-        /* title: [{ required: true, message: "标题不能为空", trigger: "blur" }],
-        startDate: [
-          { required: true, message: "开始时间不能为空", trigger: "blur" },
+        dictType: [{ required: true, message: "请选择词典类型", trigger: "blur" }],
+        expand: [
+          { required: false},
         ],
-        validDate: [
-          { required: true, message: "结束时间不能为空", trigger: "blur" },
+        name: [
+          { required: true, message: "请输入词典名称", trigger: "blur" },
         ],
-        isShow: [{ required: true, message: "请选择状态", trigger: "blur" }], */
+        value: [{ required: true, message: "请输入词典值", trigger: "blur" }],
       },
     };
   },
-  /* created() {
+  created() {
     this.getList();
-  }, */
+  },
   methods: {
-    /* getList() {
+    getList() {
       this.loading = true;
       var indexPage = 0
-      if (this.queryParams.Filter == undefined) {
+      if (this.queryParams.parameter.dictName == null && this.queryParams.parameter.dictType == null) {
         indexPage = this.queryParams.pageNum - 1
       }
       const queryParams = {
         pageIndex: indexPage,
+        parameter: {
+          dictName: this.queryParams.parameter.dictName,
+          dictType: this.queryParams.parameter.dictType
+        },
         size: this.queryParams.pageSize,
-        parameter: this.queryParams.Filter,
+        sortField: null,
+        sorting: null
       }
-      getPageNotice(queryParams).then(res => {
+      pageDictType(queryParams).then(res => {
         if (res.type == "success" && res.code == 200) {
           this.deptList = res.result.data
           this.total = parseInt(res.result.items)
           this.loading = false;
         }
       })
-    }, */
+    },
 
     /** 新增按钮操作 */
     handleAdd() {
@@ -234,14 +244,13 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.queryParams.Filter = '';
+      this.queryParams.parameter = {
+        dictName: null,
+        dictType: null
+      };
     },   // 关闭按钮
     handleClose() {
       this.formData = {};
-    },
-    // 处理时间显示
-    carTimeFilter(row, column, cellValue, index) {
-      return moment(cellValue).format("YYYY-MM-DD");
     },
   },
 };

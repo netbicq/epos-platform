@@ -92,7 +92,7 @@ export const getRouters = () => {
                     "name": "storeManagement",
                     "path": "storeManagement",
                     "hidden": false,
-                    "component": "operationManagement/store/index",
+                    "component": "dealersMgt/storeMgt/index",
                     "meta": {
                         "title": "门店管理",
                         "noCache": false,

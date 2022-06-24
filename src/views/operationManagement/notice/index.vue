@@ -191,6 +191,8 @@ export default {
         if (valid) {
           if (this.isAddData == true) {
             this.formData.sort = 0;
+            this.formData.createBy = 0;
+            this.formData.nickName = null;
             addNotice(this.formData).then(res => {
               if (res.type == "success" && res.code == 200) {
                 this.$message.success('新增成功');
