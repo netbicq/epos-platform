@@ -33,7 +33,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="orderTime" label="购买时间" width="230" align="center">
+      <el-table-column prop="orderTime" label="购买时间" width="200" align="center">
         <template slot-scope="scope">
           <span>{{ carTimeFilter(scope.row.orderTime) }}</span>
         </template>

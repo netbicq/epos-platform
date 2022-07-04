@@ -9,6 +9,47 @@ export function pageAllUser(data) {
     data: data
   })
 }
+// 新增用户
+export function addUser(data) {
+  return request({
+    url: '/platform/User/Add',
+    method: 'post',
+    data: data
+  })
+}
+// 编辑用户
+export function editSysUser(data) {
+  return request({
+    url: '/platform/User/editSysUser',
+    method: 'post',
+    data: data
+  })
+}
+// 删除用户
+export function deleteSysUser(data) {
+  return request({
+    url: '/platform/User/deleteSysUser?SysUser='+data,
+    method: 'get',
+  })
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // 查询用户详细
 export function getUser(userId) {
@@ -18,14 +59,7 @@ export function getUser(userId) {
   })
 }
 
-// 新增用户
-export function addUser(data) {
-  return request({
-    url: '/platform/User/Add',
-    method: 'post',
-    data: data
-  })
-}
+
 
 // 修改用户
 export function updateUser(data) {

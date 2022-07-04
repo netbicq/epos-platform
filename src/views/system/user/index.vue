@@ -33,7 +33,7 @@
           <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd"
             v-hasPermi="['system:user:add']">新增</el-button>
         </el-col>
-        <el-col :span="1.5">
+        <!-- <el-col :span="1.5">
           <el-button type="success" plain icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate"
             v-hasPermi="['system:user:edit']">修改</el-button>
         </el-col>
@@ -44,7 +44,7 @@
         <el-col :span="1.5">
           <el-button type="info" plain icon="el-icon-upload2" size="mini" @click="handleImport"
             v-hasPermi="['system:user:import']">导入</el-button>
-        </el-col>
+        </el-col> -->
         <el-col :span="1.5">
           <el-button type="warning" plain icon="el-icon-download" size="mini" @click="handleExport"
             v-hasPermi="['system:user:export']">导出</el-button>
@@ -52,14 +52,17 @@
         <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
       </el-row>
 
-      <el-table height="575" id="table" v-loading="loading" size="medium" :data="userList" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="50" align="center" />
+      <el-table height="575" id="table" v-loading="loading" size="medium" :data="userList"
+        @selection-change="handleSelectionChange">
+        <!-- <el-table-column type="selection" width="50" align="center" /> -->
         <el-table-column label="用户名称" width="180" align="center" key="userName" prop="userName" />
         <el-table-column label="用户昵称" width="180" align="center" key="nickName" prop="nickName" />
         <el-table-column label="性别" width="100" align="center" key="sex" prop="sex" />
         <el-table-column label="类型" width="200" align="center" key="userType" prop="userType">
           <template slot-scope="scope">
-            <span v-text="userType(scope.row.userType)"></span>
+            <div>
+              {{ userTypeObj[scope.row.userType] }}
+            </div>
           </template>
         </el-table-column>
         <el-table-column label="手机号码" align="center" key="phone" prop="phone" width="160" />
@@ -114,20 +117,18 @@
           <el-col :span="22">
             <el-form-item label="性别 :" prop="sex">
               <el-radio-group v-model="form.sex">
-                <el-radio v-model="radio" label="0">男</el-radio>
-                <el-radio v-model="radio" label="1">女</el-radio>
-                <el-radio v-model="radio" label="2">保密</el-radio>
+                <el-radio v-for="(item, index) in sexObj" v-model="radio" :label="item.value" :key="index">{{ item.value
+                }}
+                </el-radio>
+
               </el-radio-group>
             </el-form-item>
           </el-col>
           <el-col :span="22">
             <el-form-item label="用户类型 :" prop="userType">
               <el-select v-model="form.userType" placeholder="请选择用户类型" style="width: 100%">
-                <el-option label="平台超级管理员" value="00"></el-option>
-                <el-option label="平台用户" value="01"></el-option>
-                <el-option label="企业用户" value="02"></el-option>
-                <el-option label="经销商" value="03"></el-option>
-                <el-option label="企业超级管理员" value="04"></el-option>
+                <el-option v-for="(val, key, index) in  userTypeObj" :label="val" :value="key" :key="index"></el-option>
+
               </el-select>
             </el-form-item>
           </el-col>
@@ -141,9 +142,14 @@
               <el-input v-model="form.email" placeholder="请输入名称" />
             </el-form-item>
           </el-col>
-          <el-col :span="22">
+          <el-col v-if="isAddData" :span="22">
             <el-form-item label="用户密码 :" prop="password">
               <el-input v-model="form.password" placeholder="请输入用户密码" type="password" maxlength="20" show-password />
+            </el-form-item>
+          </el-col>
+          <el-col v-if="!isAddData" :span="22">
+            <el-form-item label="新密码 :" prop="newPassword">
+              <el-input v-model="form.password" placeholder="请输入新密码" type="password" maxlength="20" show-password />
             </el-form-item>
           </el-col>
         </el-row>
@@ -179,7 +185,7 @@
 </template>
 
 <script>
-import { pageAllUser, getUser, delUser, addUser, updateUser, resetUserPwd, changeUserStatus } from "@/api/system/user";
+import { pageAllUser, editSysUser, addUser,deleteSysUser, resetUserPwd, changeUserStatus } from "@/api/system/user";
 import { getToken } from "@/utils/auth";
 import { treeselect } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
@@ -191,6 +197,8 @@ export default {
   components: { Treeselect },
   data() {
     return {
+
+      isAddData: true,
       radio: '0',
       // 遮罩层
       loading: false,
@@ -206,8 +214,6 @@ export default {
       total: 0,
       // 用户表格数据
       userList: null,
-      // 弹出层标题
-      title: "",
       // 部门树选项
       deptOptions: undefined,
       // 是否显示弹出层
@@ -265,6 +271,11 @@ export default {
           { required: true, message: "用户密码不能为空", trigger: "blur" },
           { min: 5, max: 20, message: '用户密码长度必须介于 5 和 20 之间', trigger: 'blur' }
         ],
+        newPassword: [
+
+          { required: true, message: "用户密码不能为空", trigger: "blur" },
+          { min: 5, max: 20, message: '用户密码长度必须介于 5 和 20 之间', trigger: 'blur' }
+        ],
         email: [
           {
             type: "email",
@@ -280,7 +291,28 @@ export default {
             trigger: "blur"
           }
         ]
-      }
+      },
+      userTypeObj: {
+        "ADMINPLATFORM": '平台超级管理员',
+        "PLATFORM": '平台用户',
+        "ENTERPRISE": '企业用户',
+        "AGENCY": '经销商',
+        "ADMINENTERPRISE": '企业超级管理员',
+      },
+      sexObj: [
+        {
+          value: "男",
+
+        },
+        {
+          value: "女",
+
+        },
+        {
+          value: "保密",
+
+        },
+      ]
     };
   },
   watch: {
@@ -291,26 +323,12 @@ export default {
   },
   created() {
     this.getList();
-    this.userType();
     this.getTreeselect();
     this.getConfigKey("sys.user.initPassword").then(response => {
       this.initPassword = response.msg;
     });
   },
   methods: {
-    userType(type) {
-      if (type == 'ADMINPLATFORM') {
-        return '平台超级管理员'
-      } else if (type == 'PLATFORM') {
-        return '平台用户'
-      } else if (type == 'ENTERPRISE') {
-        return '企业用户'
-      } else if (type == 'AGENCY') {
-        return '经销商'
-      } else if (type == 'ADMINENTERPRISE') {
-        return '企业超级管理员'
-      }
-    },
     /** 查询用户列表 */
     getList() {
       this.loading = true;
@@ -413,24 +431,18 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd() {
+      this.isAddData = true
+      this.title = "新增用户";
       this.open = true;
-      this.title = "添加用户";
+
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      this.reset();
-      this.getTreeselect();
-      const userId = row.userId || this.ids;
-      getUser(userId).then(response => {
-        this.form = response.data;
-        this.postOptions = response.posts;
-        this.roleOptions = response.roles;
-        this.form.postIds = response.postIds;
-        this.form.roleIds = response.roleIds;
-        this.open = true;
-        this.title = "修改用户";
-        this.form.password = "";
-      });
+      this.title = "修改用户";
+      this.isAddData = false
+      this.form = JSON.parse(JSON.stringify(row))
+      this.form.password = ''
+      this.open = true;
     },
     /** 重置密码按钮操作 */
     handleResetPwd(row) {
@@ -455,19 +467,22 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          if (this.form.userId != undefined) {
-            updateUser(this.form).then(response => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
+          if (this.isAddData) {
             addUser(this.form).then(res => {
               if (res.type == "success" && res.code == 200) {
                 this.$modal.msgSuccess("新增成功");
                 this.open = false;
                 this.getList();
-              } 
+              }
+
+            });
+          } else {
+            editSysUser(this.form).then(res => {
+              if (res.type == "success" && res.code == 200) {
+                this.$modal.msgSuccess("修改成功");
+                this.open = false;
+                this.getList();
+              }
             })
           }
         }
@@ -475,13 +490,19 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const userIds = row.userId || this.ids;
-      this.$modal.confirm('是否确认删除用户编号为"' + userIds + '"的数据项？').then(function () {
-        return delUser(userIds);
-      }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("删除成功");
-      }).catch(() => { });
+      this.$confirm("此操作将永久删除该数据, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          deleteSysUser(row.id).then(res => {
+            if (res.type == 'success' && res.code == 200) {
+              this.$message.success('删除成功');
+              this.getList();
+            }
+          })
+        })
     },
     /** 导出按钮操作 */
     handleExport() {
@@ -496,7 +517,7 @@ export default {
       try {
         this.$FileSaver.saveAs(
           new Blob([table_write], { type: "application/octet-stream" }),
-           "用户管理"+time +".xlsx"
+          "用户管理" + time + ".xlsx"
         );
       } catch (e) {
         if (typeof console !== "undefined") console.log(e, table_write);
