@@ -1,4 +1,21 @@
 import request from '@/utils/request'
+// 新增菜单
+export function addMenu(data) {
+  return request({
+    url: '/basic/menu/addMenu',
+    method: 'post',
+    data: data
+  })
+}
+// 删除菜单
+export function delMenu(menuId) {
+  return request({
+    url: '/basic/menu/delMenuById/' + menuId,
+    method: 'get'
+  })
+}
+
+
 
 // 查询菜单列表
 export function listMenu(query) {
@@ -33,14 +50,7 @@ export function roleMenuTreeselect(roleId) {
   })
 }
 
-// 新增菜单
-export function addMenu(data) {
-  return request({
-    url: '/system/menu',
-    method: 'post',
-    data: data
-  })
-}
+
 
 // 修改菜单
 export function updateMenu(data) {
@@ -51,10 +61,3 @@ export function updateMenu(data) {
   })
 }
 
-// 删除菜单
-export function delMenu(menuId) {
-  return request({
-    url: '/system/menu/' + menuId,
-    method: 'delete'
-  })
-}

@@ -17,7 +17,7 @@ export const getRouters = () => {
                     "meta": {
                         "title": "经销商管理",
                         "noCache": false,
-                        "icon":"tree-table",
+                        "icon": "tree-table",
                         "link": null
                     },
                     "children": [
@@ -40,7 +40,7 @@ export const getRouters = () => {
                             "component": "dealersMgt/storePurchase/index",
                             "meta": {
                                 "title": "门店账号购买",
-                                "icon":'shopping',
+                                "icon": 'shopping',
                                 "noCache": false,
                                 "link": null
                             }
@@ -53,109 +53,109 @@ export const getRouters = () => {
                             "meta": {
                                 "title": "门店账号管理",
                                 "noCache": false,
-                                "icon":"zahnghaonew",
+                                "icon": "zahnghaonew",
                                 "link": null
                             }
                         }
                     ]
                 },
                 // 运营管理
-        {
-            "name": "operationManagement",
-            "path": "/operationManagement",
-            "hidden": false,
-            "redirect": "noRedirect",
-            "component": "Layout",
-            "alwaysShow": true,
-            "meta": {
-                "title": "运营管理",                
-                "noCache": false,
-                "icon":'druid',
-                "link": null
-            },
-            "children": [
-                //通知公告
                 {
-                    "name": "noticeNotice",
-                    "path": "noticeNotice",
+                    "name": "operationManagement",
+                    "path": "/operationManagement",
                     "hidden": false,
-                    "component": "operationManagement/notice/index",
+                    "redirect": "noRedirect",
+                    "component": "Layout",
+                    "alwaysShow": true,
                     "meta": {
-                        "title": "通知公告",
+                        "title": "运营管理",
                         "noCache": false,
-                        "icon":'notification',
+                        "icon": 'druid',
                         "link": null
-                    }
+                    },
+                    "children": [
+                        //通知公告
+                        {
+                            "name": "noticeNotice",
+                            "path": "noticeNotice",
+                            "hidden": false,
+                            "component": "operationManagement/notice/index",
+                            "meta": {
+                                "title": "通知公告",
+                                "noCache": false,
+                                "icon": 'notification',
+                                "link": null
+                            }
+                        },
+                        //门店管理
+                        {
+                            "name": "storeManagement",
+                            "path": "storeManagement",
+                            "hidden": false,
+                            "component": "dealersMgt/storeMgt/index",
+                            "meta": {
+                                "title": "门店管理",
+                                "noCache": false,
+                                "icon": "门店管理",
+                                "link": null
+                            }
+                        },
+                        //收款管理
+                        {
+                            "name": "collectionManagement",
+                            "path": "collectionManagement",
+                            "hidden": false,
+                            "component": "operationManagement/collection/index",
+                            "meta": {
+                                "title": "收款管理",
+                                "noCache": false,
+                                "icon": "shoukuannew",
+                                "link": null
+                            }
+                        },
+                        //退款管理
+                        {
+                            "name": "refundManagement",
+                            "path": "refundManagement",
+                            "hidden": false,
+                            "component": "operationManagement/refund/index",
+                            "meta": {
+                                "title": "退款管理",
+                                "noCache": false,
+                                "icon": "退款管理",
+                                "link": null
+                            }
+                        },
+
+                        //售价策略
+                        {
+                            "name": "priceStrategyt",
+                            "path": "priceStrategyt",
+                            "hidden": false,
+                            "component": "operationManagement/strategy/index",
+                            "meta": {
+                                "title": "售价策略",
+                                "noCache": false,
+                                "icon": "零售价",
+                                "link": null
+                            }
+                        },
+                        //小程序+支付配置
+                        {
+                            "name": "configure",
+                            "path": "configure",
+                            "hidden": false,
+                            "component": "operationManagement/configure/index",
+                            "meta": {
+                                "title": "配置应用",
+                                "noCache": false,
+                                "icon": "peizhinew",
+                                "link": null
+                            }
+                        }
+
+                    ]
                 },
-                //门店管理
-                {
-                    "name": "storeManagement",
-                    "path": "storeManagement",
-                    "hidden": false,
-                    "component": "dealersMgt/storeMgt/index",
-                    "meta": {
-                        "title": "门店管理",
-                        "noCache": false,
-                        "icon":"门店管理",
-                        "link": null
-                    }
-                },
-                //收款管理
-                {
-                    "name": "collectionManagement",
-                    "path": "collectionManagement",
-                    "hidden": false,
-                    "component": "operationManagement/collection/index",
-                    "meta": {
-                        "title": "收款管理",
-                        "noCache": false,
-                        "icon":"shoukuannew",
-                        "link": null
-                    }
-                },
-                //退款管理
-                {
-                    "name": "refundManagement",
-                    "path": "refundManagement",
-                    "hidden": false,
-                    "component": "operationManagement/refund/index",
-                    "meta": {
-                        "title": "退款管理",
-                        "noCache": false,
-                        "icon":"退款管理",
-                        "link": null
-                    }
-                },
-              
-                //售价策略
-                {
-                    "name": "priceStrategyt",
-                    "path": "priceStrategyt",
-                    "hidden": false,
-                    "component": "operationManagement/strategy/index",
-                    "meta": {
-                        "title": "售价策略",
-                        "noCache": false,
-                        "icon":"零售价",
-                        "link": null
-                    }
-                },
-                  //小程序+支付配置
-                  {
-                    "name": "configure",
-                    "path": "configure",
-                    "hidden": false,
-                    "component": "operationManagement/configure/index",
-                    "meta": {
-                        "title": "配置应用",
-                        "noCache": false,
-                        "icon":"peizhinew",
-                        "link": null
-                    }
-                }
-               
-            ]
-        },
                 {
                     "name": "facilitysMgt",
                     "path": "/facilitysMgt",
@@ -166,7 +166,7 @@ export const getRouters = () => {
                     "meta": {
                         "title": "设备管理",
                         "noCache": false,
-                        "icon":"swagger",
+                        "icon": "swagger",
                         "link": null
                     },
                     "children": [
@@ -178,10 +178,10 @@ export const getRouters = () => {
                             "meta": {
                                 "title": "设备注册",
                                 "noCache": false,
-                                "icon":'form',
+                                "icon": 'form',
                                 "link": null
                             }
-                        }                        
+                        }
                     ]
                 },
                 {
@@ -201,7 +201,7 @@ export const getRouters = () => {
                         {
                             "name": "systemParameter",
                             "path": "systemParameter",
-                            "hidden": false,                            
+                            "hidden": false,
                             "component": "system/systemParameter/index",
                             "meta": {
                                 "icon": "druid",
@@ -213,11 +213,23 @@ export const getRouters = () => {
                         {
                             "name": "dataSource",
                             "path": "dataSource",
-                            "hidden": false,                            
+                            "hidden": false,
                             "component": "system/dataSource/index",
                             "meta": {
                                 "icon": "druid",
                                 "title": "数据源管理",
+                                "noCache": false,
+                                "link": null
+                            }
+                        },
+                        {
+                            "name": "Menu",
+                            "path": "Menu",
+                            "hidden": false,
+                            "component": "system/menu/index",
+                            "meta": {
+                                "title": "菜单管理",
+                                "icon": "tree-table",
                                 "noCache": false,
                                 "link": null
                             }
@@ -318,7 +330,7 @@ export const getRouters = () => {
                                 "link": null
                             }
                         }, */
-                        
+
                         /* {
                             "name": "Config",
                             "path": "config",
@@ -374,7 +386,7 @@ export const getRouters = () => {
                         } */
                     ]
                 },
-                
+
                 /* {
                     "name": "Monitor",
                     "path": "/monitor",
