@@ -6,6 +6,69 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "3092310",
+      "name": "数据报表",
+      "font_class": "shujubaobiao",
+      "unicode": "e78c",
+      "unicode_decimal": 59276
+    },
+    {
+      "icon_id": "3472659",
+      "name": "快捷服务-01",
+      "font_class": "kuaijiefuwu-",
+      "unicode": "e68f",
+      "unicode_decimal": 59023
+    },
+    {
+      "icon_id": "4294079",
+      "name": "个人中心",
+      "font_class": "gerenzhongxin",
+      "unicode": "e789",
+      "unicode_decimal": 59273
+    },
+    {
+      "icon_id": "11459687",
+      "name": "账单",
+      "font_class": "zhangdan",
+      "unicode": "e63f",
+      "unicode_decimal": 58943
+    },
+    {
+      "icon_id": "15232402",
+      "name": "快捷入口",
+      "font_class": "kuaijierukou",
+      "unicode": "e626",
+      "unicode_decimal": 58918
+    },
+    {
+      "icon_id": "1200231",
+      "name": "筛选",
+      "font_class": "shaixuan",
+      "unicode": "e631",
+      "unicode_decimal": 58929
+    },
+    {
+      "icon_id": "4775356",
+      "name": "搜索",
+      "font_class": "sousuo",
+      "unicode": "e66d",
+      "unicode_decimal": 58989
+    },
+    {
+      "icon_id": "10109104",
+      "name": "喇叭",
+      "font_class": "laba",
+      "unicode": "e611",
+      "unicode_decimal": 58897
+    },
+    {
+      "icon_id": "1110",
+      "name": "提醒",
+      "font_class": "tixing",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
       "icon_id": "2076358",
       "name": "返回箭头",
       "font_class": "fanhuijiantou",

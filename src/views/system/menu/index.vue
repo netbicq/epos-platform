@@ -20,29 +20,58 @@
     </el-row>
 
     <el-table :data="deptList" height="537" v-loading="loading">
-      <el-table-column label="名称" align="center" prop="title" />
-      <el-table-column label="标题" align="center" prop="content" />
-      <el-table-column label="路由组件" :formatter="carTimeFilter" align="center" prop="startDate" />
-      <el-table-column label="客户端拓展" :formatter="carTimeFilter" align="center" prop="validDate" />
-      <el-table-column label="类型" align="center" prop="isShow">
+      <el-table-column label="名称" align="center" prop="name" width="130" />
+      <el-table-column label="标题" align="center" prop="title" width="130" />
+      <el-table-column label="路由组件" align="center" prop="component" width="200" />
+      <el-table-column label="客户端拓展" align="center" prop="clientEx" width="150" />
+      <el-table-column label="类型" align="center" prop="menuType" width="180">
         <template slot-scope="scope">
-          <el-switch v-model="scope.row.isShow" @change="handleStatusChange(scope.row)"></el-switch>
+          <div class="editionTypeStrBgc" :class="scope.row.menuType">
+            {{ menuType[scope.row.menuType] }}
+          </div>
         </template>
       </el-table-column>
-      <el-table-column label="权限key" align="center" prop="nickName" :show-overflow-tooltip="true" />
-      <el-table-column label="模块" align="center" :formatter="carTimeFilter" prop="createTime" width="180" />
-      <el-table-column label="图标" align="center" :formatter="carTimeFilter" prop="createTime" width="180" />
-      <el-table-column label="排序" align="center" :formatter="carTimeFilter" prop="createTime" width="180" />
-      <el-table-column label="备注" align="center" :formatter="carTimeFilter" prop="createTime" width="180" />
+      <el-table-column label="权限key" align="center" prop="perms" :show-overflow-tooltip="true" />
+      <el-table-column label="模块" align="center" prop="module" width="180">
+        <template slot-scope="scope">
+          <div class="editionTypeStrBgc" :class="scope.row.module">
+            {{ lockStatusObj[scope.row.module] }}
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column label="图标" align="center" prop="icon" width="50">
+        <template slot-scope="scope">
+          <i slot="prefix" class="iconfont" :class="scope.row.icon" style="font-size: 20px;"></i>
+        </template>
+      </el-table-column>
+      <el-table-column label="排序" align="center" prop="sort" width="180" />
+      <el-table-column label="备注" align="center" prop="remark" width="180" />
       <el-table-column label="操作" width="180" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)">修改</el-button>
-          <el-button size="mini" type="text" icon="el-icon-s-data">排序</el-button>
-          <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)">删除</el-button>
+          <el-button size="mini" type="text" icon="el-icon-plus">新增</el-button>
+
+          <el-popover placement="bottom" width="100" trigger="hover">
+            <div style="display: flex;align-items: center;">
+              <el-input-number size="mini" v-model="num" @change="handleChange" :min="1" :max="10" label="描述文字">
+              </el-input-number>
+              <div class="sort" @click="confirmSorting(scope.row)">确认</div>
+            </div>
+            <span class="el-dropdown-link" slot="reference">
+              <i class="el-icon-s-data el-icon--right"></i>排序
+            </span>
+          </el-popover>
+          <el-dropdown size="mini" @command="(command) => handleCommand(command, scope.row)">
+            <span class="el-dropdown-link">
+              <i class="el-icon-d-arrow-right el-icon--right"></i>更多
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="checkBtn">修改</el-dropdown-item>
+              <el-dropdown-item command="deleteRow">删除</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </template>
       </el-table-column>
     </el-table>
-
     <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize"
       @pagination="getList" />
 
@@ -81,20 +110,27 @@
             </el-form-item>
           </el-col>
           <el-col :span="22">
-            <el-col :span="12">
-              <el-form-item label="排序 :">
-                <el-input v-model="formData.sort" placeholder="排序" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="图标 :">
-                <el-select value-key="id" placeholder="请选择图标" v-model="formData.icon" style="width: 100%">
-                  <el-option label="图标1" value="1"></el-option>
-                  <el-option label="图标2" value="2"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
+            <el-form-item label="图标 :">
+              <el-popover placement="bottom" width="400" trigger="click">
+                <div class="iconForm">
+                  <div class="iconFormItem" v-for="(item, index) in icon" :key="index" @click="selectIcon(index)">
+                    <i slot="prefix" class="iconfont" :class="item" style="font-size: 20px;"></i>
+                    <div>{{ item }}</div>
+                  </div>
+                </div>
+                <el-input slot="reference" v-model="currentIcon" placeholder="请选择图标">
+                  <i v-if="currentIcon != null" slot="prefix" class="iconfont" :class="currentIcon"></i>
+                </el-input>
+              </el-popover>
+            </el-form-item>
           </el-col>
+
+          <el-col :span="22">
+            <el-form-item label="排序 :">
+              <el-input v-model="formData.sort" placeholder="排序" />
+            </el-form-item>
+          </el-col>
+
           <el-col :span="22">
             <el-col :span="12">
               <el-form-item label="菜单类型 :">
@@ -129,16 +165,16 @@
 
 <script>
 import {
-  getPageNotice, addNotice, deleteNotice, editNotice, setIsShow
-} from "@/api/operationManagement/notice"
-import {
-  addMenu, delMenu
+  addMenu, delMenu, getMenuList, editMenu, getMenuById
 } from "@/api/system/menu";
 import moment from "moment";
 export default {
   name: "Notice",
   data() {
     return {
+      num: 1,
+      currentIcon: null,
+      icon: ['icon-shaixuan', 'icon-sousuo', 'icon-laba', 'icon-tixing'],
       lockStatusObj: {
         "Basic": '专业版',
         "Professional": '企业版',
@@ -186,6 +222,10 @@ export default {
     this.getList();
   },
   methods: {
+    selectIcon(index) {
+      this.currentIcon = this.icon[index]
+      this.formData.icon = this.icon[index]
+    },
     getList() {
       this.loading = true;
       var indexPage = 0
@@ -197,7 +237,7 @@ export default {
         size: this.queryParams.pageSize,
         parameter: this.queryParams.Filter,
       }
-      getPageNotice(queryParams).then(res => {
+      getMenuList(queryParams).then(res => {
         if (res.type == "success" && res.code == 200) {
           this.deptList = res.result.data
           this.total = parseInt(res.result.items)
@@ -213,12 +253,16 @@ export default {
       this.open = true;
 
     },
+    confirmSorting(row) {
+
+    },
 
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.title = "修改菜单";
       this.isAddData = false;
       this.formData = JSON.parse(JSON.stringify(row));
+      this.currentIcon = row.icon;
       this.open = true;
     },
     // 提交按钮
@@ -234,17 +278,17 @@ export default {
                 this.open = false;
                 this.getList()
                 this.formData = {};
+                this.currentIcon = null;
               }
             })
           } else {
-            this.formData.validDate = new Date(this.formData.validDate).toISOString()
-            this.formData.startDate = new Date(this.formData.startDate).toISOString()
-            editNotice(this.formData).then(res => {
+            editMenu(this.formData).then(res => {
               if (res.type == "success" && res.code == 200) {
                 this.$message.success('修改成功');
                 this.open = false;
                 this.getList()
                 this.formData = {};
+                this.currentIcon = null;
               }
             })
           }
@@ -268,6 +312,9 @@ export default {
           })
         })
     },
+    handleChange(value) {
+      console.log(value);
+    },
     // 隐藏/显示
     handleStatusChange(row) {
       const params = {
@@ -288,35 +335,91 @@ export default {
     },   // 关闭按钮
     handleClose() {
       this.formData = {};
+      this.currentIcon = null;
     },
     // 处理时间显示
     carTimeFilter(row, column, cellValue, index) {
       return moment(cellValue).format("YYYY-MM-DD");
     },
-    //更多按钮触发操作
-    /* handleCommand(command, row) {
+    // 更多操作触发
+    handleCommand(command, row) {
       switch (command) {
-        case "display":
-          this.display(row);
+        case "checkBtn":
+          this.handleUpdate(row);
           break;
-        case "hide":
-          this.hide(row);
+        case "deleteRow":
+          this.handleDelete(row);
           break;
         default:
           break;
       }
-    }, */
-    //显示按钮
-    /* display() {
-      console.log("显示");
     },
-    //隐藏按钮
-    hide() {
-      console.log("隐藏");
-    }, */
-
-
-
   },
 };
 </script>
+<style  scoped rel="stylesheet/scss" lang="scss">
+.iconForm {
+  width: 400px;
+  display: flex;
+  flex-wrap: wrap
+}
+
+.iconFormItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.editionTypeStrBgc {
+  display: inline-block;
+  height: 32px;
+  padding: 0 10px;
+  line-height: 30px;
+  font-size: 12px;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 4px;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+
+.Enterprise,
+.MODULE {
+  background-color: #e8f4ff;
+  border-color: #d1e9ff;
+  color: #1890ff;
+}
+
+.Basic,
+.MENU {
+  background-color: #fef0f0;
+  border-color: #fde2e2;
+  color: #f56c6c;
+}
+
+.Professional,
+.BUTTON {
+  background-color: #f0f9eb;
+  border-color: #e1f3d8;
+  color: #67c23a;
+}
+
+
+::v-deep.el-input-number--medium {
+  width: 120px !important;
+}
+
+.sort {
+  width: 50px;
+  margin-left: 5px;
+  background-color: #e8f4ff;
+  border-color: #d1e9ff;
+  color: #1890ff;
+  text-align: center;
+  cursor: pointer;
+}
+</style>

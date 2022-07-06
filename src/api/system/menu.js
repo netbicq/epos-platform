@@ -2,7 +2,7 @@ import request from '@/utils/request'
 // 新增菜单
 export function addMenu(data) {
   return request({
-    url: '/basic/menu/addMenu',
+    url: '/platform/menu/addMenu',
     method: 'post',
     data: data
   })
@@ -10,21 +10,38 @@ export function addMenu(data) {
 // 删除菜单
 export function delMenu(menuId) {
   return request({
-    url: '/basic/menu/delMenuById/' + menuId,
+    url: '/platform/menu/delMenuById/' + menuId,
     method: 'get'
   })
 }
-
-
-
-// 查询菜单列表
-export function listMenu(query) {
+// 排序菜单
+export function getMenuById(query) {
   return request({
-    url: '/system/menu/list',
+    url: '/platform/menu/getMenuById/',
     method: 'get',
     params: query
   })
 }
+// 获取菜单列表
+export function getMenuList(data) {
+  return request({
+    url: '/platform/menu/getMenuList',
+    method: 'post',
+    data: data
+  })
+}
+// 编辑菜单
+export function editMenu(data) {
+  return request({
+    url: '/platform/menu/editMenu',
+    method: 'post',
+    data: data
+  })
+}
+
+
+
+
 
 // 查询菜单详细
 export function getMenu(menuId) {
