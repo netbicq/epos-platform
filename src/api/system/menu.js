@@ -15,11 +15,10 @@ export function delMenu(menuId) {
   })
 }
 // 排序菜单
-export function getMenuById(query) {
+export function getMenuById(id,num) {
   return request({
-    url: '/platform/menu/getMenuById/',
+    url: '/platform/menu/getMenuById/'+ id+'/'+num,
     method: 'get',
-    params: query
   })
 }
 // 获取菜单列表

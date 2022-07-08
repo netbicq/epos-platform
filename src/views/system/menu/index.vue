@@ -48,13 +48,15 @@
       <el-table-column label="备注" align="center" prop="remark" width="180" />
       <el-table-column label="操作" width="180" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button size="mini" type="text" icon="el-icon-plus">新增</el-button>
+          <el-button size="mini" type="text" icon="el-icon-plus" @click="addChildMenu(scope.row)">新增</el-button>
 
-          <el-popover placement="bottom" width="100" trigger="hover">
+          <el-popover placement="bottom" width="100" trigger="click">
             <div style="display: flex;align-items: center;">
               <el-input-number size="mini" v-model="num" @change="handleChange" :min="1" :max="10" label="描述文字">
               </el-input-number>
-              <div class="sort" @click="confirmSorting(scope.row)">确认</div>
+
+              <el-button type="text" size="mini" @click="confirmSorting(scope.row)" icon="el-icon-caret-right">确认
+              </el-button>
             </div>
             <span class="el-dropdown-link" slot="reference">
               <i class="el-icon-s-data el-icon--right"></i>排序
@@ -79,9 +81,9 @@
     <el-dialog :title="title" @close="handleClose" :visible.sync="open" width="600px" append-to-body>
       <el-form ref="formData" :model="formData" :rules="rules" label-width="106px" style="padding-left: 29px">
         <el-row>
-          <el-col :span="22">
+          <el-col :span="22" v-if="isAddChild">
             <el-form-item label="上级菜单 :">
-              <el-input v-model="formData.parentId" disabled="disabled" />
+              <el-input v-model="formData.parentName" disabled="disabled" />
             </el-form-item>
           </el-col>
           <el-col :span="22">
@@ -172,6 +174,7 @@ export default {
   name: "Notice",
   data() {
     return {
+      isAddChild: false,
       num: 1,
       currentIcon: null,
       icon: ['icon-shaixuan', 'icon-sousuo', 'icon-laba', 'icon-tixing'],
@@ -246,15 +249,29 @@ export default {
       })
     },
 
-    /** 新增按钮操作 */
+    /** 新增主菜单 */
     handleAdd() {
       this.title = "新增菜单";
       this.isAddData = true;
+      this.isAddChild = false;
       this.open = true;
-
+    },
+    // 新增子菜单
+    addChildMenu(row) {
+      this.title = "新增子菜单";
+      this.formData.parentName = row.parentName;
+      this.formData.parentId = row.parentId;
+      this.isAddChild = true;
+      this.open = true;
     },
     confirmSorting(row) {
-
+      console.log(row)
+      getMenuById(row.id, this.num).then(res => {
+        if (res.type == "success" && res.code == 200) {
+          this.$message.success('设置成功');
+          this.getList()
+        }
+      })
     },
 
     /** 修改按钮操作 */
@@ -414,11 +431,13 @@ export default {
 }
 
 .sort {
-  width: 50px;
+  width: 60px;
+  height: 25px;
   margin-left: 5px;
   background-color: #e8f4ff;
+  line-height: 25px;
   border-color: #d1e9ff;
-  color: #1890ff;
+  color: #000000;
   text-align: center;
   cursor: pointer;
 }
